@@ -17,6 +17,21 @@ import torchvision.transforms as T
 import torchvision.models
 
 
+def seed_everything(seed: int):
+    import random
+    import os
+    import numpy as np
+    import torch
+
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = True
+
+
 def save_model(model, i):
     sd = model.state_dict()
     torch.save(model.state_dict(), '%s.pt' % i)
@@ -27,57 +42,180 @@ def load_model(model, i):
     model.load_state_dict(sd)
 
 
-CIFAR_MEAN = (0.5071, 0.4867, 0.4408)
-CIFAR_STD = (0.2675, 0.2565, 0.2761)
-normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
+def main():
+    seed_everything(42)
 
-train_transform = T.Compose([
-    T.RandomHorizontalFlip(),
-    T.RandomCrop(32, padding=4),
-    T.ToTensor(),
-    normalize,
-])
-test_transform = T.Compose([
-    T.ToTensor(),
-    normalize,
-])
-train_dset = torchvision.datasets.CIFAR100(root='/tmp', train=True,
-                                           download=True, transform=train_transform)
-test_dset = torchvision.datasets.CIFAR100(root='/tmp', train=False,
-                                          download=True, transform=test_transform)
+    CIFAR_MEAN = (0.5071, 0.4867, 0.4408)
+    CIFAR_STD = (0.2675, 0.2565, 0.2761)
+    normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
 
-train_aug_loader = torch.utils.data.DataLoader(train_dset, batch_size=500, shuffle=True, num_workers=8)
-test_loader = torch.utils.data.DataLoader(test_dset, batch_size=500, shuffle=False, num_workers=8)
+    train_transform = T.Compose([
+        T.RandomHorizontalFlip(),
+        T.RandomCrop(32, padding=4),
+        T.ToTensor(),
+        normalize,
+    ])
+    test_transform = T.Compose([
+        T.ToTensor(),
+        normalize,
+    ])
+    train_dset = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                               download=True, transform=train_transform)
+    test_dset = torchvision.datasets.CIFAR100(root='/tmp', train=False,
+                                              download=True, transform=test_transform)
+
+    train_aug_loader = torch.utils.data.DataLoader(train_dset, batch_size=500, shuffle=True, num_workers=8)
+    test_loader = torch.utils.data.DataLoader(test_dset, batch_size=500, shuffle=False, num_workers=8)
+
+    train_dataset_part1 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                                        download=True, transform=train_transform)
+    targets = torch.Tensor(train_dataset_part1.targets).to(torch.long)
+    idx_part1 = targets < 50
+    train_dataset_part1.data = train_dataset_part1.data[idx_part1]
+    train_dataset_part1.targets = targets[idx_part1]
+    train_dataloder_part1 = torch.utils.data.DataLoader(train_dataset_part1, batch_size=500, shuffle=True, num_workers=8)
+
+    train_dataset_part2 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                                        download=True, transform=train_transform)
+    targets = torch.Tensor(train_dataset_part2.targets).to(torch.long)
+    idx_part2 = targets >= 50
+    train_dataset_part2.data = train_dataset_part2.data[idx_part2]
+    train_dataset_part2.targets = targets[idx_part2]
+    train_dataloder_part2 = torch.utils.data.DataLoader(train_dataset_part2, batch_size=500, shuffle=True, num_workers=8)
+
+    train('resnet18_v1', train_aug_loader, test_loader)  # train_dataloder_part1
+    train('resnet18_v2', train_aug_loader, test_loader)  # train_dataloder_part2
+
+    # sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/0045eef3.pt')
+    # model.load_state_dict(sd)
+    # save_model(model, 'imagenet/resnet18_v1')
+
+    # sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/00ab6ff6.pt')
+    # model.load_state_dict(sd)
+    # save_model(model, 'imagenet/resnet18_v2')
+
+    model0 = resnet18()
+    model1 = resnet18()
+    load_model(model0, 'resnet18_v1')
+    load_model(model1, 'resnet18_v2')
+
+    model0 = add_junctures(model0)
+    model1 = add_junctures(model1)
+    save_model(model0, 'resnet18j_v1')
+    save_model(model1, 'resnet18j_v2')
+
+    blocks0 = get_blocks(model0)
+    blocks1 = get_blocks(model1)
+
+    for k in range(1, len(blocks1)):
+        block0 = blocks0[k]
+        block1 = blocks1[k]
+        subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, block0.relu)
+        subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, block1.relu)
+        perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader)
+        permute_output(perm_map, block1.conv1, block1.bn1)
+        permute_input(perm_map, block1.conv2)
+
+    def get_permk(k):
+        if k == 0:
+            return 0
+        elif k > 0 and k <= 2:
+            return 2
+        elif k > 2 and k <= 4:
+            return 4
+        elif k > 4 and k <= 6:
+            return 6
+        elif k > 6 and k <= 8:
+            return 8
+        else:
+            raise Exception()
+
+    last_kk = None
+    perm_map = None
+
+    for k in range(len(blocks1)):
+        kk = get_permk(k)
+        if kk != last_kk:
+            perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1], train_aug_loader)
+            last_kk = kk
+    #     perm_map = get_layer_perm(blocks0[:k+1], blocks1[:k+1], train_aug_loader)
+
+        if k > 0:
+            permute_output(perm_map, blocks1[k].conv2, blocks1[k].bn2)
+            shortcut = blocks1[k].downsample
+            if isinstance(shortcut, nn.Conv2d):
+                permute_output(perm_map, shortcut)
+            else:
+                permute_output(perm_map, shortcut[0], shortcut[1])
+        else:
+            permute_output(perm_map, model1.conv1, model1.bn1)
+
+        if k+1 < len(blocks1):
+            permute_input(perm_map, blocks1[k+1].conv1)
+            shortcut = blocks1[k+1].downsample
+            if isinstance(shortcut, nn.Conv2d):
+                permute_input(perm_map, shortcut)
+            else:
+                permute_input(perm_map, shortcut[0])
+        else:
+            model1.fc.weight.data = model1.fc.weight[:, perm_map]
+
+    print('evaluate(model1) = ', evaluate(model1, test_loader))
+    save_model(model1, 'resnet18j_v2_perm1')
+
+    model_a = add_junctures(resnet18())
+    mix_weights(model_a, 0.5, 'resnet18j_v1', 'resnet18j_v2_perm1')
+    reset_bn_stats(model_a, train_aug_loader)
+    full_eval(model_a, train_aug_loader, test_loader)
+
+    xx = np.arange(0, 1.001, 0.02)
+    # xx = np.arange(0, 1.001, 0.5)
+
+    stats = {}
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['vanilla'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['permute'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
+        reset_bn_stats(model_a, train_aug_loader)
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['renorm'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
+        reset_bn_stats(model_a, train_aug_loader)
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['permute_renorm'] = bb
+
+    p = 'resnet18j_imagenet_barrier50.pt'
+    torch.save(stats, p)
+
+    for k in stats.keys():
+        cc = [b[2] for b in stats[k]]
+        plt.plot(cc, label=k)
+    plt.legend()
+    plt.show()
 
 
-train_dataset_part1 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
-                                                    download=True, transform=train_transform)
-targets = torch.Tensor(train_dataset_part1.targets).to(torch.long)
-idx_part1 = targets < 50
-train_dataset_part1.data = train_dataset_part1.data[idx_part1]
-train_dataset_part1.targets = targets[idx_part1]
-train_dataloder_part1 = torch.utils.data.DataLoader(train_dataset_part1, batch_size=500, shuffle=True, num_workers=8)
-
-train_dataset_part2 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
-                                                    download=True, transform=train_transform)
-targets = torch.Tensor(train_dataset_part2.targets).to(torch.long)
-idx_part2 = targets >= 50
-train_dataset_part2.data = train_dataset_part2.data[idx_part2]
-train_dataset_part2.targets = targets[idx_part2]
-train_dataloder_part2 = torch.utils.data.DataLoader(train_dataset_part2, batch_size=500, shuffle=True, num_workers=8)
-
-# evaluates accuracy
-
-
-def evaluate(model, loader=test_loader, tta=False):
+def evaluate(model, loader):
     model.eval()
     correct = 0
     total = 0
     with torch.no_grad(), autocast():
         for inputs, labels in loader:
             outputs = model(inputs.cuda())
-            if tta:
-                outputs = (outputs + model(inputs.flip(3)))/2
             pred = outputs.argmax(dim=1)
             correct += (labels.cuda() == pred).sum().item()
             total += len(labels)
@@ -86,7 +224,7 @@ def evaluate(model, loader=test_loader, tta=False):
 # evaluates acc and loss
 
 
-def evaluate2(model, loader=test_loader, tta=False):
+def evaluate2(model, loader):
     model.eval()
     losses = []
     correct = 0
@@ -94,8 +232,6 @@ def evaluate2(model, loader=test_loader, tta=False):
     with torch.no_grad(), autocast():
         for inputs, labels in loader:
             outputs = model(inputs.cuda())
-            if tta:
-                outputs = (outputs + model(inputs.flip(3)))/2
             pred = outputs.argmax(dim=1)
             correct += (labels.cuda() == pred).sum().item()
             total += len(labels)
@@ -104,9 +240,9 @@ def evaluate2(model, loader=test_loader, tta=False):
     return correct / total, np.array(losses).mean()
 
 
-def full_eval(model):
-    tr_acc, tr_loss = evaluate2(model, loader=train_aug_loader)
-    te_acc, te_loss = evaluate2(model, loader=test_loader)
+def full_eval(model, train_dataloder, test_dataloader):
+    tr_acc, tr_loss = evaluate2(model, loader=train_dataloder)
+    te_acc, te_loss = evaluate2(model, loader=test_dataloader)
     return (100*tr_acc, tr_loss, 100*te_acc, te_loss)
 
 
@@ -137,10 +273,12 @@ def add_junctures(net):
 
 # Matching code
 
-# given two networks net0, net1 which each output a feature map of shape NxCxWxH
-# this will reshape both outputs to (N*W*H)xC
-# and then compute a CxC correlation matrix between the outputs of the two networks
-def run_corr_matrix(net0, net1, epochs=1, loader=train_aug_loader):
+def run_corr_matrix(net0, net1, loader, epochs=1):
+    """
+    given two networks net0, net1 which each output a feature map of shape NxCxWxH
+    this will reshape both outputs to (N*W*H)xC
+    and then compute a CxC correlation matrix between the outputs of the two networks
+    """
     n = epochs*len(loader)
     mean0 = mean1 = std0 = std1 = None
     with torch.no_grad():
@@ -188,12 +326,13 @@ def get_layer_perm1(corr_mtx):
     perm_map = torch.tensor(col_ind).long()
     return perm_map
 
-# returns the channel-permutation to make layer1's activations most closely
-# match layer0's.
 
-
-def get_layer_perm(net0, net1):
-    corr_mtx = run_corr_matrix(net0, net1)
+def get_layer_perm(net0, net1, train_dataloader):
+    """
+    returns the channel-permutation to make layer1's activations most closely
+    match layer0's.
+    """
+    corr_mtx = run_corr_matrix(net0, net1, train_dataloader)
     return get_layer_perm1(corr_mtx)
 
 
@@ -210,7 +349,7 @@ def permute_input(perm_map, conv):
     w.data = w[:, perm_map, :, :]
 
 
-def train(save_key, train_dataloader):
+def train(save_key, train_dataloader, test_dataloader):
     model = resnet18()
     model.train()
     if save_key == 'resnet20x4_v2':  # continue training
@@ -227,6 +366,7 @@ def train(save_key, train_dataloader):
     # We include the option of using Adam in this notebook to explore this question.
 
     EPOCHS = 100
+    # EPOCHS = 1
     ne_iters = len(train_dataloader)
     lr_schedule = np.interp(np.arange(1+EPOCHS*ne_iters), [0, 5*ne_iters, EPOCHS*ne_iters], [0, 1, 0])
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_schedule.__getitem__)
@@ -246,93 +386,8 @@ def train(save_key, train_dataloader):
             scaler.update()
             scheduler.step()
             losses.append(loss.item())
-    print(f'model {save_key} accuracy = {evaluate(model)}')
+    print(f'model {save_key} accuracy = {evaluate(model, test_dataloader)}')
     save_model(model, save_key)
-
-
-train('resnet18_v1', train_aug_loader)  # train_dataloder_part1
-train('resnet18_v2', train_aug_loader)  # train_dataloder_part2
-
-# sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/0045eef3.pt')
-# model.load_state_dict(sd)
-# save_model(model, 'imagenet/resnet18_v1')
-
-# sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/00ab6ff6.pt')
-# model.load_state_dict(sd)
-# save_model(model, 'imagenet/resnet18_v2')
-
-model0 = resnet18()
-model1 = resnet18()
-load_model(model0, 'resnet18_v1')
-load_model(model1, 'resnet18_v2')
-
-model0 = add_junctures(model0)
-model1 = add_junctures(model1)
-save_model(model0, 'resnet18j_v1')
-save_model(model1, 'resnet18j_v2')
-
-blocks0 = get_blocks(model0)
-blocks1 = get_blocks(model1)
-evaluate(model0), evaluate(model1)
-
-for k in range(1, len(blocks1)):
-    block0 = blocks0[k]
-    block1 = blocks1[k]
-    subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, block0.relu)
-    subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, block1.relu)
-    perm_map = get_layer_perm(subnet0, subnet1)
-    permute_output(perm_map, block1.conv1, block1.bn1)
-    permute_input(perm_map, block1.conv2)
-
-
-def get_permk(k):
-    if k == 0:
-        return 0
-    elif k > 0 and k <= 2:
-        return 2
-    elif k > 2 and k <= 4:
-        return 4
-    elif k > 4 and k <= 6:
-        return 6
-    elif k > 6 and k <= 8:
-        return 8
-    else:
-        raise Exception()
-
-
-last_kk = None
-perm_map = None
-
-for k in range(len(blocks1)):
-    kk = get_permk(k)
-    if kk != last_kk:
-        perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1])
-        last_kk = kk
-#     perm_map = get_layer_perm(blocks0[:k+1], blocks1[:k+1])
-
-    if k > 0:
-        permute_output(perm_map, blocks1[k].conv2, blocks1[k].bn2)
-        shortcut = blocks1[k].downsample
-        if isinstance(shortcut, nn.Conv2d):
-            permute_output(perm_map, shortcut)
-        else:
-            permute_output(perm_map, shortcut[0], shortcut[1])
-    else:
-        permute_output(perm_map, model1.conv1, model1.bn1)
-
-    if k+1 < len(blocks1):
-        permute_input(perm_map, blocks1[k+1].conv1)
-        shortcut = blocks1[k+1].downsample
-        if isinstance(shortcut, nn.Conv2d):
-            permute_input(perm_map, shortcut)
-        else:
-            permute_input(perm_map, shortcut[0])
-    else:
-        model1.fc.weight.data = model1.fc.weight[:, perm_map]
-
-
-print('evaluate(model1) = ', evaluate(model1))
-save_model(model1, 'resnet18j_v2_perm1')
 
 
 def mix_weights(model, alpha, key0, key1):
@@ -344,7 +399,7 @@ def mix_weights(model, alpha, key0, key1):
 
 
 # use the train loader with data augmentation as this gives better results
-def reset_bn_stats(model, epochs=1, loader=train_aug_loader):
+def reset_bn_stats(model, loader, epochs=1):
     # resetting stats to baseline first as below is necessary for stability
     for m in model.modules():
         if type(m) == nn.BatchNorm2d:
@@ -358,48 +413,5 @@ def reset_bn_stats(model, epochs=1, loader=train_aug_loader):
                 output = model(images.cuda())
 
 
-model_a = add_junctures(resnet18())
-mix_weights(model_a, 0.5, 'resnet18j_v1', 'resnet18j_v2_perm1')
-reset_bn_stats(model_a)
-full_eval(model_a)
-
-
-xx = np.arange(0, 1.001, 0.02)
-
-stats = {}
-
-bb = []
-for alpha in tqdm(xx):
-    mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
-    bb.append(full_eval(model_a))
-stats['vanilla'] = bb
-
-bb = []
-for alpha in tqdm(xx):
-    mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
-    bb.append(full_eval(model_a))
-stats['permute'] = bb
-
-bb = []
-for alpha in tqdm(xx):
-    mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
-    reset_bn_stats(model_a)
-    bb.append(full_eval(model_a))
-stats['renorm'] = bb
-
-bb = []
-for alpha in tqdm(xx):
-    mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
-    reset_bn_stats(model_a)
-    bb.append(full_eval(model_a))
-stats['permute_renorm'] = bb
-
-p = 'resnet18j_imagenet_barrier50.pt'
-torch.save(stats, p)
-
-
-for k in stats.keys():
-    cc = [b[2] for b in stats[k]]
-    plt.plot(cc, label=k)
-plt.legend()
-plt.show()
+if __name__ == '__main__':
+    main()
