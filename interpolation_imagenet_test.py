@@ -86,19 +86,55 @@ def main():
     train('resnet18_v1', train_aug_loader, test_loader)  # train_dataloder_part1
     train('resnet18_v2', train_aug_loader, test_loader)  # train_dataloder_part2
 
-    # sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/0045eef3.pt')
-    # model.load_state_dict(sd)
-    # save_model(model, 'imagenet/resnet18_v1')
-
-    # sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/00ab6ff6.pt')
-    # model.load_state_dict(sd)
-    # save_model(model, 'imagenet/resnet18_v2')
-
     model0 = resnet18()
     model1 = resnet18()
     load_model(model0, 'resnet18_v1')
     load_model(model1, 'resnet18_v2')
 
+    model_a = permute_network(train_aug_loader, test_loader, model0, model1)
+
+    # xx = np.arange(0, 1.001, 0.02)
+    xx = np.arange(0, 1.001, 0.5)
+
+    stats = {}
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['vanilla'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['permute'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
+        reset_bn_stats(model_a, train_aug_loader)
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['renorm'] = bb
+
+    bb = []
+    for alpha in tqdm(xx):
+        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
+        reset_bn_stats(model_a, train_aug_loader)
+        bb.append(full_eval(model_a, train_aug_loader, test_loader))
+    stats['permute_renorm'] = bb
+
+    p = 'resnet18j_imagenet_barrier50.pt'
+    torch.save(stats, p)
+
+    for k in stats.keys():
+        cc = [b[2] for b in stats[k]]
+        plt.plot(cc, label=k)
+    plt.legend()
+    plt.show()
+
+
+def permute_network(train_aug_loader, test_loader, model0, model1):
     model0 = add_junctures(model0)
     model1 = add_junctures(model1)
     save_model(model0, 'resnet18j_v1')
@@ -115,20 +151,6 @@ def main():
         perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader)
         permute_output(perm_map, block1.conv1, block1.bn1)
         permute_input(perm_map, block1.conv2)
-
-    def get_permk(k):
-        if k == 0:
-            return 0
-        elif k > 0 and k <= 2:
-            return 2
-        elif k > 2 and k <= 4:
-            return 4
-        elif k > 4 and k <= 6:
-            return 6
-        elif k > 6 and k <= 8:
-            return 8
-        else:
-            raise Exception()
 
     last_kk = None
     perm_map = None
@@ -167,46 +189,22 @@ def main():
     mix_weights(model_a, 0.5, 'resnet18j_v1', 'resnet18j_v2_perm1')
     reset_bn_stats(model_a, train_aug_loader)
     full_eval(model_a, train_aug_loader, test_loader)
+    return model_a
 
-    xx = np.arange(0, 1.001, 0.02)
-    # xx = np.arange(0, 1.001, 0.5)
 
-    stats = {}
-
-    bb = []
-    for alpha in tqdm(xx):
-        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
-        bb.append(full_eval(model_a, train_aug_loader, test_loader))
-    stats['vanilla'] = bb
-
-    bb = []
-    for alpha in tqdm(xx):
-        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
-        bb.append(full_eval(model_a, train_aug_loader, test_loader))
-    stats['permute'] = bb
-
-    bb = []
-    for alpha in tqdm(xx):
-        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2')
-        reset_bn_stats(model_a, train_aug_loader)
-        bb.append(full_eval(model_a, train_aug_loader, test_loader))
-    stats['renorm'] = bb
-
-    bb = []
-    for alpha in tqdm(xx):
-        mix_weights(model_a, alpha, 'resnet18j_v1', 'resnet18j_v2_perm1')
-        reset_bn_stats(model_a, train_aug_loader)
-        bb.append(full_eval(model_a, train_aug_loader, test_loader))
-    stats['permute_renorm'] = bb
-
-    p = 'resnet18j_imagenet_barrier50.pt'
-    torch.save(stats, p)
-
-    for k in stats.keys():
-        cc = [b[2] for b in stats[k]]
-        plt.plot(cc, label=k)
-    plt.legend()
-    plt.show()
+def get_permk(k):
+    if k == 0:
+        return 0
+    elif k > 0 and k <= 2:
+        return 2
+    elif k > 2 and k <= 4:
+        return 4
+    elif k > 4 and k <= 6:
+        return 6
+    elif k > 6 and k <= 8:
+        return 8
+    else:
+        raise Exception()
 
 
 def evaluate(model, loader):
@@ -365,8 +363,8 @@ def train(save_key, train_dataloader, test_dataloader):
     # is simply due to the increased test loss of said networks relative to those trained with SGD.
     # We include the option of using Adam in this notebook to explore this question.
 
-    EPOCHS = 100
-    # EPOCHS = 1
+    # EPOCHS = 100
+    EPOCHS = 1
     ne_iters = len(train_dataloader)
     lr_schedule = np.interp(np.arange(1+EPOCHS*ne_iters), [0, 5*ne_iters, EPOCHS*ne_iters], [0, 1, 0])
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_schedule.__getitem__)
