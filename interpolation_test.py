@@ -1,5 +1,6 @@
 # base on https://github.com/KellerJordan/REPAIR
 
+import torch.utils.data
 import torch.nn as nn
 import torch.nn.init as init
 import torch.nn.functional as F
@@ -30,10 +31,9 @@ def load_model(model, i):
     model.load_state_dict(sd)
 
 
-CIFAR_MEAN = [125.307, 122.961, 113.8575]
-CIFAR_STD = [51.5865, 50.847, 51.255]
-normalize = T.Normalize(np.array(CIFAR_MEAN)/255, np.array(CIFAR_STD)/255)
-denormalize = T.Normalize(-np.array(CIFAR_MEAN)/np.array(CIFAR_STD), 255/np.array(CIFAR_STD))
+CIFAR_MEAN = (0.5071, 0.4867, 0.4408)
+CIFAR_STD = (0.2675, 0.2565, 0.2761)
+normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
 
 train_transform = T.Compose([
     T.RandomHorizontalFlip(),
@@ -45,13 +45,30 @@ test_transform = T.Compose([
     T.ToTensor(),
     normalize,
 ])
-train_dset = torchvision.datasets.CIFAR10(root='/tmp', train=True,
-                                          download=True, transform=train_transform)
-test_dset = torchvision.datasets.CIFAR10(root='/tmp', train=False,
-                                         download=True, transform=test_transform)
+train_dset = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                           download=True, transform=train_transform)
+test_dset = torchvision.datasets.CIFAR100(root='/tmp', train=False,
+                                          download=True, transform=test_transform)
 
 train_aug_loader = torch.utils.data.DataLoader(train_dset, batch_size=500, shuffle=True, num_workers=8)
 test_loader = torch.utils.data.DataLoader(test_dset, batch_size=500, shuffle=False, num_workers=8)
+
+
+train_dataset_part1 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                                    download=True, transform=train_transform)
+targets = torch.Tensor(train_dataset_part1.targets).to(torch.long)
+idx_part1 = targets < 50
+train_dataset_part1.data = train_dataset_part1.data[idx_part1]
+train_dataset_part1.targets = targets[idx_part1]
+train_dataloder_part1 = torch.utils.data.DataLoader(train_dataset_part1, batch_size=500, shuffle=True, num_workers=8)
+
+train_dataset_part2 = torchvision.datasets.CIFAR100(root='/tmp', train=True,
+                                                    download=True, transform=train_transform)
+targets = torch.Tensor(train_dataset_part2.targets).to(torch.long)
+idx_part2 = targets >= 50
+train_dataset_part2.data = train_dataset_part2.data[idx_part2]
+train_dataset_part2.targets = targets[idx_part2]
+train_dataloder_part2 = torch.utils.data.DataLoader(train_dataset_part2, batch_size=500, shuffle=True, num_workers=8)
 
 # evaluates accuracy
 
@@ -59,12 +76,14 @@ test_loader = torch.utils.data.DataLoader(test_dset, batch_size=500, shuffle=Fal
 def evaluate(model, loader=test_loader):
     model.eval()
     correct = 0
+    all = 0
     with torch.no_grad(), autocast():
         for inputs, labels in loader:
             outputs = model(inputs.cuda())
             pred = outputs.argmax(dim=1)
             correct += (labels.cuda() == pred).sum().item()
-    return correct
+            all += len(labels)
+    return correct / all
 
 # evaluates loss
 
@@ -157,11 +176,13 @@ class ResNet(nn.Module):
 
 
 def resnet20(w=1):
-    return ResNet(BasicBlock, [3, 3, 3], w=w)
+    return ResNet(BasicBlock, [3, 3, 3], w=w, num_classes=100)
 
 
-def train(save_key):
+def train(save_key, train_dataloader):
     model = resnet20(w=4).cuda()
+    if save_key == 'resnet20x4_v2':  # continue training
+        load_model(model, 'resnet20x4_v1')
     optimizer = SGD(model.parameters(), lr=0.4, momentum=0.9, weight_decay=5e-4)
     # optimizer = Adam(model.parameters(), lr=0.05)
 
@@ -174,7 +195,7 @@ def train(save_key):
     # We include the option of using Adam in this notebook to explore this question.
 
     EPOCHS = 100
-    ne_iters = len(train_aug_loader)
+    ne_iters = len(train_dataloader)
     lr_schedule = np.interp(np.arange(1+EPOCHS*ne_iters), [0, 5*ne_iters, EPOCHS*ne_iters], [0, 1, 0])
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_schedule.__getitem__)
 
@@ -183,7 +204,7 @@ def train(save_key):
 
     losses = []
     for _ in tqdm(range(EPOCHS)):
-        for i, (inputs, labels) in enumerate(train_aug_loader):
+        for i, (inputs, labels) in enumerate(train_dataloader):
             optimizer.zero_grad(set_to_none=True)
             with autocast():
                 outputs = model(inputs.cuda())
@@ -193,12 +214,12 @@ def train(save_key):
             scaler.update()
             scheduler.step()
             losses.append(loss.item())
-    print(evaluate(model))
+    print(f'model {save_key} accuracy = {evaluate(model)}')
     save_model(model, save_key)
 
 
-train('resnet20x4_v1')
-train('resnet20x4_v2')
+# train('resnet20x4_v1', train_dataloder_part1)
+train('resnet20x4_v2', train_dataloder_part2)
 
 # given two networks net0, net1 which each output a feature map of shape NxCxWxH
 # this will reshape both outputs to (N*W*H)xC

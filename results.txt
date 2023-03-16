@@ -1,0 +1,31 @@
+CIFAR10
+model1 acc = 0.9519
+model2 acc = 0.9534
+Pre-reset:
+Accuracy=16.81%, Loss=2.726
+Post-reset:
+Accuracy=91.01%, Loss=0.327
+
+CIFAR100 two model trained from different initializations on the same data:
+model1: acc = 0.7713
+model2: acc = 0.7704
+Pre-reset:
+Accuracy=1.97%, Loss=5.156
+Post-reset:
+Accuracy=56.16%, Loss=1.819
+
+CIFAR100 two models trained from different initializations on different data:
+model1 acc = 0.4120
+model2 acc = 0.4091
+Pre-reset:
+Accuracy=1.10%, Loss=4.763
+Post-reset:
+Accuracy=33.41%, Loss=2.674
+
+CIFAR100 model 1 random initialization, model2 initialization from model1, trained on different data:
+model1 acc = 0.4120
+model2 acc = 0.4115
+Pre-reset:
+Accuracy=0.00%, Loss=4.304
+Post-reset:
+Accuracy=0.00%, Loss=2.528
