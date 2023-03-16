@@ -93,8 +93,8 @@ def main():
 
     model_a = permute_network(train_aug_loader, test_loader, model0, model1)
 
-    # xx = np.arange(0, 1.001, 0.02)
-    xx = np.arange(0, 1.001, 0.5)
+    xx = np.arange(0, 1.001, 0.02)
+    # xx = np.arange(0, 1.001, 0.5)
 
     stats = {}
 
@@ -246,7 +246,7 @@ def full_eval(model, train_dataloder, test_dataloader):
 
 def resnet18():
     model = torchvision.models.resnet18(pretrained=False)
-    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    # model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
     return model.cuda().eval()
 
 
@@ -316,7 +316,7 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
     return corr
 
 
-def get_layer_perm1(corr_mtx):
+def compute_permutation_matrix(corr_mtx):
     corr_mtx_a = corr_mtx.cpu().numpy()
     corr_mtx_a = np.nan_to_num(corr_mtx_a)
     row_ind, col_ind = scipy.optimize.linear_sum_assignment(corr_mtx_a, maximize=True)
@@ -331,7 +331,7 @@ def get_layer_perm(net0, net1, train_dataloader):
     match layer0's.
     """
     corr_mtx = run_corr_matrix(net0, net1, train_dataloader)
-    return get_layer_perm1(corr_mtx)
+    return compute_permutation_matrix(corr_mtx)
 
 
 def permute_output(perm_map, conv, bn=None):
@@ -363,8 +363,8 @@ def train(save_key, train_dataloader, test_dataloader):
     # is simply due to the increased test loss of said networks relative to those trained with SGD.
     # We include the option of using Adam in this notebook to explore this question.
 
-    # EPOCHS = 100
-    EPOCHS = 1
+    EPOCHS = 100
+    # EPOCHS = 1
     ne_iters = len(train_dataloader)
     lr_schedule = np.interp(np.arange(1+EPOCHS*ne_iters), [0, 5*ne_iters, EPOCHS*ne_iters], [0, 1, 0])
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_schedule.__getitem__)
