@@ -112,6 +112,7 @@ def full_eval(model):
 
 def resnet18():
     model = torchvision.models.resnet18(pretrained=False)
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
     return model.cuda().eval()
 
 
@@ -211,6 +212,7 @@ def permute_input(perm_map, conv):
 
 def train(save_key, train_dataloader):
     model = resnet18()
+    model.train()
     if save_key == 'resnet20x4_v2':  # continue training
         load_model(model, 'resnet20x4_v1')
     optimizer = SGD(model.parameters(), lr=0.4, momentum=0.9, weight_decay=5e-4)
@@ -248,8 +250,8 @@ def train(save_key, train_dataloader):
     save_model(model, save_key)
 
 
-# train('resnet18_v1', train_aug_loader)  # train_dataloder_part1
-# train('resnet18_v2', train_aug_loader)  # train_dataloder_part2
+train('resnet18_v1', train_aug_loader)  # train_dataloder_part1
+train('resnet18_v2', train_aug_loader)  # train_dataloder_part2
 
 # sd = torch.load('/persist/kjordan/notebooks/permutations/imagenet/0045eef3.pt')
 # model.load_state_dict(sd)
@@ -340,22 +342,20 @@ def mix_weights(model, alpha, key0, key1):
                 for k in sd0.keys()}
     model.load_state_dict(sd_alpha)
 
+
 # use the train loader with data augmentation as this gives better results
-
-
 def reset_bn_stats(model, epochs=1, loader=train_aug_loader):
     # resetting stats to baseline first as below is necessary for stability
     for m in model.modules():
         if type(m) == nn.BatchNorm2d:
-            m.momentum = None
+            m.momentum = None  # use simple average
             m.reset_running_stats()
     # run a single train epoch with augmentations to recalc stats
     model.train()
     for _ in range(epochs):
         with torch.no_grad(), autocast():
             for images, _ in loader:
-                images = images.cuda()
-                output = model(images)
+                output = model(images.cuda())
 
 
 model_a = add_junctures(resnet18())

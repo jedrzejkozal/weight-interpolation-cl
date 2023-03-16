@@ -176,7 +176,10 @@ class ResNet(nn.Module):
 
 
 def resnet20(w=1):
-    return ResNet(BasicBlock, [3, 3, 3], w=w, num_classes=100)
+    # return ResNet(BasicBlock, [3, 3, 3], w=w, num_classes=100)
+    model = torchvision.models.resnet18(pretrained=False)
+    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    return model.cuda()
 
 
 def train(save_key, train_dataloader):
@@ -218,8 +221,8 @@ def train(save_key, train_dataloader):
     save_model(model, save_key)
 
 
-# train('resnet20x4_v1', train_dataloder_part1)
-train('resnet20x4_v2', train_dataloder_part2)
+train('resnet20x4_v1', train_aug_loader)
+train('resnet20x4_v2', train_aug_loader)
 
 # given two networks net0, net1 which each output a feature map of shape NxCxWxH
 # this will reshape both outputs to (N*W*H)xC
@@ -350,112 +353,199 @@ load_model(model1, 'resnet20x4_v2')
 evaluate(model0), evaluate(model1)
 
 
-class Subnet(nn.Module):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
+# class Subnet(nn.Module):
+#     def __init__(self, model):
+#         super().__init__()
+#         self.model = model
 
-    def forward(self, x):
-        self = self.model
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = self.layer1(x)
-        return x
-
-
-# corr = run_corr_matrix(Subnet(model0), Subnet(model1))
-# perm_map1 = get_layer_perm1(corr)
-perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
-permute_output(perm_map, model1.conv1, model1.bn1)
-permute_output(perm_map, model1.layer1[0].conv2, model1.layer1[0].bn2)
-permute_output(perm_map, model1.layer1[1].conv2, model1.layer1[1].bn2)
-permute_output(perm_map, model1.layer1[2].conv2, model1.layer1[2].bn2)
-permute_input(perm_map, [model1.layer1[0].conv1, model1.layer1[1].conv1, model1.layer1[2].conv1])
-permute_input(perm_map, [model1.layer2[0].conv1, model1.layer2[0].shortcut[0]])
+#     def forward(self, x):
+#         self = self.model
+#         x = F.relu(self.bn1(self.conv1(x)))
+#         x = self.layer1(x)
+#         return x
 
 
-class Subnet(nn.Module):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
-    def forward(self, x):
-        self = self.model
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = self.layer1(x)
-        x = self.layer2(x)
-        return x
+# # corr = run_corr_matrix(Subnet(model0), Subnet(model1))
+# # perm_map1 = get_layer_perm1(corr)
+# perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
+# permute_output(perm_map, model1.conv1, model1.bn1)
+# permute_output(perm_map, model1.layer1[0].conv2, model1.layer1[0].bn2)
+# permute_output(perm_map, model1.layer1[1].conv2, model1.layer1[1].bn2)
+# permute_output(perm_map, model1.layer1[2].conv2, model1.layer1[2].bn2)
+# permute_input(perm_map, [model1.layer1[0].conv1, model1.layer1[1].conv1, model1.layer1[2].conv1])
+# permute_input(perm_map, [model1.layer2[0].conv1, model1.layer2[0].shortcut[0]])
 
 
-perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
-permute_output(perm_map, model1.layer2[0].conv2, model1.layer2[0].bn2)
-permute_output(perm_map, model1.layer2[0].shortcut[0], model1.layer2[0].shortcut[1])
-permute_output(perm_map, model1.layer2[1].conv2, model1.layer2[1].bn2)
-permute_output(perm_map, model1.layer2[2].conv2, model1.layer2[2].bn2)
+# class Subnet(nn.Module):
+#     def __init__(self, model):
+#         super().__init__()
+#         self.model = model
 
-permute_input(perm_map, [model1.layer2[1].conv1, model1.layer2[2].conv1])
-permute_input(perm_map, [model1.layer3[0].conv1, model1.layer3[0].shortcut[0]])
-
-
-class Subnet(nn.Module):
-    def __init__(self, model):
-        super().__init__()
-        self.model = model
-
-    def forward(self, x):
-        self = self.model
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        return x
+#     def forward(self, x):
+#         self = self.model
+#         x = F.relu(self.bn1(self.conv1(x)))
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         return x
 
 
-perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
-permute_output(perm_map, model1.layer3[0].conv2, model1.layer3[0].bn2)
-permute_output(perm_map, model1.layer3[0].shortcut[0], model1.layer3[0].shortcut[1])
-permute_output(perm_map, model1.layer3[1].conv2, model1.layer3[1].bn2)
-permute_output(perm_map, model1.layer3[2].conv2, model1.layer3[2].bn2)
+# perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
+# permute_output(perm_map, model1.layer2[0].conv2, model1.layer2[0].bn2)
+# permute_output(perm_map, model1.layer2[0].shortcut[0], model1.layer2[0].shortcut[1])
+# permute_output(perm_map, model1.layer2[1].conv2, model1.layer2[1].bn2)
+# permute_output(perm_map, model1.layer2[2].conv2, model1.layer2[2].bn2)
 
-permute_input(perm_map, [model1.layer3[1].conv1, model1.layer3[2].conv1])
-model1.linear.weight.data = model1.linear.weight[:, perm_map]
-
-
-class Subnet(nn.Module):
-    def __init__(self, model, nb=9):
-        super().__init__()
-        self.model = model
-        self.blocks = []
-        self.blocks += list(model.layer1)
-        self.blocks += list(model.layer2)
-        self.blocks += list(model.layer3)
-        self.blocks = nn.Sequential(*self.blocks)
-        self.bn1 = model.bn1
-        self.conv1 = model.conv1
-        self.linear = model.linear
-        self.nb = nb
-
-    def forward(self, x):
-        x = F.relu(self.bn1(self.conv1(x)))
-        x = self.blocks[:self.nb](x)
-        block = self.blocks[self.nb]
-        x = block.conv1(x)
-        x = block.bn1(x)
-        x = F.relu(x)
-        return x
+# permute_input(perm_map, [model1.layer2[1].conv1, model1.layer2[2].conv1])
+# permute_input(perm_map, [model1.layer3[0].conv1, model1.layer3[0].shortcut[0]])
 
 
-blocks1 = []
-blocks1 += list(model1.layer1)
-blocks1 += list(model1.layer2)
-blocks1 += list(model1.layer3)
-blocks1 = nn.Sequential(*blocks1)
+# class Subnet(nn.Module):
+#     def __init__(self, model):
+#         super().__init__()
+#         self.model = model
 
-for nb in range(9):
-    perm_map = get_layer_perm(Subnet(model0, nb=nb), Subnet(model1, nb=nb))
-    block = blocks1[nb]
-    permute_output(perm_map, block.conv1, block.bn1)
-    permute_input(perm_map, [block.conv2])
+#     def forward(self, x):
+#         self = self.model
+#         x = F.relu(self.bn1(self.conv1(x)))
+#         x = self.layer1(x)
+#         x = self.layer2(x)
+#         x = self.layer3(x)
+#         return x
 
+
+# perm_map = get_layer_perm(Subnet(model0), Subnet(model1))
+# permute_output(perm_map, model1.layer3[0].conv2, model1.layer3[0].bn2)
+# permute_output(perm_map, model1.layer3[0].shortcut[0], model1.layer3[0].shortcut[1])
+# permute_output(perm_map, model1.layer3[1].conv2, model1.layer3[1].bn2)
+# permute_output(perm_map, model1.layer3[2].conv2, model1.layer3[2].bn2)
+
+# permute_input(perm_map, [model1.layer3[1].conv1, model1.layer3[2].conv1])
+# model1.linear.weight.data = model1.linear.weight[:, perm_map]
+
+
+# class Subnet(nn.Module):
+#     def __init__(self, model, nb=9):
+#         super().__init__()
+#         self.model = model
+#         self.blocks = []
+#         self.blocks += list(model.layer1)
+#         self.blocks += list(model.layer2)
+#         self.blocks += list(model.layer3)
+#         self.blocks = nn.Sequential(*self.blocks)
+#         self.bn1 = model.bn1
+#         self.conv1 = model.conv1
+#         self.linear = model.linear
+#         self.nb = nb
+
+#     def forward(self, x):
+#         x = F.relu(self.bn1(self.conv1(x)))
+#         x = self.blocks[:self.nb](x)
+#         block = self.blocks[self.nb]
+#         x = block.conv1(x)
+#         x = block.bn1(x)
+#         x = F.relu(x)
+#         return x
+
+
+# blocks1 = []
+# blocks1 += list(model1.layer1)
+# blocks1 += list(model1.layer2)
+# blocks1 += list(model1.layer3)
+# blocks1 = nn.Sequential(*blocks1)
+
+# for nb in range(9):
+#     perm_map = get_layer_perm(Subnet(model0, nb=nb), Subnet(model1, nb=nb))
+#     block = blocks1[nb]
+#     permute_output(perm_map, block.conv1, block.bn1)
+#     permute_input(perm_map, [block.conv2])
+
+# save_model(model1, 'resnet20x4_v2_perm1')
+
+def get_blocks(net):
+    return nn.Sequential(nn.Sequential(net.conv1, net.bn1, net.relu, net.maxpool),
+                         *net.layer1, *net.layer2, *net.layer3, *net.layer4)
+
+
+def add_junctures(net):
+    net1 = resnet20()
+    net1.load_state_dict(net.state_dict())
+    blocks = get_blocks(net1)[1:]
+    for block in blocks:
+        if block.downsample is not None:
+            continue
+        planes = len(block.bn2.weight)
+        shortcut = nn.Conv2d(planes, planes, kernel_size=1, stride=1, padding=0, bias=False)
+        shortcut.weight.data[:, :, 0, 0] = torch.eye(planes)
+        block.downsample = shortcut
+    return net1.cuda().eval()
+
+
+model0 = add_junctures(model0)
+model1 = add_junctures(model1)
+# save_model(model0, 'resnet18j_v1')
+# save_model(model1, 'resnet18j_v2')
+
+blocks0 = get_blocks(model0)
+blocks1 = get_blocks(model1)
+evaluate(model0), evaluate(model1)
+
+for k in range(1, len(blocks1)):
+    block0 = blocks0[k]
+    block1 = blocks1[k]
+    subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, block0.relu)
+    subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, block1.relu)
+    perm_map = get_layer_perm(subnet0, subnet1)
+    permute_output(perm_map, block1.conv1, block1.bn1)
+    permute_input(perm_map, block1.conv2)
+
+
+def get_permk(k):
+    if k == 0:
+        return 0
+    elif k > 0 and k <= 2:
+        return 2
+    elif k > 2 and k <= 4:
+        return 4
+    elif k > 4 and k <= 6:
+        return 6
+    elif k > 6 and k <= 8:
+        return 8
+    else:
+        raise Exception()
+
+
+last_kk = None
+perm_map = None
+
+for k in range(len(blocks1)):
+    kk = get_permk(k)
+    if kk != last_kk:
+        perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1])
+        last_kk = kk
+#     perm_map = get_layer_perm(blocks0[:k+1], blocks1[:k+1])
+
+    if k > 0:
+        permute_output(perm_map, blocks1[k].conv2, blocks1[k].bn2)
+        shortcut = blocks1[k].downsample
+        if isinstance(shortcut, nn.Conv2d):
+            permute_output(perm_map, shortcut)
+        else:
+            permute_output(perm_map, shortcut[0], shortcut[1])
+    else:
+        permute_output(perm_map, model1.conv1, model1.bn1)
+
+    if k+1 < len(blocks1):
+        permute_input(perm_map, blocks1[k+1].conv1)
+        shortcut = blocks1[k+1].downsample
+        if isinstance(shortcut, nn.Conv2d):
+            permute_input(perm_map, shortcut)
+        else:
+            permute_input(perm_map, shortcut[0])
+    else:
+        model1.fc.weight.data = model1.fc.weight[:, perm_map]
+
+
+print('evaluate(model1) = ', evaluate(model1))
 save_model(model1, 'resnet20x4_v2_perm1')
 
 
