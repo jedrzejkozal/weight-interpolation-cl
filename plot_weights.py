@@ -80,6 +80,7 @@ def get_acc_barrier(alpha_grid, train_loader, test_loader, model1, model2, reset
         interpolate_networks.mix_weights(model, alpha, model1, model2)
         if reset_bn:
             interpolate_networks.reset_bn_stats(model, train_loader)
+        model = interpolate_networks.remove_junctures(model)
         test_acc, _ = evaluate(model, test_loader)
         accs.append(test_acc)
     return accs

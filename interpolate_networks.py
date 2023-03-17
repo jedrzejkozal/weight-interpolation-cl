@@ -31,6 +31,18 @@ def main():
     interpolate(model0, model1, train_dataloader, test_dataloader)
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument('--dataset', choices=('cifar100', 'cifar10'), default='cifar100')
+    parser.add_argument('--weights1_path', type=str, required=True)
+    parser.add_argument('--weights2_path', type=str, required=True)
+    parser.add_argument('--simulate_rehersal', action='store_true')
+
+    args = parser.parse_args()
+    return args
+
+
 def interpolate(model0, model1, train_loader, test_loader, alpha=0.5):
     model0 = add_junctures(model0)
     model1 = add_junctures(model1)
@@ -43,20 +55,9 @@ def interpolate(model0, model1, train_loader, test_loader, alpha=0.5):
     model = add_junctures(model)
     mix_weights(model, alpha, model0, premuted_nework)
     reset_bn_stats(model, train_loader)
+    model = remove_junctures(model)
     test_acc, _ = evaluate(model, test_loader)
     print('test_acc = ', test_acc)
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--dataset', choices=('cifar100', 'cifar10'), default='cifar100')
-    parser.add_argument('--weights1_path', type=str, required=True)
-    parser.add_argument('--weights2_path', type=str, required=True)
-    parser.add_argument('--simulate_rehersal', action='store_true')
-
-    args = parser.parse_args()
-    return args
 
 
 def permute_network(train_aug_loader, test_loader, source_network, premuted_network):
@@ -118,6 +119,15 @@ def add_junctures(net):
         shortcut.weight.data[:, :, 0, 0] = torch.eye(planes)
         block.downsample = shortcut
     return net1.cuda().eval()
+
+
+def remove_junctures(net):
+    blocks = get_blocks(net)[1:]
+    for block in blocks:
+        conv = block.downsample
+        if type(conv) == nn.Conv2d and conv.kernel_size == (1, 1) and conv.in_channels == conv.out_channels:
+            block.downsample = None
+    return net
 
 
 def get_blocks(net):
