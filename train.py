@@ -4,11 +4,11 @@ import argparse
 import numpy as np
 import torch.nn as nn
 import torchvision.models
-import tqdm
 
 from torch.cuda.amp import GradScaler, autocast
 from torch.nn import CrossEntropyLoss
 from torch.optim import SGD, Adam, lr_scheduler
+from tqdm import tqdm
 
 import dataset
 import utils
@@ -21,11 +21,11 @@ def main():
     if args.train_halves:
         train_dataloader_part1, train_dataloader_part2 = train_dataloader
         store_weights_path = args.store_weights_path + "_part1"
-        train(train_dataloader_part1, test_dataloader, store_weights_path)
+        train(train_dataloader_part1, test_dataloader, store_weights_path, args.seed)
         store_weights_path = args.store_weights_path + "_part2"
-        train(train_dataloader_part2, test_dataloader, store_weights_path)
+        train(train_dataloader_part2, test_dataloader, store_weights_path, args.seed)
     else:
-        train(train_dataloader, test_dataloader, args.store_weights_path, args.load_weights_path)
+        train(train_dataloader, test_dataloader, args.store_weights_path, args.load_weights_path, args.seed)
 
 
 def parse_args():
@@ -35,13 +35,14 @@ def parse_args():
     parser.add_argument('--train_halves', action='store_true')
     parser.add_argument('--load_weights_path', type=str, default=None)
     parser.add_argument('--store_weights_path', type=str, required=True)
+    parser.add_argument('--seed', type=int, default=42)
 
     args = parser.parse_args()
     return args
 
 
-def train(train_dataloader, test_dataloader, store_weights_path, load_weights_path=None):
-    utils.seed_everything(42)
+def train(train_dataloader, test_dataloader, store_weights_path, load_weights_path=None, seed=42):
+    utils.seed_everything(seed)
 
     model = resnet18()
     model.train()
@@ -58,8 +59,8 @@ def train(train_dataloader, test_dataloader, store_weights_path, load_weights_pa
     # is simply due to the increased test loss of said networks relative to those trained with SGD.
     # We include the option of using Adam in this notebook to explore this question.
 
-    # EPOCHS = 100
-    EPOCHS = 1
+    EPOCHS = 100
+    # EPOCHS = 1
     ne_iters = len(train_dataloader)
     lr_schedule = np.interp(np.arange(1+EPOCHS*ne_iters), [0, 5*ne_iters, EPOCHS*ne_iters], [0, 1, 0])
     scheduler = lr_scheduler.LambdaLR(optimizer, lr_schedule.__getitem__)
@@ -79,7 +80,7 @@ def train(train_dataloader, test_dataloader, store_weights_path, load_weights_pa
             scaler.update()
             scheduler.step()
             losses.append(loss.item())
-    test_acc = utils.evaluate(model, test_dataloader)[1]
+    test_acc = evaluate(model, test_dataloader)[0]
     print(f'model {store_weights_path} accuracy = {test_acc}')
     utils.save_model(model, store_weights_path)
 

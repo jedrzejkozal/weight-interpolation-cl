@@ -23,7 +23,10 @@ def main():
     utils.load_model(model1, args.weights2_path)
 
     train_dataloader, test_dataloader = dataset.get_dataset(args.dataset, train_halves=False)
-    interpolation(model0, model1, train_dataloader, test_dataloader)
+    img_filename = 'interpolation'
+    for arg in vars(args):
+        img_filename += f'_{arg}={getattr(args, arg)}'
+    interpolation_plot(model0, model1, train_dataloader, test_dataloader, img_filename)
 
 
 def parse_args():
@@ -37,7 +40,7 @@ def parse_args():
     return args
 
 
-def interpolation(model0, model1, train_loader, test_loader):
+def interpolation_plot(model0, model1, train_loader, test_loader, img_filename):
     model0 = add_junctures(model0)
     model1 = add_junctures(model1)
     premuted_nework = resnet18()
@@ -54,6 +57,7 @@ def interpolation(model0, model1, train_loader, test_loader):
     for k in stats.keys():
         plt.plot(stats[k], label=k)
     plt.legend()
+    plt.savefig('images/' + img_filename + '.png')
     plt.show()
 
 
