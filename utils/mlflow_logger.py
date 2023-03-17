@@ -50,13 +50,17 @@ class MLFlowLogger(utils.loggers.Logger):
         """
         if self.setting == 'general-continual':
             self.accs.append(mean_acc)
+            self.log_metric('mean_acc', mean_acc)
         elif self.setting == 'domain-il':
             mean_acc, _ = mean_acc
             self.accs.append(mean_acc)
+            self.log_metric('mean_acc', mean_acc)
         else:
             mean_acc_class_il, mean_acc_task_il = mean_acc
             self.accs.append(mean_acc_class_il)
             self.accs_mask_classes.append(mean_acc_task_il)
+            self.log_metric('mean_acc_class_il', mean_acc_class_il)
+            self.log_metric('mean_acc_task_il', mean_acc_task_il)
 
     def log_fullacc(self, accs):
         if self.setting == 'class-il':
