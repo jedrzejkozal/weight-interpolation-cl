@@ -1,4 +1,4 @@
-# base on https://github.com/KellerJordan/REPAIR
+# based on https://github.com/KellerJordan/REPAIR
 
 import torch.utils.data
 import torch.nn as nn

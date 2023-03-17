@@ -1,28 +1,34 @@
-from torch.cuda.amp import autocast
-from tqdm import tqdm
+import argparse
+
+import matplotlib.pyplot as plt
+import numpy as np
 import scipy.optimize
 import torch
 import torch.nn as nn
-import argparse
-import numpy as np
-import matplotlib.pyplot as plt
-
-from train import resnet18, evaluate
+import torch.utils.data
+from torch.cuda.amp import autocast
+from tqdm import tqdm
 
 import dataset
 import utils
+from train import evaluate, resnet18
 
 
 def main():
-    utils.seed_everything(42)
     args = parse_args()
+    utils.seed_everything(42)
 
     model0 = resnet18()
     utils.load_model(model0, args.weights1_path)
     model1 = resnet18()
     utils.load_model(model1, args.weights2_path)
 
-    train_dataloader, test_dataloader = dataset.get_dataset(args.dataset, train_halves=False)
+    train_dataloader, test_dataloader = dataset.get_dataloaders(args.dataset, train_halves=False)
+    if args.simulate_rehersal:
+        train_dataset, _ = dataset.cifar100()
+        random_idx = torch.randperm(len(train_dataset))[:500]
+        train_dataset = torch.utils.data.Subset(train_dataset, random_idx)
+        train_dataloader = dataset.train_dataloader(train_dataset)
     img_filename = 'interpolation'
     for arg in vars(args):
         img_filename += f'_{arg}={getattr(args, arg)}'
@@ -35,6 +41,7 @@ def parse_args():
     parser.add_argument('--dataset', choices=('cifar100', 'cifar10'), default='cifar100')
     parser.add_argument('--weights1_path', type=str, required=True)
     parser.add_argument('--weights2_path', type=str, required=True)
+    parser.add_argument('--simulate_rehersal', action='store_true')
 
     args = parser.parse_args()
     return args

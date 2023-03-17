@@ -17,15 +17,18 @@ import utils
 def main():
     args = parse_args()
 
-    train_dataloader, test_dataloader = dataset.get_dataset(args.dataset, args.train_halves)
+    train_dataloader, test_dataloader = dataset.get_dataloaders(args.dataset, args.train_halves)
     if args.train_halves:
         train_dataloader_part1, train_dataloader_part2 = train_dataloader
         store_weights_path = args.store_weights_path + "_part1"
-        train(train_dataloader_part1, test_dataloader, store_weights_path, args.seed)
+        train(train_dataloader_part1, test_dataloader,
+              store_weights_path, args.load_weights_path, seed=args.seed)
         store_weights_path = args.store_weights_path + "_part2"
-        train(train_dataloader_part2, test_dataloader, store_weights_path, args.seed)
+        train(train_dataloader_part2, test_dataloader,
+              store_weights_path, args.load_weights_path, seed=args.seed)
     else:
-        train(train_dataloader, test_dataloader, args.store_weights_path, args.load_weights_path, args.seed)
+        train(train_dataloader, test_dataloader,
+              args.store_weights_path, args.load_weights_path, seed=args.seed)
 
 
 def parse_args():

@@ -21,5 +21,4 @@ def save_model(model, name):
 
 def load_model(model, name):
     state_dict = torch.load(f'weights/{name}.pt')
-    # state_dict = torch.load(f'{name}.pt')
     model.load_state_dict(state_dict)
