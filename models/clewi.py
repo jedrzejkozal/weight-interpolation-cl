@@ -26,8 +26,6 @@ class Clewi(ContinualModel):
     def __init__(self, backbone, loss, args, transform):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
-        self.interpolation_interval = args.interpolation_interval
-        self.interpolation_counter = 0
         self.old_model = self.deepcopy_model(backbone)
 
     def observe(self, inputs, labels, not_aug_inputs):
@@ -48,16 +46,6 @@ class Clewi(ContinualModel):
         self.buffer.add_data(examples=not_aug_inputs,
                              labels=labels[:real_batch_size])
 
-        self.interpolation_counter += 1
-        if self.interpolation_counter % self.interpolation_interval == 0:
-            self.interpolation_counter = 0
-
-            buffer_dataloder = self.get_buffer_dataloder()
-            interpolate(self.net, self.old_model, buffer_dataloder)
-            self.net = self.deepcopy_model(self.old_model)
-            self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
-            self.opt.zero_grad()
-
         return loss.item()
 
     def get_buffer_dataloder(self):
@@ -71,3 +59,10 @@ class Clewi(ContinualModel):
         model_copy = copy.deepcopy(model)
         model_copy.load_state_dict(model.state_dict())
         return model_copy
+
+    def end_task(self, dataset):
+        buffer_dataloder = self.get_buffer_dataloder()
+        interpolate(self.net, self.old_model, buffer_dataloder)
+        self.net = self.deepcopy_model(self.old_model)
+        self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
+        self.opt.zero_grad()

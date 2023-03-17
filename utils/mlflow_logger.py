@@ -108,13 +108,13 @@ class MLFlowLogger(utils.loggers.Logger):
                 with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
                     mlflow.log_artifact(artifact_path, name)
 
-    def log_model(self, model: torch.nn.Module):
+    def log_model(self, model: torch.nn.Module, weight_name):
         with SwapArtifactUri(self.experiment_id, self.run_id):
             with tempfile.TemporaryDirectory() as tmpdir:
-                model_path = pathlib.Path(tmpdir) / 'model.pth'
+                model_path = pathlib.Path(tmpdir) / f'{weight_name}.pt'
                 torch.save(model, model_path)
                 with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-                    mlflow.log_artifact(model_path, 'model')
+                    mlflow.log_artifact(model_path, weight_name)
 
     def log_avrg_accuracy(self):
         client = mlflow.tracking.MlflowClient()
