@@ -27,6 +27,7 @@ class Clewi(ContinualModel):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
         self.old_model = self.deepcopy_model(backbone)
+        self.first_task = True
 
     def observe(self, inputs, labels, not_aug_inputs):
         real_batch_size = inputs.shape[0]
@@ -61,6 +62,10 @@ class Clewi(ContinualModel):
         return model_copy
 
     def end_task(self, dataset):
+        # if self.first_task:
+        #     self.first_task = False
+        #     self.old_model = self.deepcopy_model(self.net)
+        #     return
         buffer_dataloder = self.get_buffer_dataloder()
         interpolate(self.net, self.old_model, buffer_dataloder)
         self.net = self.deepcopy_model(self.old_model)
