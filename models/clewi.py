@@ -49,6 +49,17 @@ class Clewi(ContinualModel):
 
         return loss.item()
 
+    def end_task(self, dataset):
+        # if self.first_task:
+        #     self.first_task = False
+        #     self.old_model = self.deepcopy_model(self.net)
+        #     return
+        buffer_dataloder = self.get_buffer_dataloder()
+        interpolate(self.net, self.old_model, buffer_dataloder)
+        self.net = self.deepcopy_model(self.old_model)
+        self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
+        self.opt.zero_grad()
+
     def get_buffer_dataloder(self):
         buf_inputs, buf_labels = self.buffer.get_data(len(self.buffer), transform=self.transform)
         buffer_dataset = torch.utils.data.TensorDataset(buf_inputs, buf_labels)
@@ -60,14 +71,3 @@ class Clewi(ContinualModel):
         model_copy = copy.deepcopy(model)
         model_copy.load_state_dict(model.state_dict())
         return model_copy
-
-    def end_task(self, dataset):
-        # if self.first_task:
-        #     self.first_task = False
-        #     self.old_model = self.deepcopy_model(self.net)
-        #     return
-        buffer_dataloder = self.get_buffer_dataloder()
-        interpolate(self.net, self.old_model, buffer_dataloder)
-        self.net = self.deepcopy_model(self.old_model)
-        self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
-        self.opt.zero_grad()

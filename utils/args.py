@@ -52,6 +52,10 @@ def add_management_args(parser: ArgumentParser) -> None:
                         help='disable additional metrics')
     parser.add_argument('--debug_mode', type=int, default=0, help='Run only a few forward steps per epoch')
 
+    parser.add_argument('--experiment_name', type=str, default='Default')
+    parser.add_argument('--nested_experiment', action='store_true')
+    parser.add_argument('--run_name', type=str, default=None)
+
 
 def add_rehearsal_args(parser: ArgumentParser) -> None:
     """
