@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/313b6174400540d0adefa4a555f7568e/artifacts
+end_time: 1679064960047
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 313b6174400540d0adefa4a555f7568e
+run_name: logging er training hyperparameters
+run_uuid: 313b6174400540d0adefa4a555f7568e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1679064889621
+status: 1
+tags: []
+user_id: jkozal

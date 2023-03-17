@@ -91,6 +91,10 @@ class MLFlowLogger(utils.loggers.Logger):
         with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
             mlflow.log_metric(metric_name, value)
 
+    def log_args(self, args: dict):
+        with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
+            mlflow.log_params(args)
+
     def log_artifact(self, artifact_path, name):
         with SwapArtifactUri(self.experiment_id, self.run_id):
             active_run = mlflow.active_run()

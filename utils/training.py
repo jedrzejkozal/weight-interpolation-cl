@@ -87,6 +87,7 @@ def train(model: ContinualModel, dataset: ContinualDataset,
 
     if not args.disable_log:
         logger = MLFlowLogger(dataset.SETTING, dataset.NAME, model.NAME)
+        logger.log_args(args.__dict__)
 
     progress_bar = ProgressBar(verbose=not args.non_verbose)
 
