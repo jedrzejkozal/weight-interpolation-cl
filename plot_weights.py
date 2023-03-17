@@ -14,12 +14,13 @@ import utils
 
 
 def main():
+    utils.seed_everything(42)
     args = parse_args()
 
     model0 = resnet18()
-    utils.load_model(model0, 'resnet18_v1')
+    utils.load_model(model0, args.weights1_path)
     model1 = resnet18()
-    utils.load_model(model1, 'resnet18_v2')
+    utils.load_model(model1, args.weights2_path)
 
     train_dataloader, test_dataloader = dataset.get_dataset(args.dataset, train_halves=False)
     interpolation(model0, model1, train_dataloader, test_dataloader)
@@ -29,21 +30,26 @@ def parse_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--dataset', choices=('cifar100', 'cifar10'), default='cifar100')
-    # parser.add_argument('--weights1_path', type=str, required=True)
-    # parser.add_argument('--weights2_path', type=str, required=True)
+    parser.add_argument('--weights1_path', type=str, required=True)
+    parser.add_argument('--weights2_path', type=str, required=True)
 
     args = parser.parse_args()
     return args
 
 
 def interpolation(model0, model1, train_loader, test_loader):
-    model_a = permute_network(train_loader, test_loader, model0, model1)
+    model0 = add_junctures(model0)
+    model1 = add_junctures(model1)
+    premuted_nework = resnet18()
+    premuted_nework = add_junctures(premuted_nework)
+    premuted_nework.load_state_dict(model1.state_dict())
+    premuted_nework = permute_network(train_loader, test_loader, model0, premuted_nework)
 
     stats = {}
-    stats['vanilla'] = get_acc_barrier(train_loader, test_loader, 'resnet18j_v1', 'resnet18j_v2')
-    stats['permute'] = get_acc_barrier(train_loader, test_loader, 'resnet18j_v1', 'resnet18j_v2_perm1')
-    stats['renorm'] = get_acc_barrier(train_loader, test_loader, 'resnet18j_v1', 'resnet18j_v2', reset_bn=True)
-    stats['permute_renorm'] = get_acc_barrier(train_loader, test_loader, 'resnet18j_v1', 'resnet18j_v2_perm1', reset_bn=True)
+    stats['vanilla'] = get_acc_barrier(train_loader, test_loader, model0, model1)
+    stats['permute'] = get_acc_barrier(train_loader, test_loader, model0, premuted_nework)
+    stats['renorm'] = get_acc_barrier(train_loader, test_loader, model0, model1, reset_bn=True)
+    stats['permute_renorm'] = get_acc_barrier(train_loader, test_loader, model0, premuted_nework, reset_bn=True)
 
     for k in stats.keys():
         plt.plot(stats[k], label=k)
@@ -51,7 +57,7 @@ def interpolation(model0, model1, train_loader, test_loader):
     plt.show()
 
 
-def get_acc_barrier(train_loader, test_loader, model1_path, model2_path, reset_bn=False):
+def get_acc_barrier(train_loader, test_loader, model1, model2, reset_bn=False):
     accs = []
     alpha_grid = np.arange(0, 1.001, 0.02)
     # alpha_grid = np.arange(0, 1.001, 0.5)
@@ -59,7 +65,7 @@ def get_acc_barrier(train_loader, test_loader, model1_path, model2_path, reset_b
     model = add_junctures(model)
 
     for alpha in tqdm(alpha_grid):
-        mix_weights(model, alpha, model1_path, model2_path)
+        mix_weights(model, alpha, model1, model2)
         if reset_bn:
             reset_bn_stats(model, train_loader)
         test_acc, _ = evaluate(model, test_loader)
@@ -67,14 +73,9 @@ def get_acc_barrier(train_loader, test_loader, model1_path, model2_path, reset_b
     return accs
 
 
-def permute_network(train_aug_loader, test_loader, model0, model1):
-    model0 = add_junctures(model0)
-    model1 = add_junctures(model1)
-    utils.save_model(model0, 'resnet18j_v1')
-    utils.save_model(model1, 'resnet18j_v2')
-
-    blocks0 = get_blocks(model0)
-    blocks1 = get_blocks(model1)
+def permute_network(train_aug_loader, test_loader, source_network, premuted_network):
+    blocks0 = get_blocks(source_network)
+    blocks1 = get_blocks(premuted_network)
 
     for k in range(1, len(blocks1)):
         block0 = blocks0[k]
@@ -102,7 +103,7 @@ def permute_network(train_aug_loader, test_loader, model0, model1):
             else:
                 permute_output(perm_map, shortcut[0], shortcut[1])
         else:
-            permute_output(perm_map, model1.conv1, model1.bn1)
+            permute_output(perm_map, premuted_network.conv1, premuted_network.bn1)
 
         if k+1 < len(blocks1):
             permute_input(perm_map, blocks1[k+1].conv1)
@@ -112,20 +113,11 @@ def permute_network(train_aug_loader, test_loader, model0, model1):
             else:
                 permute_input(perm_map, shortcut[0])
         else:
-            model1.fc.weight.data = model1.fc.weight[:, perm_map]
+            premuted_network.fc.weight.data = premuted_network.fc.weight[:, perm_map]
 
-    test_acc = evaluate(model1, test_loader)[0]
-    print('evaluate(model1) = ', test_acc)
-    utils.save_model(model1, 'resnet18j_v2_perm1')
-
-    model_a = add_junctures(resnet18())
-    mix_weights(model_a, 0.5, 'resnet18j_v1', 'resnet18j_v2_perm1')
-    reset_bn_stats(model_a, train_aug_loader)
-    train_acc, train_loss = evaluate(model_a, train_aug_loader)
-    test_acc, test_loss = evaluate(model_a, test_loader)
-    print('train_acc = {}, train_loss = {}, test_acc = {}, test_loss = {}'.format(
-        train_acc, train_loss, test_acc, test_loss))
-    return model_a
+    test_acc = evaluate(premuted_network, test_loader)[0]
+    print('evaluate permuted model = ', test_acc)
+    return premuted_network
 
 
 def add_junctures(net):
@@ -238,11 +230,11 @@ def permute_output(perm_map, conv, bn=None):
         w.data = w[perm_map]
 
 
-def mix_weights(model, alpha, key0, key1):
-    sd0 = torch.load('%s.pt' % key0)
-    sd1 = torch.load('%s.pt' % key1)
-    sd_alpha = {k: (1 - alpha) * sd0[k].cuda() + alpha * sd1[k].cuda()
-                for k in sd0.keys()}
+def mix_weights(model, alpha, model0, model1):
+    state_dict0 = model0.state_dict()
+    state_dict1 = model1.state_dict()
+    sd_alpha = {k: (1 - alpha) * state_dict0[k].cuda() + alpha * state_dict1[k].cuda()
+                for k in state_dict0.keys()}
     model.load_state_dict(sd_alpha)
 
 
