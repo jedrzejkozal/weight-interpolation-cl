@@ -4,12 +4,12 @@ entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
 run_id: fc81b1490c78437b968954e1b90d9a44
-run_name: capable-auk-759
+run_name: skip training on first task - is worse
 run_uuid: fc81b1490c78437b968954e1b90d9a44
 source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1679081315555
-status: 3
+status: 1
 tags: []
 user_id: jkozal
