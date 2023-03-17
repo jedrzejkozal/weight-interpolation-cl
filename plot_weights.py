@@ -56,22 +56,25 @@ def interpolation_plot(model0, model1, train_loader, test_loader, img_filename):
     premuted_nework = permute_network(train_loader, test_loader, model0, premuted_nework)
 
     stats = {}
-    stats['vanilla'] = get_acc_barrier(train_loader, test_loader, model0, model1)
-    stats['permute'] = get_acc_barrier(train_loader, test_loader, model0, premuted_nework)
-    stats['renorm'] = get_acc_barrier(train_loader, test_loader, model0, model1, reset_bn=True)
-    stats['permute_renorm'] = get_acc_barrier(train_loader, test_loader, model0, premuted_nework, reset_bn=True)
+    alpha_grid = np.arange(0, 1.001, 0.02)
+    # alpha_grid = np.arange(0, 1.001, 0.5)
+    stats['vanilla'] = get_acc_barrier(alpha_grid, train_loader, test_loader, model0, model1)
+    stats['permute'] = get_acc_barrier(alpha_grid, train_loader, test_loader, model0, premuted_nework)
+    stats['renorm'] = get_acc_barrier(alpha_grid, train_loader, test_loader, model0, model1, reset_bn=True)
+    stats['permute_renorm'] = get_acc_barrier(alpha_grid, train_loader, test_loader, model0, premuted_nework, reset_bn=True)
 
     for k in stats.keys():
-        plt.plot(stats[k], label=k)
+        plt.plot(alpha_grid, stats[k], label=k)
     plt.legend()
+    plt.xlabel('alpha')
+    plt.ylabel('test accuracy')
+
     plt.savefig('images/' + img_filename + '.png')
     plt.show()
 
 
-def get_acc_barrier(train_loader, test_loader, model1, model2, reset_bn=False):
+def get_acc_barrier(alpha_grid, train_loader, test_loader, model1, model2, reset_bn=False):
     accs = []
-    alpha_grid = np.arange(0, 1.001, 0.02)
-    # alpha_grid = np.arange(0, 1.001, 0.5)
     model = resnet18()
     model = add_junctures(model)
 
