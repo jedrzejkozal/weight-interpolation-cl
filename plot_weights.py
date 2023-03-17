@@ -154,13 +154,38 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
     this will reshape both outputs to (N*W*H)xC
     and then compute a CxC correlation matrix between the outputs of the two networks
     """
-    n = epochs*len(loader)
+    n = epochs * len(loader.dataset)
     mean0 = mean1 = std0 = std1 = None
     with torch.no_grad():
         net0.eval()
         net1.eval()
         for _ in range(epochs):
-            for i, (images, _) in enumerate(tqdm(loader)):
+            for images, _ in tqdm(loader):
+                img_t = images.float().cuda()
+                out0 = net0(img_t)
+                out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
+                out0 = out0.reshape(-1, out0.shape[2]).double()
+
+                out1 = net1(img_t)
+                out1 = out1.reshape(out1.shape[0], out1.shape[1], -1).permute(0, 2, 1)
+                out1 = out1.reshape(-1, out1.shape[2]).double()
+                outer_b = out0.T @ out1
+
+                if mean0 is None:
+                    mean0 = torch.zeros(out0.shape[1:]).to(out0.device)
+                    mean1 = torch.zeros(out1.shape[1:]).to(out1.device)
+                    outer = torch.zeros_like(outer_b)
+                mean0 += out0.sum(dim=0)
+                mean1 += out1.sum(dim=0)
+
+                outer += outer_b
+
+        mean0 = mean0 / n
+        mean1 = mean1 / n
+        outer = outer / n
+
+        for _ in range(epochs):
+            for images, _ in tqdm(loader):
                 img_t = images.float().cuda()
                 out0 = net0(img_t)
                 out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
@@ -170,23 +195,15 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
                 out1 = out1.reshape(out1.shape[0], out1.shape[1], -1).permute(0, 2, 1)
                 out1 = out1.reshape(-1, out1.shape[2]).double()
 
-                mean0_b = out0.mean(dim=0)
-                mean1_b = out1.mean(dim=0)
-                std0_b = out0.std(dim=0)
-                std1_b = out1.std(dim=0)
-                outer_b = (out0.T @ out1) / out0.shape[0]
+                if std0 is None:
+                    std0 = torch.zeros(out0.shape[1:]).to(out0.device)
+                    std1 = torch.zeros(out1.shape[1:]).to(out1.device)
 
-                if i == 0:
-                    mean0 = torch.zeros_like(mean0_b)
-                    mean1 = torch.zeros_like(mean1_b)
-                    std0 = torch.zeros_like(std0_b)
-                    std1 = torch.zeros_like(std1_b)
-                    outer = torch.zeros_like(outer_b)
-                mean0 += mean0_b / n
-                mean1 += mean1_b / n
-                std0 += std0_b / n
-                std1 += std1_b / n
-                outer += outer_b / n
+                std0 += ((out0 - mean0)**2).sum(dim=0)
+                std1 += ((out1 - mean1)**2).sum(dim=0)
+
+        std0 = torch.sqrt(std0 / (n-1))
+        std1 = torch.sqrt(std1 / (n-1))
 
     cov = outer - torch.outer(mean0, mean1)
     corr = cov / (torch.outer(std0, std1) + 1e-4)
