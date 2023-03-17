@@ -4,15 +4,18 @@ import pathlib
 import tempfile
 import torch
 import re
+import numpy as np
 import mlflow
 import mlflow.pytorch
 
 import utils.loggers
+from utils.metrics import backward_transfer, forward_transfer, forgetting
 
 
 class MLFlowLogger(utils.loggers.Logger):
-    def __init__(self, run_id=None, experiment_name='Default', nested=False, run_name=None):
-        super().__init__()
+    def __init__(self, setting_str: str, dataset_str: str, model_str: str,
+                 run_id=None, experiment_name='Default', nested=False, run_name=None):
+        super().__init__(setting_str, dataset_str, model_str)
         self.run_id = run_id
         self.experiment_name = experiment_name
         client = mlflow.tracking.MlflowClient()
@@ -40,43 +43,53 @@ class MLFlowLogger(utils.loggers.Logger):
             last_id = i
         return last_id
 
-    def log_parameters(self, parameters: dict):
-        with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-            mlflow.log_params(parameters)
+    def log(self, mean_acc: np.ndarray) -> None:
+        """
+        Logs a mean accuracy value.
+        :param mean_acc: mean accuracy value
+        """
+        if self.setting == 'general-continual':
+            self.accs.append(mean_acc)
+        elif self.setting == 'domain-il':
+            mean_acc, _ = mean_acc
+            self.accs.append(mean_acc)
+        else:
+            mean_acc_class_il, mean_acc_task_il = mean_acc
+            self.accs.append(mean_acc_class_il)
+            self.accs_mask_classes.append(mean_acc_task_il)
 
-    def log_single_metric(self, name, value, x_plot):
+    def log_fullacc(self, accs):
+        if self.setting == 'class-il':
+            acc_class_il, acc_task_il = accs
+            self.fullaccs.append(acc_class_il)
+            self.fullaccs_mask_classes.append(acc_task_il)
+            for t, acc in enumerate(acc_class_il):
+                self.log_metric(f'acc_class_il_task_{t}', acc)
+            for t, acc in enumerate(acc_task_il):
+                self.log_metric(f'acc_task_il_task_{t}', acc)
+
+    def add_fwt(self, results, accs, results_mask_classes, accs_mask_classes):
+        self.fwt = forward_transfer(results, accs)
+        self.log_metric('fwt', self.fwt)
+        if self.setting == 'class-il':
+            self.fwt_mask_classes = forward_transfer(results_mask_classes, accs_mask_classes)
+            self.log_metric('fwt_mask_classes', self.fwt_mask_classes)
+
+    def add_bwt(self, results, results_mask_classes):
+        self.bwt = backward_transfer(results)
+        self.log_metric('bwt', self.bwt)
+        self.bwt_mask_classes = backward_transfer(results_mask_classes)
+        self.log_metric('bwt_mask_classes', self.bwt_mask_classes)
+
+    def add_forgetting(self, results, results_mask_classes):
+        self.forgetting = forgetting(results)
+        self.log_metric('forgetting', self.forgetting)
+        self.forgetting_mask_classes = forgetting(results_mask_classes)
+        self.log_metric('forgetting_mask_classes', self.forgetting_mask_classes)
+
+    def log_metric(self, metric_name, value):
         with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-            metric_name = self.map_metric_name(name)
             mlflow.log_metric(metric_name, value)
-
-    @staticmethod
-    def map_metric_name(name):
-        metric_name = None
-        if 'Top1_Acc' in name:
-            metric_name = 'accuracy'
-        elif 'Loss' in name:
-            metric_name = 'loss'
-        else:
-            metric_name = 'unknown'
-
-        phase = None
-        if 'train_phase' in name:
-            phase = 'train'
-        elif 'eval_phase' in name:
-            phase = 'test'
-
-        res = re.finditer(r'Exp[0-9]+', name)
-        res = list(res)
-        if len(res) > 0:
-            i = res[0].start()
-            task_id_str = name[i+3:i+6]
-            task_id = int(task_id_str)
-            new_name = f'{phase}_{metric_name}_task_{task_id}'
-        elif phase == 'train':
-            new_name = f'{phase}_{metric_name}'
-        else:
-            new_name = f'{phase}_{metric_name}'
-        return new_name
 
     def log_artifact(self, artifact_path, name):
         with SwapArtifactUri(self.experiment_id, self.run_id):
