@@ -16,10 +16,6 @@ from models.utils.continual_model import ContinualModel
 from utils.loggers import *
 from utils.status import ProgressBar
 
-try:
-    import wandb
-except ImportError:
-    wandb = None
 
 def mask_classes(outputs: torch.Tensor, dataset: ContinualDataset, k: int) -> None:
     """
@@ -32,7 +28,7 @@ def mask_classes(outputs: torch.Tensor, dataset: ContinualDataset, k: int) -> No
     """
     outputs[:, 0:k * dataset.N_CLASSES_PER_TASK] = -float('inf')
     outputs[:, (k + 1) * dataset.N_CLASSES_PER_TASK:
-               dataset.N_TASKS * dataset.N_CLASSES_PER_TASK] = -float('inf')
+            dataset.N_TASKS * dataset.N_CLASSES_PER_TASK] = -float('inf')
 
 
 def evaluate(model: ContinualModel, dataset: ContinualDataset, last=False) -> Tuple[list, list]:
@@ -84,12 +80,6 @@ def train(model: ContinualModel, dataset: ContinualDataset,
     :param dataset: the continual dataset at hand
     :param args: the arguments of the current execution
     """
-    print(args)
-
-    if not args.nowand:
-        assert wandb is not None, "Wandb not installed, please install it or run without wandb"
-        wandb.init(project=args.wandb_project, entity=args.wandb_entity, config=vars(args))
-        args.wandb_url = wandb.run.get_url()
 
     model.net.to(model.device)
     results, results_mask_classes = [], []
@@ -159,28 +149,9 @@ def train(model: ContinualModel, dataset: ContinualDataset,
             logger.log(mean_acc)
             logger.log_fullacc(accs)
 
-        if not args.nowand:
-            d2={'RESULT_class_mean_accs': mean_acc[0], 'RESULT_task_mean_accs': mean_acc[1],
-                **{f'RESULT_class_acc_{i}': a for i, a in enumerate(accs[0])},
-                **{f'RESULT_task_acc_{i}': a for i, a in enumerate(accs[1])}}
-
-            wandb.log(d2)
-
-
-
     if not args.disable_log and not args.ignore_other_metrics:
         logger.add_bwt(results, results_mask_classes)
         logger.add_forgetting(results, results_mask_classes)
         if model.NAME != 'icarl' and model.NAME != 'pnn':
             logger.add_fwt(results, random_results_class,
-                    results_mask_classes, random_results_task)
-
-    if not args.disable_log:
-        logger.write(vars(args))
-        if not args.nowand:
-            d = logger.dump()
-            d['wandb_url'] = wandb.run.get_url()
-            wandb.log(d)
-
-    if not args.nowand:
-        wandb.finish()
+                           results_mask_classes, random_results_task)

@@ -3,35 +3,33 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 
-import numpy  # needed (don't change it)
+import datetime
 import importlib
 import os
 import socket
 import sys
-
-
-mammoth_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.append(mammoth_path)
-sys.path.append(mammoth_path + '/datasets')
-sys.path.append(mammoth_path + '/backbone')
-sys.path.append(mammoth_path + '/models')
-
-import datetime
 import uuid
 from argparse import ArgumentParser
 
+import numpy  # needed (don't change it)
 import setproctitle
 import torch
+
 from datasets import NAMES as DATASET_NAMES
 from datasets import ContinualDataset, get_dataset
 from models import get_all_models, get_model
-
 from utils.args import add_management_args
 from utils.best_args import best_args
 from utils.conf import set_random_seed
 from utils.continual_training import train as ctrain
 from utils.distributed import make_dp
 from utils.training import train
+
+mammoth_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(mammoth_path)
+sys.path.append(mammoth_path + '/datasets')
+sys.path.append(mammoth_path + '/backbone')
+sys.path.append(mammoth_path + '/models')
 
 
 def lecun_fix():
@@ -88,10 +86,9 @@ def parse_args():
     return args
 
 
-def main(args=None):
+def main():
     lecun_fix()
-    if args is None:
-        args = parse_args()
+    args = parse_args()
 
     os.putenv("MKL_SERVICE_FORCE_INTEL", "1")
     os.putenv("NPY_MKL_FORCE_INTEL", "1")
@@ -127,6 +124,7 @@ def main(args=None):
     # set job name
     setproctitle.setproctitle('{}_{}_{}'.format(args.model, args.buffer_size if 'buffer_size' in args else 0, args.dataset))
 
+    args.n_epochs = 1
     if isinstance(dataset, ContinualDataset):
         train(model, dataset, args)
     else:
