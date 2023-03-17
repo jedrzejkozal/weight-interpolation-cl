@@ -1,69 +1,31 @@
 # code based on https://github.com/KellerJordan/REPAIR
 import torch
 import torch.nn as nn
-import argparse
 import scipy.optimize
 import numpy as np
-from tqdm import tqdm
 from torch.cuda.amp import autocast
 
-import utils
-import dataset
-from train import evaluate, resnet18
 
-
-def main():
-    args = parse_args()
-    utils.seed_everything(42)
-
-    model0 = resnet18()
-    utils.load_model(model0, args.weights1_path)
-    model1 = resnet18()
-    utils.load_model(model1, args.weights2_path)
-
-    train_dataloader, test_dataloader = dataset.get_dataloaders(args.dataset, train_halves=False)
-    if args.simulate_rehersal:
-        train_dataset, _ = dataset.cifar100()
-        random_idx = torch.randperm(len(train_dataset))[:500]
-        train_dataset = torch.utils.data.Subset(train_dataset, random_idx)
-        train_dataloader = dataset.train_dataloader(train_dataset)
-
-    interpolate(model0, model1, train_dataloader, test_dataloader)
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument('--dataset', choices=('cifar100', 'cifar10'), default='cifar100')
-    parser.add_argument('--weights1_path', type=str, required=True)
-    parser.add_argument('--weights2_path', type=str, required=True)
-    parser.add_argument('--simulate_rehersal', action='store_true')
-
-    args = parser.parse_args()
-    return args
-
-
-def interpolate(sournce_network, premutation_nework, train_loader, test_loader, alpha=0.5):
+def interpolate(sournce_network, premutation_nework, train_loader, alpha=0.5):
     sournce_network = add_junctures(sournce_network)
     premutation_nework = add_junctures(premutation_nework)
-    premutation_nework = permute_network(train_loader, test_loader, sournce_network, premutation_nework)
+    premutation_nework = permute_network(train_loader, sournce_network, premutation_nework)
 
     mix_weights(premutation_nework, alpha, sournce_network, premutation_nework)
     reset_bn_stats(premutation_nework, train_loader)
     premutation_nework = remove_junctures(premutation_nework)
-    test_acc, _ = evaluate(premutation_nework, test_loader)
-    print('test_acc = ', test_acc)
+    return premutation_nework
 
 
-def permute_network(train_aug_loader, test_loader, source_network, premuted_network):
+def permute_network(train_aug_loader, source_network, premuted_network):
     blocks0 = get_blocks(source_network)
     blocks1 = get_blocks(premuted_network)
 
     for k in range(1, len(blocks1)):
         block0 = blocks0[k]
         block1 = blocks1[k]
-        subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, block0.relu)
-        subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, block1.relu)
+        subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, nn.ReLU(inplace=True))
+        subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, nn.ReLU(inplace=True))
         perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader)
         permute_output(perm_map, block1.conv1, block1.bn1)
         permute_input(perm_map, block1.conv2)
@@ -79,7 +41,7 @@ def permute_network(train_aug_loader, test_loader, source_network, premuted_netw
 
         if k > 0:
             permute_output(perm_map, blocks1[k].conv2, blocks1[k].bn2)
-            shortcut = blocks1[k].downsample
+            shortcut = blocks1[k].shortcut
             if isinstance(shortcut, nn.Conv2d):
                 permute_output(perm_map, shortcut)
             else:
@@ -89,42 +51,40 @@ def permute_network(train_aug_loader, test_loader, source_network, premuted_netw
 
         if k+1 < len(blocks1):
             permute_input(perm_map, blocks1[k+1].conv1)
-            shortcut = blocks1[k+1].downsample
+            shortcut = blocks1[k+1].shortcut
             if isinstance(shortcut, nn.Conv2d):
                 permute_input(perm_map, shortcut)
             else:
                 permute_input(perm_map, shortcut[0])
         else:
-            premuted_network.fc.weight.data = premuted_network.fc.weight[:, perm_map]
+            premuted_network.classifier.weight.data = premuted_network.classifier.weight[:, perm_map]
 
-    test_acc = evaluate(premuted_network, test_loader)[0]
-    print('evaluate permuted model = ', test_acc)
     return premuted_network
 
 
 def add_junctures(net):
     blocks = get_blocks(net)[1:]
     for block in blocks:
-        if block.downsample is not None:
+        if type(block.shortcut) != nn.Sequential or len(block.shortcut) > 0:
             continue
         planes = len(block.bn2.weight)
         shortcut = nn.Conv2d(planes, planes, kernel_size=1, stride=1, padding=0, bias=False)
         shortcut.weight.data[:, :, 0, 0] = torch.eye(planes)
-        block.downsample = shortcut
+        block.shortcut = shortcut
     return net.cuda().eval()
 
 
 def remove_junctures(net):
     blocks = get_blocks(net)[1:]
     for block in blocks:
-        conv = block.downsample
+        conv = block.shortcut
         if type(conv) == nn.Conv2d and conv.kernel_size == (1, 1) and conv.in_channels == conv.out_channels:
-            block.downsample = None
+            block.shortcut = nn.Sequential()
     return net
 
 
 def get_blocks(net):
-    return nn.Sequential(nn.Sequential(net.conv1, net.bn1, net.relu, net.maxpool),
+    return nn.Sequential(nn.Sequential(net.conv1, net.bn1),
                          *net.layer1, *net.layer2, *net.layer3, *net.layer4)
 
 
@@ -149,7 +109,7 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
         net0.eval()
         net1.eval()
         for _ in range(epochs):
-            for images, _ in tqdm(loader):
+            for images, _ in loader:
                 img_t = images.float().cuda()
                 out0 = net0(img_t)
                 out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
@@ -174,7 +134,7 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
         outer = outer / n
 
         for _ in range(epochs):
-            for images, _ in tqdm(loader):
+            for images, _ in loader:
                 img_t = images.float().cuda()
                 out0 = net0(img_t)
                 out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
@@ -259,7 +219,3 @@ def reset_bn_stats(model, loader, epochs=1):
         with torch.no_grad(), autocast():
             for images, _ in loader:
                 output = model(images.cuda())
-
-
-if __name__ == '__main__':
-    main()

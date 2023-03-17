@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/f54001ab379b428ba2ce96554247b7dd/artifacts
+end_time: 1679073402687
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f54001ab379b428ba2ce96554247b7dd
+run_name: capable-auk-759
+run_uuid: f54001ab379b428ba2ce96554247b7dd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1679072329885
+status: 3
+tags: []
+user_id: jkozal
