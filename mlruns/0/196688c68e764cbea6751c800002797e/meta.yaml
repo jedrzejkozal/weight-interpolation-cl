@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/196688c68e764cbea6751c800002797e/artifacts
+end_time: 1679099630059
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 196688c68e764cbea6751c800002797e
+run_name: clewi run 5
+run_uuid: 196688c68e764cbea6751c800002797e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1679097121136
+status: 3
+tags: []
+user_id: jkozal
