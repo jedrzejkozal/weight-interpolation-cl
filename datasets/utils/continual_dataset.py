@@ -18,6 +18,7 @@ class ContinualDataset:
     """
     NAME: str
     SETTING: str
+    N_CLASSES: int
     N_CLASSES_PER_TASK: int
     N_TASKS: int
 
@@ -31,7 +32,7 @@ class ContinualDataset:
         self.i = 0
         self.args = args
 
-        if not all((self.NAME, self.SETTING, self.N_CLASSES_PER_TASK, self.N_TASKS)):
+        if not all((self.NAME, self.SETTING, self.N_CLASSES, self.N_CLASSES_PER_TASK, self.N_TASKS)):
             raise NotImplementedError('The dataset must be initialized with all the required fields.')
 
     def get_data_loaders(self) -> Tuple[DataLoader, DataLoader]:

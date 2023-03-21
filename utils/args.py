@@ -55,6 +55,7 @@ def add_management_args(parser: ArgumentParser) -> None:
     parser.add_argument('--experiment_name', type=str, default='Default')
     parser.add_argument('--nested_experiment', action='store_true')
     parser.add_argument('--run_name', type=str, default=None)
+    parser.add_argument('--n_tasks', type=int, default=10)
 
 
 def add_rehearsal_args(parser: ArgumentParser) -> None:

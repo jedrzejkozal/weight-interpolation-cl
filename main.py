@@ -98,6 +98,8 @@ def main():
     args.conf_timestamp = str(datetime.datetime.now())
     args.conf_host = socket.gethostname()
     dataset = get_dataset(args)
+    type(dataset).N_TASKS = args.n_tasks
+    type(dataset).N_CLASSES_PER_TASK = type(dataset).N_CLASSES // type(dataset).N_TASKS
 
     if args.n_epochs is None and isinstance(dataset, ContinualDataset):
         args.n_epochs = dataset.get_epochs()

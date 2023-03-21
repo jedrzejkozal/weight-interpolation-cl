@@ -39,7 +39,7 @@ class TinyImagenet(Dataset):
             if os.path.isdir(root) and len(os.listdir(root)) > 0:
                 print('Download not needed, files already on disk.')
             else:
-                # from onedrivedownloader import download
+                from onedrivedownloader import download
 
                 print('Downloading dataset')
                 ln = "https://unimore365-my.sharepoint.com/:u:/g/personal/263133_unimore_it/EVKugslStrtNpyLGbgrhjaABqRHcE3PB_r2OEaV7Jy94oQ?e=9K29aD"
@@ -118,8 +118,9 @@ class SequentialTinyImagenet(ContinualDataset):
 
     NAME = 'seq-tinyimg'
     SETTING = 'class-il'
-    N_CLASSES_PER_TASK = 20
+    N_CLASSES = 200
     N_TASKS = 10
+    N_CLASSES_PER_TASK = N_CLASSES // N_TASKS
     TRANSFORM = transforms.Compose(
         [transforms.RandomCrop(64, padding=4),
          transforms.RandomHorizontalFlip(),
