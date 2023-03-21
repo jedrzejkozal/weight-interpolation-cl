@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/42e6d96ed61442c3ac5fffdbe743a14f/artifacts
+end_time: 1679365977876
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 42e6d96ed61442c3ac5fffdbe743a14f
+run_name: der run 4 20 tasks
+run_uuid: 42e6d96ed61442c3ac5fffdbe743a14f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1679362722373
+status: 3
+tags: []
+user_id: jkozal
