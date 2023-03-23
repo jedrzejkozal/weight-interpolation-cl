@@ -44,7 +44,7 @@ def standard_benchmarks():
 
     dataset_experiments = {
         'cifar10': None,
-        'cifar100': '0',
+        'cifar100': '675415310966171557',
         'tiny-imagenet': '757344672409704114'
     }
 
@@ -100,7 +100,7 @@ def varing_n_tasks():
         for n_tasks in ('5 tasks', '10 tasks', '20 tasks'):
             run_ids = runs_n_tasks[n_tasks][algorithm_name]
             n_tasks = int(n_tasks.split()[0])
-            acc, _ = calc_average_metrics(run_ids, client, '0', n_tasks)
+            acc, _ = calc_average_metrics(run_ids, client, '675415310966171557', n_tasks)
             row.append(acc)
         table.append(row)
 
