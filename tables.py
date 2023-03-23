@@ -29,7 +29,7 @@ def standard_benchmarks():
             'CLeWI': ['e4e60735d2a24e46af776e58b665c50c', 'fc20d261f94a434b973d90d8f2cd53f8', 'd832df41be7f42da85dce970320f75b8', 'f1ca76b4d9254a88923fdbed686b3ae8', '7468c0d7ff51437a986d2857678214b5'],
         },
         'tiny-imagenet': {
-            'ER': ['df1d15d952604f8eae5c6d7052c186cd', '8d5d2a422be04bfb92ad67034fad9e0a', '2e9a2795bc1545a4a38595e8ac4b9780', 'bd15ceeef00a4659a8800f58bf854511',],
+            'ER': ['df1d15d952604f8eae5c6d7052c186cd', '8d5d2a422be04bfb92ad67034fad9e0a', '2e9a2795bc1545a4a38595e8ac4b9780', 'bd15ceeef00a4659a8800f58bf854511', '5bb1144886344fe3a96c5b7e25ad661d'],
             'DER': None,
             'CLeWI': ['3d16de643e934656a19f2974777b537f', '5835832d970f4d53929a8e3afbd0b397', '67586f57d45b4e2e8c54afb0fa854171', '8eadfcea2fbb4f86bc2f13e4f14a11ec', '25d5279fca464c84b6429a4915c5dbdf'],
         }
