@@ -10,8 +10,7 @@ from .model_parameters import rand_u_like, orthogonal_to
 from loss_landscapes.metrics.metric import Metric
 
 
-def three_models(model1, model2, model3, model4, metric, distance=1, steps=20,
-                 normalization='filter', deepcopy_model=False):
+def three_models(model1, model2, model3, model4, steps=20, normalization='filter', deepcopy_model=False):
     model_start_wrapper1 = wrap_model(copy.deepcopy(model1) if deepcopy_model else model1)
     model_start_wrapper2 = wrap_model(copy.deepcopy(model2) if deepcopy_model else model2)
     model_start_wrapper3 = wrap_model(copy.deepcopy(model3) if deepcopy_model else model3)
@@ -36,15 +35,23 @@ def three_models(model1, model2, model3, model4, metric, distance=1, steps=20,
     coor2 = project_vec_into(vector2, dir_one, dir_two)
     coor3 = project_vec_into(vector3, dir_one, dir_two)
     coor4 = project_vec_into(vector4, dir_one, dir_two)
-    print(coor1)
-    print(coor2)
-    print(coor3)
-    print(coor4)
+    # print(coor1)
+    # print(coor2)
+    # print(coor3)
+    # print(coor4)
+
+    coordinates = coor1, coor2, coor3, coor4
+
+    coor_x = [x for x, _ in (coor1, coor2, coor3, coor4)]
+    coor_y = [y for _, y in (coor1, coor2, coor3, coor4)]
+    distance_one = max(abs(max(coor_x)), abs(min(coor_x))) * 2
+    distance_two = max(abs(max(coor_y)), abs(min(coor_y))) * 2
+    # print('distance_one = ', distance_one)
+    # print('distance_two = ', distance_two)
 
     # scale to match steps and total distance
-    dir_one.mul_(((start_point.model_norm() / distance) / steps) / dir_one.model_norm())
-    dir_two.mul_(((start_point.model_norm() / distance) / steps) / dir_two.model_norm())
-    exit()
+    dir_one.mul_(start_point.model_norm() / (distance_one * steps * dir_one.model_norm()))
+    dir_two.mul_(start_point.model_norm() / (distance_two * steps * dir_two.model_norm()))
 
     # Move start point so that original start params will be in the center of the plot
     dir_one.mul_(steps / 2)
@@ -53,6 +60,8 @@ def three_models(model1, model2, model3, model4, metric, distance=1, steps=20,
     start_point.sub_(dir_two)
     dir_one.truediv_(steps / 2)
     dir_two.truediv_(steps / 2)
+
+    return coordinates, dir_one, dir_two, start_point
 
 
 def project_vec_into(vec, dir_one, dir_two):
@@ -117,6 +126,12 @@ def random_plane(model: typing.Union[torch.nn.Module, ModelWrapper], metric: Met
     dir_one.truediv_(steps / 2)
     dir_two.truediv_(steps / 2)
 
+    data_matrix = get_grid(metric, steps, model_start_wrapper, start_point, dir_one, dir_two)
+
+    return data_matrix
+
+
+def get_grid(metric, steps, model_start_wrapper, start_point, dir_one, dir_two):
     data_matrix = []
     # evaluate loss in grid of (steps * steps) points, where each column signifies one step
     # along dir_one and each row signifies one step along dir_two. The implementation is again
@@ -138,7 +153,8 @@ def random_plane(model: typing.Union[torch.nn.Module, ModelWrapper], metric: Met
         data_matrix.append(data_column)
         start_point.add_(dir_one)
 
-    return np.array(data_matrix)
+    data_matrix = np.array(data_matrix)
+    return data_matrix
 
 
 def get_directions(normalization, start_point):

@@ -11,13 +11,13 @@ import dataset
 from train import resnet18
 
 
+@torch.no_grad()
 def main():
     utils.seed_everything(42)
     steps = 10
 
     loss_function = nn.CrossEntropyLoss()
-    train_dataloader, _, test_dataloader = dataset.get_dataloaders('cifar100', train_halves=True)
-    X, y = get_data(train_dataloader)
+    train_dataloader_part1, train_dataloader_part2, test_dataloader = dataset.get_dataloaders('cifar100', train_halves=True)
 
     model1 = resnet18()
     utils.load_model(model1, 'resnet18_v1_part1')
@@ -28,13 +28,21 @@ def main():
     model3 = resnet18()
     utils.load_model(model3, 'resnet18_v1_part1')
     model3.to('cuda')
-    model3 = permute_nework(model2, model3, train_dataloader, test_dataloader)
+    model3 = permute_nework(model2, model3, train_dataloader_part1, test_dataloader)
     model4 = resnet18()
-    model4 = interpolation(model2, model3, model4, train_dataloader)
+    model4 = interpolation(model2, model3, model4, train_dataloader_part1)
 
+    coordinates, dir_one, dir_two, start_point = loss_landscape.three_models(model1, model2, model3, model4, normalization='filter', steps=steps)
+    coor1, coor2, coor3, coor4 = coordinates
+
+    X, y = get_data(train_dataloader_part1)
     metric = loss_landscapes.metrics.Loss(loss_function, X, y)
     # landscape = loss_landscape.random_plane(model, metric, normalization='filter', steps=steps)
-    landscape = loss_landscape.three_models(model1, model2, model3, model4, metric, normalization='filter', steps=steps)
+    model = resnet18()
+    load_params(model, start_point)
+    model_wrapper = loss_landscape.wrap_model(model)
+    start_point = model_wrapper.get_module_parameters()
+    landscape = loss_landscape.get_grid(metric, steps, model_wrapper, start_point, dir_one, dir_two)
 
     # landscape = get_landscape()
     print(landscape)
@@ -47,15 +55,26 @@ def main():
     loss_min = np.log10(landscape.min())
     loss_max = np.log10(landscape.max())
     levels = np.logspace(loss_min, loss_max, num=10)
-    levels_finegrained = np.linspace(landscape.min(), 2*landscape.min(), num=5)
-    levels = [levels[0]] + list(levels_finegrained[1:]) + list(levels[1:])
+    levels_finegrained = np.linspace(landscape.min(), min(2*landscape.min(), levels[1]), num=5)
+    levels = [levels[0]] + list(levels_finegrained[1:-1]) + list(levels[1:])
     print(levels)
     print(levels_finegrained)
     # exit()
 
-    CS = plt.contour(X, Y, landscape, levels=levels)
+    CS = plt.contour(X, Y, landscape,)  # levels=levels)
     plt.clabel(CS, inline=True, fontsize=10, fmt='%1.1e')
+    plt.plot(*coor1, 'rx', label='model 1')
+    plt.plot(*coor2, 'bx', label='model 2')
+    plt.plot(*coor3, 'gx', label='premuted model 1')
+    plt.plot(*coor4, 'mo', label='interpolation')
+    plt.legend()
     plt.show()
+
+
+def load_params(model, parameters):
+    params_iter = iter(parameters)
+    for name, _ in model.named_parameters():
+        setattr(model, name, next(params_iter))
 
 
 def permute_nework(source_network, premutation_nework, train_loader, test_loader):
