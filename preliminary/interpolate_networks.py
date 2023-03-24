@@ -50,6 +50,7 @@ def interpolate(sournce_network, premutation_nework, train_loader, test_loader, 
 
     mix_weights(premutation_nework, alpha, sournce_network, premutation_nework)
     reset_bn_stats(premutation_nework, train_loader)
+    sournce_network = remove_junctures(sournce_network)
     premutation_nework = remove_junctures(premutation_nework)
     test_acc, _ = evaluate(premutation_nework, test_loader)
     print('test_acc = ', test_acc)
@@ -97,8 +98,8 @@ def permute_network(train_aug_loader, test_loader, source_network, premuted_netw
         else:
             premuted_network.fc.weight.data = premuted_network.fc.weight[:, perm_map]
 
-    test_acc = evaluate(premuted_network, test_loader)[0]
-    print('evaluate permuted model = ', test_acc)
+    # test_acc = evaluate(premuted_network, test_loader)[0]
+    # print('evaluate permuted model = ', test_acc)
     return premuted_network
 
 
@@ -236,12 +237,12 @@ def permute_output(perm_map, conv, bn=None):
         w.data = w[perm_map]
 
 
-def mix_weights(model, alpha, model0, model1):
+def mix_weights(output_model, alpha, model0, model1):
     state_dict0 = model0.state_dict()
     state_dict1 = model1.state_dict()
     sd_alpha = {k: (1 - alpha) * state_dict0[k].cuda() + alpha * state_dict1[k].cuda()
                 for k in state_dict0.keys()}
-    model.load_state_dict(sd_alpha)
+    output_model.load_state_dict(sd_alpha)
 
 
 def reset_bn_stats(model, loader, epochs=1):

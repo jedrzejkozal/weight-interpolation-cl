@@ -1,3 +1,4 @@
+from interpolate_networks import *
 import torch
 import torch.nn as nn
 import loss_landscape
@@ -14,16 +15,26 @@ def main():
     utils.seed_everything(42)
     steps = 10
 
-    model = resnet18()
-    utils.load_model(model, 'resnet18_v1_part1')
-    model.to('cuda')
-
     loss_function = nn.CrossEntropyLoss()
     train_dataloader, _, test_dataloader = dataset.get_dataloaders('cifar100', train_halves=True)
     X, y = get_data(train_dataloader)
 
+    model1 = resnet18()
+    utils.load_model(model1, 'resnet18_v1_part1')
+    model1.to('cuda')
+    model2 = resnet18()
+    utils.load_model(model2, 'resnet18_v1_part2')
+    model2.to('cuda')
+    model3 = resnet18()
+    utils.load_model(model3, 'resnet18_v1_part1')
+    model3.to('cuda')
+    model3 = permute_nework(model2, model3, train_dataloader, test_dataloader)
+    model4 = resnet18()
+    model4 = interpolation(model2, model3, model4, train_dataloader)
+
     metric = loss_landscapes.metrics.Loss(loss_function, X, y)
-    landscape = loss_landscape.random_plane(model, metric, normalization='filter', steps=steps)
+    # landscape = loss_landscape.random_plane(model, metric, normalization='filter', steps=steps)
+    landscape = loss_landscape.three_models(model1, model2, model3, model4, metric, normalization='filter', steps=steps)
 
     # landscape = get_landscape()
     print(landscape)
@@ -47,12 +58,28 @@ def main():
     plt.show()
 
 
+def permute_nework(source_network, premutation_nework, train_loader, test_loader):
+    source_network = add_junctures(source_network)
+    premutation_nework = add_junctures(premutation_nework)
+    premutation_nework = permute_network(train_loader, test_loader, source_network, premutation_nework)
+    premutation_nework = remove_junctures(premutation_nework)
+    source_network = remove_junctures(source_network)
+    return premutation_nework
+
+
+def interpolation(sournce_network, premutation_nework, output_network, train_loader, alpha=0.5):
+    mix_weights(output_network, alpha, sournce_network, premutation_nework)
+    reset_bn_stats(output_network, train_loader)
+    return output_network
+
+
 def get_data(train_dataloader):
     X = []
     y = []
     for batch_X, batch_y in train_dataloader:
         X.append(batch_X)
         y.append(batch_y)
+        # break
     X = torch.cat(X, dim=0)
     y = torch.cat(y, dim=0)
     X = X.to('cuda')

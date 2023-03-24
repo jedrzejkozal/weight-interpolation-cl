@@ -1,1 +1,1 @@
-from .generate import random_plane
+from .generate import *

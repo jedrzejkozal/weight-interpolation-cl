@@ -13,6 +13,7 @@ def interpolate(sournce_network, premutation_nework, train_loader, alpha=0.5):
 
     mix_weights(premutation_nework, alpha, sournce_network, premutation_nework)
     reset_bn_stats(premutation_nework, train_loader)
+    sournce_network = remove_junctures(sournce_network)
     premutation_nework = remove_junctures(premutation_nework)
     return premutation_nework
 

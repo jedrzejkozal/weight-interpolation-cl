@@ -5,12 +5,62 @@ import copy
 import typing
 import torch.nn
 import numpy as np
-from loss_landscapes.model_interface.model_wrapper import ModelWrapper, wrap_model
+from .model_wrapper import ModelWrapper, wrap_model
 from .model_parameters import rand_u_like, orthogonal_to
 from loss_landscapes.metrics.metric import Metric
 
 
-# noinspection DuplicatedCode
+def three_models(model1, model2, model3, model4, metric, distance=1, steps=20,
+                 normalization='filter', deepcopy_model=False):
+    model_start_wrapper1 = wrap_model(copy.deepcopy(model1) if deepcopy_model else model1)
+    model_start_wrapper2 = wrap_model(copy.deepcopy(model2) if deepcopy_model else model2)
+    model_start_wrapper3 = wrap_model(copy.deepcopy(model3) if deepcopy_model else model3)
+    model_start_wrapper4 = wrap_model(copy.deepcopy(model4) if deepcopy_model else model4)
+
+    parameters1 = model_start_wrapper1.get_module_parameters()
+    parameters2 = model_start_wrapper2.get_module_parameters()
+    parameters3 = model_start_wrapper3.get_module_parameters()
+    parameters4 = model_start_wrapper4.get_module_parameters()
+
+    start_point = (parameters1 + parameters2 + 4 * parameters3) / 6
+    # print(start_point)
+
+    dir_one, dir_two = get_directions(normalization, start_point)
+
+    vector1 = parameters1 - start_point
+    vector2 = parameters2 - start_point
+    vector3 = parameters3 - start_point
+    vector4 = parameters4 - start_point
+
+    coor1 = project_vec_into(vector1, dir_one, dir_two)
+    coor2 = project_vec_into(vector2, dir_one, dir_two)
+    coor3 = project_vec_into(vector3, dir_one, dir_two)
+    coor4 = project_vec_into(vector4, dir_one, dir_two)
+    print(coor1)
+    print(coor2)
+    print(coor3)
+    print(coor4)
+
+    # scale to match steps and total distance
+    dir_one.mul_(((start_point.model_norm() / distance) / steps) / dir_one.model_norm())
+    dir_two.mul_(((start_point.model_norm() / distance) / steps) / dir_two.model_norm())
+    exit()
+
+    # Move start point so that original start params will be in the center of the plot
+    dir_one.mul_(steps / 2)
+    dir_two.mul_(steps / 2)
+    start_point.sub_(dir_one)
+    start_point.sub_(dir_two)
+    dir_one.truediv_(steps / 2)
+    dir_two.truediv_(steps / 2)
+
+
+def project_vec_into(vec, dir_one, dir_two):
+    coor_one = dir_one.project(vec)
+    coor_two = dir_two.project(vec)
+    return coor_one, coor_two
+
+
 def random_plane(model: typing.Union[torch.nn.Module, ModelWrapper], metric: Metric, distance=1, steps=20,
                  normalization='filter', deepcopy_model=False) -> np.ndarray:
     """
@@ -54,22 +104,7 @@ def random_plane(model: typing.Union[torch.nn.Module, ModelWrapper], metric: Met
     model_start_wrapper = wrap_model(copy.deepcopy(model) if deepcopy_model else model)
 
     start_point = model_start_wrapper.get_module_parameters()
-    dir_one = rand_u_like(start_point)
-    dir_two = orthogonal_to(dir_one)
-
-    if normalization == 'model':
-        dir_one.model_normalize_(start_point)
-        dir_two.model_normalize_(start_point)
-    elif normalization == 'layer':
-        dir_one.layer_normalize_(start_point)
-        dir_two.layer_normalize_(start_point)
-    elif normalization == 'filter':
-        dir_one.filter_normalize_(start_point)
-        dir_two.filter_normalize_(start_point)
-    elif normalization is None:
-        pass
-    else:
-        raise AttributeError('Unsupported normalization argument. Supported values are model, layer, and filter')
+    dir_one, dir_two = get_directions(normalization, start_point)
 
     # scale to match steps and total distance
     dir_one.mul_(((start_point.model_norm() / distance) / steps) / dir_one.model_norm())
@@ -104,3 +139,23 @@ def random_plane(model: typing.Union[torch.nn.Module, ModelWrapper], metric: Met
         start_point.add_(dir_one)
 
     return np.array(data_matrix)
+
+
+def get_directions(normalization, start_point):
+    dir_one = rand_u_like(start_point)
+    dir_two = orthogonal_to(dir_one)
+
+    if normalization == 'model':
+        dir_one.model_normalize_(start_point)
+        dir_two.model_normalize_(start_point)
+    elif normalization == 'layer':
+        dir_one.layer_normalize_(start_point)
+        dir_two.layer_normalize_(start_point)
+    elif normalization == 'filter':
+        dir_one.filter_normalize_(start_point)
+        dir_two.filter_normalize_(start_point)
+    elif normalization is None:
+        pass
+    else:
+        raise AttributeError('Unsupported normalization argument. Supported values are model, layer, and filter')
+    return dir_one, dir_two

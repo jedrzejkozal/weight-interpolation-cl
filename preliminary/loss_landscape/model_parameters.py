@@ -265,7 +265,7 @@ class ModelParameters:
         Returns the tensor as a flat numpy array.
         :return: a numpy array
         """
-        return np.concatenate([p.numpy().flatten() for p in self.parameters])
+        return np.concatenate([p.numpy().flatten() if str(p.device) == 'cpu' else p.cpu().numpy().flatten() for p in self.parameters])
 
     def _get_parameters(self) -> list:
         """
@@ -273,6 +273,13 @@ class ModelParameters:
         :return: reference to internal parameter data
         """
         return self.parameters
+
+    def project(self, vec: 'ModelParameters') -> float:
+        """
+        Projects vec onto direction pointed by parameters stored in this class
+        """
+        dot_product = (self.as_numpy().T * vec.as_numpy()).sum()
+        return dot_product / self.model_norm()
 
 
 def rand_u_like(example_vector: ModelParameters) -> ModelParameters:

@@ -55,7 +55,7 @@ class Clewi(ContinualModel):
         #     self.old_model = self.deepcopy_model(self.net)
         #     return
         buffer_dataloder = self.get_buffer_dataloder()
-        interpolate(self.net, self.old_model, buffer_dataloder)
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
