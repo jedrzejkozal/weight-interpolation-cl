@@ -11,7 +11,7 @@ from train import resnet18
 
 
 def main():
-    utils.seed_everything(50)
+    utils.seed_everything(42)
     steps = 10
 
     model = resnet18()
@@ -19,7 +19,7 @@ def main():
     model.to('cuda')
 
     loss_function = nn.CrossEntropyLoss()
-    train_dataloader, test_dataloader = dataset.get_dataloaders('cifar100', train_halves=False)
+    train_dataloader, _, test_dataloader = dataset.get_dataloaders('cifar100', train_halves=True)
     X, y = get_data(train_dataloader)
 
     metric = loss_landscapes.metrics.Loss(loss_function, X, y)
@@ -32,6 +32,7 @@ def main():
     x = np.arange(-border, border, delta)
     y = np.arange(-border, border, delta)
     X, Y = np.meshgrid(x, y)
+
     loss_min = np.log10(landscape.min())
     loss_max = np.log10(landscape.max())
     levels = np.logspace(loss_min, loss_max, num=10)
@@ -40,7 +41,9 @@ def main():
     print(levels)
     print(levels_finegrained)
     # exit()
-    plt.contour(X, Y, landscape, levels=levels)
+
+    CS = plt.contour(X, Y, landscape, levels=levels)
+    plt.clabel(CS, inline=True, fontsize=10, fmt='%1.1e')
     plt.show()
 
 
