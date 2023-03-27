@@ -2,6 +2,8 @@ import random
 import os
 import numpy as np
 import torch
+import torch.cuda
+import torch.backends.cudnn
 
 
 def seed_everything(seed: int):

@@ -29,3 +29,22 @@ Pre-reset:
 Accuracy=0.00%, Loss=4.304
 Post-reset:
 Accuracy=0.00%, Loss=2.528
+
+
+python train.py --store_weights_path="resnet18_v3_200_epochs" --seed=42 --train_halves
+training with 200 epochs starts to overfit
+model resnet18_v3_200_epochs_part1 train loss = 0.0024733531265519557 train accuracy = 0.99992
+model resnet18_v3_200_epochs_part1 test loss = 6.163420557975769 test accuracy = 0.3261
+model resnet18_v3_200_epochs_part2 train loss = 0.0034167041187174617 train accuracy = 0.99944
+model resnet18_v3_200_epochs_part2 test loss = 6.235090160369873 test accuracy = 0.3409
+
+(interpolation) jkozal@hinton:~/Documents/PWr/interpolation/weight-interpolation-cl/preliminary$ python train.py --store_weights_path="resnet18_whole_50_epochs" --seed=42
+Files already downloaded and verified
+Files already downloaded and verified
+/home/jkozal/anaconda3/envs/interpolation/lib/python3.10/site-packages/torchvision/models/_utils.py:208: UserWarning: The parameter 'pretrained' is deprecated since 0.13 and will be removed in 0.15, please use 'weights' instead.
+  warnings.warn(
+/home/jkozal/anaconda3/envs/interpolation/lib/python3.10/site-packages/torchvision/models/_utils.py:223: UserWarning: Arguments other than a weight enum or `None` for 'weights' are deprecated since 0.13 and will be removed in 0.15. The current behavior is equivalent to passing `weights=None`.
+  warnings.warn(msg)
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 100/100 [32:23<00:00, 19.43s/it]
+model resnet18_whole_50_epochs train loss = 0.0060 train accuracy = 0.9990 test loss = 1.8654 test accuracy = 0.6501
+

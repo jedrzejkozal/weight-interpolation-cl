@@ -32,8 +32,8 @@ def cifar100():
     normalize = T.Normalize(CIFAR_MEAN, CIFAR_STD)
 
     train_transform = T.Compose([
-        T.RandomHorizontalFlip(),
         T.RandomCrop(32, padding=4),
+        T.RandomHorizontalFlip(),
         T.ToTensor(),
         normalize,
     ])
@@ -69,11 +69,11 @@ def split_cifar100(train_dset):
 
 
 def train_dataloader(dataset):
-    return torch.utils.data.DataLoader(dataset, batch_size=500, shuffle=True, num_workers=8)
+    return torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True, num_workers=5)
 
 
 def test_dataloader(dataset):
-    return torch.utils.data.DataLoader(dataset, batch_size=500, shuffle=False, num_workers=8)
+    return torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=5)
 
 
 if __name__ == '__main__':
