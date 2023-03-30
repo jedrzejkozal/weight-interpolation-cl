@@ -141,7 +141,7 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         if hasattr(model, 'end_task'):
             model.end_task(dataset)
 
-        # if model.NAME == 'clewi':
+        # if 'clewi' in model.NAME:
         #     logger.log_artifact('old_model.pt', f'old_model_task_{t}')
         #     logger.log_artifact('net.pt', f'net_model_task_{t}')
 

@@ -25,7 +25,7 @@ def main():
     device = 'cuda'
     buffer = Buffer(args.buffer_size, device)
 
-    artifact_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/743680f7bbf94924abc7629aa6f724ac/artifacts/{}_task_{}/{}'
+    artifact_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/f99e731ccf1b4ba999e390106b396fc3/artifacts/{}_task_{}/{}'
     # alpha_grid = np.arange(0, 1.001, 0.1)
     alpha_grid = np.arange(0, 1.001, 0.02)
     # alpha_grid = np.arange(0, 1.001, 0.5)
@@ -73,9 +73,9 @@ def evaluate(model, dataset):
     correct = 0
     total = 0
 
-    # test_dataloders = [dataset.test_loaders[-1]]
+    test_dataloders = [dataset.test_loaders[-1]]
     # test_dataloders = dataset.test_loaders[:-1]
-    test_dataloders = dataset.test_loaders
+    # test_dataloders = dataset.test_loaders
 
     for test_dataloder in test_dataloders:
         for inputs, labels in test_dataloder:

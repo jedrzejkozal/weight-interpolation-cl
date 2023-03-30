@@ -11,8 +11,8 @@ from models.utils.weight_interpolation import *
 
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser(description='Continual Learning with Weight Interpolation')
-    parser.add_argument('--interpolation_interval', type=int, default=10000,
-                        help='number of steps between interpolation of two networks')
+    parser.add_argument('--interpolation_alpha', type=float, default=0.5,
+                        help='interpolation alpha')
 
     add_management_args(parser)
     add_experiment_args(parser)
@@ -28,6 +28,7 @@ class Clewi(ContinualModel):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
         self.old_model = self.deepcopy_model(backbone)
+        self.interpolation_alpha = args.interpolation_alpha
         self.first_task = True
 
     def observe(self, inputs, labels, not_aug_inputs):
@@ -61,7 +62,7 @@ class Clewi(ContinualModel):
 
         # self.interpolation_plot(dataset, buffer_dataloder)
 
-        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder)
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, alpha=self.interpolation_alpha)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
