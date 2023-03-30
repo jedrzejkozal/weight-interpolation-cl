@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/743680f7bbf94924abc7629aa6f724ac/artifacts
+end_time: 1679928125947
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 743680f7bbf94924abc7629aa6f724ac
+run_name: clewi run store weights
+run_uuid: 743680f7bbf94924abc7629aa6f724ac
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1679925346542
+status: 3
+tags: []
+user_id: jkozal
