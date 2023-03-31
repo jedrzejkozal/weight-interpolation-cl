@@ -16,16 +16,28 @@ from utils.buffer import Buffer
 
 def main():
     args = parse_args()
-    dataset = get_dataset(args)
 
+    artifact_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/f99e731ccf1b4ba999e390106b396fc3/artifacts/{}_task_{}/{}'
+
+    plt.subplot(1, 3, 1)
+    plot(args, artifact_path)
+    plt.subplot(1, 3, 2)
+    plot(args, artifact_path, evaluate_previous=True)
+    plt.subplot(1, 3, 3)
+    plot(args, artifact_path, evaluate_last=True)
+
+    plt.show()
+
+
+def plot(args, artifact_path, evaluate_last=False, evaluate_previous=False):
     num_tasks = 20
     results = []
     result_labels = []
 
+    dataset = get_dataset(args)
     device = 'cuda'
     buffer = Buffer(args.buffer_size, device)
 
-    artifact_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/f99e731ccf1b4ba999e390106b396fc3/artifacts/{}_task_{}/{}'
     # alpha_grid = np.arange(0, 1.001, 0.1)
     alpha_grid = np.arange(0, 1.001, 0.02)
     # alpha_grid = np.arange(0, 1.001, 0.5)
@@ -40,7 +52,7 @@ def main():
                 net_t = torch.load(artifact_path.format('net_model', t, 'net.pt'))
                 old_t = torch.load(artifact_path.format('old_model', t, 'old_model.pt'))
                 new_model = interpolate(net_t, old_t, buffer_dataloder, alpha=alpha)
-                acc, _ = evaluate(new_model, dataset)
+                acc, _ = evaluate(new_model, dataset, evaluate_last, evaluate_previous)
                 interpolation_accs.append(acc)
 
             results.append(interpolation_accs)
@@ -56,7 +68,6 @@ def main():
     plt.legend()
     plt.xlabel('alpha')
     plt.ylabel('accuracy')
-    plt.show()
 
 
 def get_buffer_dataloder(buffer, dataset):
@@ -66,16 +77,19 @@ def get_buffer_dataloder(buffer, dataset):
     return buffer_dataloder
 
 
-def evaluate(model, dataset):
+def evaluate(model, dataset, evaluate_last=False, evaluate_previous=False):
     model.cuda()
     model.eval()
     losses = []
     correct = 0
     total = 0
 
-    test_dataloders = [dataset.test_loaders[-1]]
-    # test_dataloders = dataset.test_loaders[:-1]
-    # test_dataloders = dataset.test_loaders
+    if evaluate_last:
+        test_dataloders = [dataset.test_loaders[-1]]
+    elif evaluate_previous:
+        test_dataloders = dataset.test_loaders[:-1]
+    else:
+        test_dataloders = dataset.test_loaders
 
     for test_dataloder in test_dataloders:
         for inputs, labels in test_dataloder:
