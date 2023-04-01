@@ -11,6 +11,8 @@ def get_parser() -> ArgumentParser:
     add_rehearsal_args(parser)
     parser.add_argument('--alpha', type=float, required=True,
                         help='Penalty weight.')
+    parser.add_argument('--beta', type=float, required=True,
+                        help='Penalty weight.')
     parser.add_argument('--interpolation_alpha', type=float, default=0.5,
                         help='interpolation alpha')
     return parser
@@ -25,10 +27,11 @@ class ClewiDerpp(Derpp, ClewiMixin):
         self.interpolation_alpha = args.interpolation_alpha
         self.old_model = self.deepcopy_model(backbone)
 
-    # def end_task(self, dataset):
-    #     """recompute logits after each task for less limitation on training with new tasks"""
-    #     ClewiMixin.end_task(self, dataset)
-    #     with torch.no_grad():
-    #         buf_inputs, _ = self.buffer.get_data(len(self.buffer), transform=self.transform)
-    #         outputs = self.net(buf_inputs)
-    #         self.buffer.logits = outputs.data
+    def end_task(self, dataset):
+        """recompute logits after each task for less limitation on training with new tasks"""
+        ClewiMixin.end_task(self, dataset)
+        with torch.no_grad():
+            data = self.buffer.get_data(len(self.buffer), transform=self.transform)
+            buf_inputs = data[0]
+            outputs = self.net(buf_inputs)
+            self.buffer.logits = outputs.data

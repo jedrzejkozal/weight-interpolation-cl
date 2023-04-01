@@ -19,7 +19,10 @@ class ClewiMixin:
         self.opt.zero_grad()
 
     def get_buffer_dataloder(self):
-        buf_inputs, buf_labels = self.buffer.get_data(len(self.buffer), transform=self.transform)
+        data = self.buffer.get_data(len(self.buffer), transform=self.transform)
+        buf_inputs = data[0]
+        buf_labels = data[1]
+
         buffer_dataset = torch.utils.data.TensorDataset(buf_inputs, buf_labels)
         buffer_dataloder = torch.utils.data.DataLoader(buffer_dataset, batch_size=32, num_workers=0)
         return buffer_dataloder

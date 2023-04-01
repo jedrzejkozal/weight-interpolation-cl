@@ -29,6 +29,7 @@ class ClewiDer(Der, ClewiMixin):
         """recompute logits after each task for less limitation on training with new tasks"""
         ClewiMixin.end_task(self, dataset)
         with torch.no_grad():
-            buf_inputs, _ = self.buffer.get_data(len(self.buffer), transform=self.transform)
+            data = self.buffer.get_data(len(self.buffer), transform=self.transform)
+            buf_inputs = data[0]
             outputs = self.net(buf_inputs)
             self.buffer.logits = outputs.data

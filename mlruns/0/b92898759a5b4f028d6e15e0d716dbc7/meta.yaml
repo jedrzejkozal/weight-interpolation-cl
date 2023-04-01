@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/b92898759a5b4f028d6e15e0d716dbc7/artifacts
+end_time: 1680279740189
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: b92898759a5b4f028d6e15e0d716dbc7
+run_name: clewi with derpp
+run_uuid: b92898759a5b4f028d6e15e0d716dbc7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1680274362466
+status: 3
+tags: []
+user_id: jkozal
