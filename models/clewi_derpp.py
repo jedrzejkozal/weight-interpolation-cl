@@ -26,12 +26,3 @@ class ClewiDerpp(Derpp, ClewiMixin):
         super().__init__(backbone, loss, args, transform)
         self.interpolation_alpha = args.interpolation_alpha
         self.old_model = self.deepcopy_model(backbone)
-
-    def end_task(self, dataset):
-        """recompute logits after each task for less limitation on training with new tasks"""
-        ClewiMixin.end_task(self, dataset)
-        with torch.no_grad():
-            data = self.buffer.get_data(len(self.buffer), transform=self.transform)
-            buf_inputs = data[0]
-            outputs = self.net(buf_inputs)
-            self.buffer.logits = outputs.data

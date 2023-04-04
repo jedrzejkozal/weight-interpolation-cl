@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/95e3898f9a7d4671bfe1c9895bf312f8/artifacts
+end_time: 1680418646919
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 95e3898f9a7d4671bfe1c9895bf312f8
+run_name: gss
+run_uuid: 95e3898f9a7d4671bfe1c9895bf312f8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1680378252716
+status: 3
+tags: []
+user_id: jkozal

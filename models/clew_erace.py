@@ -1,6 +1,6 @@
 import torch
 
-from .der import *
+from .er_ace import *
 from .clewi_mixin import ClewiMixin
 
 
@@ -16,8 +16,8 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-class ClewiDer(Der, ClewiMixin):
-    NAME = 'clewi_der'
+class ClewiDer(ErACE, ClewiMixin):
+    NAME = 'clewi_er_ace'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 
     def __init__(self, backbone, loss, args, transform):
