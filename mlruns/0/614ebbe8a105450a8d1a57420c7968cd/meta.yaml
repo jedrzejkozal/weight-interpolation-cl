@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/614ebbe8a105450a8d1a57420c7968cd/artifacts
+end_time: 1681119690804
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 614ebbe8a105450a8d1a57420c7968cd
+run_name: clewi mixin implementation
+run_uuid: 614ebbe8a105450a8d1a57420c7968cd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681116820142
+status: 3
+tags: []
+user_id: jkozal
