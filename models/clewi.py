@@ -64,11 +64,10 @@ class Clewi(ContinualModel):
         # self.interpolation_plot(dataset, buffer_dataloder)
 
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, alpha=self.interpolation_alpha)
+        self.train_model_after_interpolation(buffer_dataloder)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
-
-        self.train_model_after_interpolation(buffer_dataloder)
 
     def interpolation_plot(self, dataset, buffer_dataloder):
         alpha_grid = np.arange(0, 1.001, 0.02)
@@ -94,15 +93,15 @@ class Clewi(ContinualModel):
         return model_copy
 
     def train_model_after_interpolation(self, datalodaer):
-        self.net.train()
+        self.old_model.train()
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.net.parameters(), lr=0.00001)
+        optimizer = optim.Adam(self.old_model.parameters(), lr=0.00001)
 
         for input, target in datalodaer:
             optimizer.zero_grad()
             input = input.to(self.device)
             target = target.to(self.device)
-            y_pred = self.net(input)
+            y_pred = self.old_model(input)
             loss = criterion(y_pred, target)
             loss.backward()
             optimizer.step()

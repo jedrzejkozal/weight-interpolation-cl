@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/d47a173b9ae446ba8cdc2098b67daf5f/artifacts
+end_time: 1681228059713
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d47a173b9ae446ba8cdc2098b67daf5f
+run_name: clewi train after interpolation lr=0.00001 training right after interpolation
+run_uuid: d47a173b9ae446ba8cdc2098b67daf5f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681225320187
+status: 3
+tags: []
+user_id: jkozal
