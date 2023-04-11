@@ -1,6 +1,7 @@
 import torch
 import torch.utils.data
 import torch.nn.functional as F
+import torch.optim as optim
 import copy
 
 from models.utils.continual_model import ContinualModel
@@ -67,6 +68,8 @@ class Clewi(ContinualModel):
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
 
+        self.train_model_after_interpolation(buffer_dataloder)
+
     def interpolation_plot(self, dataset, buffer_dataloder):
         alpha_grid = np.arange(0, 1.001, 0.02)
         net = self.deepcopy_model(self.net)
@@ -89,6 +92,20 @@ class Clewi(ContinualModel):
         model_copy = copy.deepcopy(model)
         model_copy.load_state_dict(model.state_dict())
         return model_copy
+
+    def train_model_after_interpolation(self, datalodaer):
+        self.net.train()
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(self.net.parameters(), lr=0.00001)
+
+        for input, target in datalodaer:
+            optimizer.zero_grad()
+            input = input.to(self.device)
+            target = target.to(self.device)
+            y_pred = self.net(input)
+            loss = criterion(y_pred, target)
+            loss.backward()
+            optimizer.step()
 
 
 def evaluate(network: ContinualModel, dataset, device, last=False):
