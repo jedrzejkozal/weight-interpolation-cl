@@ -1,22 +1,18 @@
-import torch
-
 from .er_ace import *
 from .clewi_mixin import ClewiMixin
 
 
 def get_parser() -> ArgumentParser:
-    parser = ArgumentParser(description='Continual Learning with Weight Interpolation with DER')
+    parser = ArgumentParser(description='Continual Learning with Weight Interpolation with ER ACE')
     add_management_args(parser)
     add_experiment_args(parser)
     add_rehearsal_args(parser)
-    parser.add_argument('--alpha', type=float, required=True,
-                        help='Penalty weight.')
     parser.add_argument('--interpolation_alpha', type=float, default=0.5,
                         help='interpolation alpha')
     return parser
 
 
-class ClewiDer(ErACE, ClewiMixin):
+class ClewiErACE(ErACE, ClewiMixin):
     NAME = 'clewi_er_ace'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 
