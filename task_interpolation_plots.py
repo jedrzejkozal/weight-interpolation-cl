@@ -19,19 +19,17 @@ def main():
 
     artifact_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/f99e731ccf1b4ba999e390106b396fc3/artifacts/{}_task_{}/{}'
 
-    plt.subplot(1, 3, 1)
-    plot(args, artifact_path)
-    plt.subplot(1, 3, 2)
-    plot(args, artifact_path, evaluate_previous=True)
-    plt.subplot(1, 3, 3)
-    plot(args, artifact_path, evaluate_last=True)
+    plot(args, artifact_path, (1, 3, 1))
+    plot(args, artifact_path, (1, 3, 2), evaluate_previous=True)
+    plot(args, artifact_path, (1, 3, 3), evaluate_last=True)
 
     plt.show()
 
 
-def plot(args, artifact_path, evaluate_last=False, evaluate_previous=False):
+def plot(args, artifact_path, suplot_idx, evaluate_last=False, evaluate_previous=False):
     num_tasks = 20
-    results = []
+    results_acc = []
+    results_loss = []
     result_labels = []
 
     dataset = get_dataset(args)
@@ -47,15 +45,18 @@ def plot(args, artifact_path, evaluate_last=False, evaluate_previous=False):
         if t in (1, 4, 9, 14, 19):
             buffer_dataloder = get_buffer_dataloder(buffer, dataset)
             interpolation_accs = []
+            interpolation_losses = []
 
             for alpha in alpha_grid:
                 net_t = torch.load(artifact_path.format('net_model', t, 'net.pt'))
                 old_t = torch.load(artifact_path.format('old_model', t, 'old_model.pt'))
                 new_model = interpolate(net_t, old_t, buffer_dataloder, alpha=alpha)
-                acc, _ = evaluate(new_model, dataset, evaluate_last, evaluate_previous)
+                acc, loss = evaluate(new_model, dataset, evaluate_last, evaluate_previous)
                 interpolation_accs.append(acc)
+                interpolation_losses.append(loss)
 
-            results.append(interpolation_accs)
+            results_acc.append(interpolation_accs)
+            results_loss.append(interpolation_losses)
             result_labels.append(t)
 
         for _, labels, not_aug_inputs in train_loader:
@@ -63,11 +64,21 @@ def plot(args, artifact_path, evaluate_last=False, evaluate_previous=False):
             buffer.add_data(examples=not_aug_inputs,
                             labels=labels[:real_batch_size])
 
-    for t, interpolation_accs in zip(result_labels, results):
+    plt.figure(1)
+    plt.subplot(*suplot_idx)
+    for t, interpolation_accs in zip(result_labels, results_acc):
         plt.plot(alpha_grid, interpolation_accs, label=t)
     plt.legend()
     plt.xlabel('alpha')
     plt.ylabel('accuracy')
+
+    plt.figure(2)
+    plt.subplot(*suplot_idx)
+    for t, interpolation_accs in zip(result_labels, results_loss):
+        plt.plot(alpha_grid, interpolation_accs, label=t)
+    plt.legend()
+    plt.xlabel('alpha')
+    plt.ylabel('loss')
 
 
 def get_buffer_dataloder(buffer, dataset):
@@ -101,7 +112,7 @@ def evaluate(model, dataset, evaluate_last=False, evaluate_previous=False):
                 loss = F.cross_entropy(outputs, labels.cuda(), reduction='sum')
                 losses.append(loss.item())
                 # break
-    return correct / total, np.array(losses).mean()
+    return correct / total, sum(losses) / total
 
 
 if __name__ == '__main__':

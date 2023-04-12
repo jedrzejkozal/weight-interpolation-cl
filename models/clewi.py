@@ -64,7 +64,7 @@ class Clewi(ContinualModel):
         # self.interpolation_plot(dataset, buffer_dataloder)
 
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, alpha=self.interpolation_alpha)
-        self.train_model_after_interpolation(buffer_dataloder)
+        # self.train_model_after_interpolation(buffer_dataloder)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
