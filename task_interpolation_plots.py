@@ -23,6 +23,7 @@ def main():
     with open(seed_file_path, 'r') as f:
         seed = f.read()
         seed = int(seed)
+    args.seed = seed
 
     plot(args, artifact_path, 1)
     plot(args, artifact_path, 2, evaluate_buffer=True)
