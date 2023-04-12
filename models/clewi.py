@@ -94,8 +94,9 @@ class Clewi(ContinualModel):
 
     def train_model_after_interpolation(self, datalodaer):
         self.old_model.train()
+        self.old_model = self.freeze_weights(self.old_model)
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.old_model.parameters(), lr=0.00001)
+        optimizer = optim.Adam(self.old_model.parameters(), lr=0.0001)
 
         for input, target in datalodaer:
             optimizer.zero_grad()
@@ -105,6 +106,19 @@ class Clewi(ContinualModel):
             loss = criterion(y_pred, target)
             loss.backward()
             optimizer.step()
+
+        self.old_model = self.unfreeze_weights(self.old_model)
+
+    def freeze_weights(self, model: nn.Module):
+        for name, param in model.named_parameters():
+            if not ('linear' in name or 'classifier' in name):
+                param.requires_grad = False
+        return model
+
+    def unfreeze_weights(self, model: nn.Module):
+        for _, param in model.named_parameters():
+            param.requires_grad = True
+        return model
 
 
 def evaluate(network: ContinualModel, dataset, device, last=False):
