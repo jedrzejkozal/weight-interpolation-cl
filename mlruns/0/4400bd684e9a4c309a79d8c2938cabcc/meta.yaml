@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/4400bd684e9a4c309a79d8c2938cabcc/artifacts
+end_time: 1681410434691
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4400bd684e9a4c309a79d8c2938cabcc
+run_name: clewi with er no first task interpolation_alpha 0.3 buffer size 2000
+run_uuid: 4400bd684e9a4c309a79d8c2938cabcc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681407595866
+status: 3
+tags: []
+user_id: jkozal
