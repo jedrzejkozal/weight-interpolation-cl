@@ -7,8 +7,16 @@ from models.utils.weight_interpolation import *
 
 
 class ClewiMixin:
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.first_task = True
 
     def end_task(self, dataset):
+        if self.first_task:
+            self.first_task = False
+            self.old_model = self.deepcopy_model(self.net)
+            return
+
         buffer_dataloder = self.get_buffer_dataloder()
         torch.save(self.old_model, 'old_model.pt')
         torch.save(self.net, 'net.pt')

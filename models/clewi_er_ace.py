@@ -12,7 +12,7 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-class ClewiErACE(ErACE, ClewiMixin):
+class ClewiErACE(ClewiMixin, ErACE):
     NAME = 'clewi_er_ace'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 

@@ -16,7 +16,7 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-class ClewiDer(Der, ClewiMixin):
+class ClewiDer(ClewiMixin, Der):
     NAME = 'clewi_der'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 

@@ -17,7 +17,7 @@ from utils.buffer import Buffer
 def main():
     args = parse_args()
 
-    run_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/743680f7bbf94924abc7629aa6f724ac'
+    run_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/e65910af044a45e7a4db5b21f45be582'
     artifact_path = run_path + '/artifacts/{}_task_{}/{}'
     seed_file_path = run_path + '/params/seed'
     with open(seed_file_path, 'r') as f:
@@ -49,7 +49,7 @@ def plot(args, artifact_path, suplot_idx, evaluate_last=False, evaluate_previous
     for t in tqdm(range(num_tasks)):
         train_loader, test_loader = dataset.get_data_loaders()
 
-        if t in (1, 4, 9, 14, 19):
+        if t in (1, 2, 3, 4, 9, 14, 19):
             buffer_dataloder = get_buffer_dataloder(buffer, dataset)
             interpolation_accs = []
             interpolation_losses = []
@@ -57,7 +57,7 @@ def plot(args, artifact_path, suplot_idx, evaluate_last=False, evaluate_previous
             for alpha in alpha_grid:
                 net_t = torch.load(artifact_path.format('net_model', t, 'net.pt'))
                 old_t = torch.load(artifact_path.format('old_model', t, 'old_model.pt'))
-                new_model = interpolate(net_t, old_t, buffer_dataloder, alpha=alpha)
+                new_model = interpolate(net_t, old_t, buffer_dataloder, args.device, alpha=alpha)
                 acc, loss = evaluate(new_model, dataset, buffer_dataloder, evaluate_last, evaluate_previous, evaluate_buffer)
                 interpolation_accs.append(acc)
                 interpolation_losses.append(loss)

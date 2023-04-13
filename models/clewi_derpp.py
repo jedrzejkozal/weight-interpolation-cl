@@ -18,7 +18,7 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-class ClewiDerpp(Derpp, ClewiMixin):
+class ClewiDerpp(ClewiMixin, Derpp):
     NAME = 'clewi_derpp'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 
