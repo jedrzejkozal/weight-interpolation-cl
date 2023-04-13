@@ -100,6 +100,11 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         if model.NAME != 'icarl' and model.NAME != 'pnn':
             random_results_class, random_results_task = evaluate(model, dataset_copy)
 
+    if os.path.exists('old_model.pt'):
+        os.remove('old_model.pt')
+    if os.path.exists('net.pt'):
+        os.remove('net.pt')
+
     print(file=sys.stderr)
     for t in range(dataset.N_TASKS):
         model.net.train()
@@ -141,7 +146,7 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         if hasattr(model, 'end_task'):
             model.end_task(dataset)
 
-        if 'clewi' in model.NAME:
+        if 'clewi' in model.NAME and os.path.exists('old_model.pt') and os.path.exists('net.pt'):
             logger.log_artifact('old_model.pt', f'old_model_task_{t}')
             logger.log_artifact('net.pt', f'net_model_task_{t}')
 

@@ -13,7 +13,7 @@ class ClewiMixin:
         torch.save(self.old_model, 'old_model.pt')
         torch.save(self.net, 'net.pt')
 
-        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, alpha=self.interpolation_alpha)
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device, alpha=self.interpolation_alpha)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()

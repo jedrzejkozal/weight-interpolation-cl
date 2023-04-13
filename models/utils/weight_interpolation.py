@@ -3,22 +3,21 @@ import torch
 import torch.nn as nn
 import scipy.optimize
 import numpy as np
-from torch.cuda.amp import autocast
 
 
-def interpolate(sournce_network, premutation_nework, train_loader, alpha=0.5):
-    sournce_network = add_junctures(sournce_network)
-    premutation_nework = add_junctures(premutation_nework)
-    premutation_nework = permute_network(train_loader, sournce_network, premutation_nework)
+def interpolate(sournce_network, premutation_nework, train_loader, device, alpha=0.5):
+    sournce_network = add_junctures(sournce_network, device)
+    premutation_nework = add_junctures(premutation_nework, device)
+    premutation_nework = permute_network(train_loader, sournce_network, premutation_nework, device)
 
-    mix_weights(premutation_nework, alpha, sournce_network, premutation_nework)
-    reset_bn_stats(premutation_nework, train_loader)
+    mix_weights(premutation_nework, alpha, sournce_network, premutation_nework, device)
+    reset_bn_stats(premutation_nework, train_loader, device)
     sournce_network = remove_junctures(sournce_network)
     premutation_nework = remove_junctures(premutation_nework)
     return premutation_nework
 
 
-def permute_network(train_aug_loader, source_network, premuted_network):
+def permute_network(train_aug_loader, source_network, premuted_network, device):
     blocks0 = get_blocks(source_network)
     blocks1 = get_blocks(premuted_network)
 
@@ -27,7 +26,7 @@ def permute_network(train_aug_loader, source_network, premuted_network):
         block1 = blocks1[k]
         subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, nn.ReLU(inplace=True))
         subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, nn.ReLU(inplace=True))
-        perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader)
+        perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader, device)
         permute_output(perm_map, block1.conv1, block1.bn1)
         permute_input(perm_map, block1.conv2)
 
@@ -37,7 +36,7 @@ def permute_network(train_aug_loader, source_network, premuted_network):
     for k in range(len(blocks1)):
         kk = get_permk(k)
         if kk != last_kk:
-            perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1], train_aug_loader)
+            perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1], train_aug_loader, device)
             last_kk = kk
 
         if k > 0:
@@ -63,7 +62,7 @@ def permute_network(train_aug_loader, source_network, premuted_network):
     return premuted_network
 
 
-def add_junctures(net):
+def add_junctures(net, device):
     blocks = get_blocks(net)[1:]
     for block in blocks:
         if type(block.shortcut) != nn.Sequential or len(block.shortcut) > 0:
@@ -72,7 +71,7 @@ def add_junctures(net):
         shortcut = nn.Conv2d(planes, planes, kernel_size=1, stride=1, padding=0, bias=False)
         shortcut.weight.data[:, :, 0, 0] = torch.eye(planes)
         block.shortcut = shortcut
-    return net.cuda().eval()
+    return net.to(device).eval()
 
 
 def remove_junctures(net):
@@ -89,16 +88,16 @@ def get_blocks(net):
                          *net.layer1, *net.layer2, *net.layer3, *net.layer4)
 
 
-def get_layer_perm(net0, net1, train_dataloader):
+def get_layer_perm(net0, net1, train_dataloader, device):
     """
     returns the channel-permutation to make layer1's activations most closely
     match layer0's.
     """
-    corr_mtx = run_corr_matrix(net0, net1, train_dataloader)
+    corr_mtx = run_corr_matrix(net0, net1, train_dataloader, device)
     return compute_permutation_matrix(corr_mtx)
 
 
-def run_corr_matrix(net0, net1, loader, epochs=1):
+def run_corr_matrix(net0, net1, loader, device, epochs=1):
     """
     given two networks net0, net1 which each output a feature map of shape NxCxWxH
     this will reshape both outputs to (N*W*H)xC
@@ -111,7 +110,7 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
         net1.eval()
         for _ in range(epochs):
             for images, _ in loader:
-                img_t = images.float().cuda()
+                img_t = images.float().to(device)
                 out0 = net0(img_t)
                 out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
                 out0 = out0.reshape(-1, out0.shape[2]).double()
@@ -136,7 +135,7 @@ def run_corr_matrix(net0, net1, loader, epochs=1):
 
         for _ in range(epochs):
             for images, _ in loader:
-                img_t = images.float().cuda()
+                img_t = images.float().to(device)
                 out0 = net0(img_t)
                 out0 = out0.reshape(out0.shape[0], out0.shape[1], -1).permute(0, 2, 1)
                 out0 = out0.reshape(-1, out0.shape[2]).double()
@@ -197,15 +196,15 @@ def permute_output(perm_map, conv, bn=None):
         w.data = w[perm_map]
 
 
-def mix_weights(model, alpha, model0, model1):
+def mix_weights(model, alpha, model0, model1, device):
     state_dict0 = model0.state_dict()
     state_dict1 = model1.state_dict()
-    sd_alpha = {k: (1 - alpha) * state_dict0[k].cuda() + alpha * state_dict1[k].cuda()
+    sd_alpha = {k: (1 - alpha) * state_dict0[k].to(device) + alpha * state_dict1[k].to(device)
                 for k in state_dict0.keys()}
     model.load_state_dict(sd_alpha)
 
 
-def reset_bn_stats(model, loader, epochs=1):
+def reset_bn_stats(model, loader, device, epochs=1):
     """
     use the train loader with data augmentation as this gives better results
     """
@@ -217,6 +216,6 @@ def reset_bn_stats(model, loader, epochs=1):
     # run a single train epoch with augmentations to recalc stats
     model.train()
     for _ in range(epochs):
-        with torch.no_grad(), autocast():
+        with torch.no_grad():
             for images, _ in loader:
-                output = model(images.cuda())
+                output = model(images.to(device))
