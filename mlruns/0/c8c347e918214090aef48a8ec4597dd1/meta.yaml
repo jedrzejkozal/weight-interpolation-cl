@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/c8c347e918214090aef48a8ec4597dd1/artifacts
+end_time: 1681326644662
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: c8c347e918214090aef48a8ec4597dd1
+run_name: er 20 tasks
+run_uuid: c8c347e918214090aef48a8ec4597dd1
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681324090231
+status: 3
+tags: []
+user_id: jkozal
