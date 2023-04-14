@@ -38,10 +38,20 @@
 
 # sleep 3h
 # python main.py --model="clewim" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --run_name="clewi with er no first task"
-python main.py --model="clewi_er_ace" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --run_name="clewi with er ace no first task"
-python main.py --model="clewi_der" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --run_name="clewi with der no first task"
-python main.py --model="clewi_derpp" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --run_name="clewi with derpp no first task"
+# python main.py --model="clewi_er_ace" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --run_name="clewi with er ace no first task"
+# python main.py --model="clewi_der" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --run_name="clewi with der no first task"
+# python main.py --model="clewi_derpp" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --run_name="clewi with derpp no first task"
 python main.py --model="clewi_xder" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --run_name="clewi with xder no first task"
+
+# python main.py --model="clewi_er_ace" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --interpolation_alpha=0.4 --run_name="clewi with er ace no first task interpolation_alpha=0.4"
+# python main.py --model="clewi_der" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --interpolation_alpha=0.4 --run_name="clewi with der no first task interpolation_alpha=0.4"
+# python main.py --model="clewi_derpp" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --interpolation_alpha=0.4 --run_name="clewi with derpp no first task interpolation_alpha=0.4"
+python main.py --model="clewi_xder" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --interpolation_alpha=0.4 --run_name="clewi with xder no first task interpolation_alpha=0.4"
+
+python main.py --model="clewi_er_ace" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --interpolation_alpha=0.3 --run_name="clewi with er ace no first task interpolation_alpha=0.3"
+python main.py --model="clewi_der" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --interpolation_alpha=0.3 --run_name="clewi with der no first task interpolation_alpha=0.3"
+python main.py --model="clewi_derpp" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --interpolation_alpha=0.3 --run_name="clewi with derpp no first task interpolation_alpha=0.3"
+python main.py --model="clewi_xder" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --beta=0.9 --interpolation_alpha=0.3 --run_name="clewi with xder no first task interpolation_alpha=0.3"
 
 # python main.py --model="clewim" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --interpolation_alpha=0.35 --run_name="clewi with er no first task interpolation_alpha 0.35"
 # python main.py --model="clewim" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --interpolation_alpha=0.4 --run_name="clewi with er no first task interpolation_alpha 0.4"

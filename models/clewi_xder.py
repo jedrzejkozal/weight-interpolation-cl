@@ -34,3 +34,7 @@ class ClewiXDer(ClewiMixin, XDer):
         super().__init__(backbone, loss, args, transform)
         self.interpolation_alpha = args.interpolation_alpha
         self.old_model = self.deepcopy_model(backbone)
+
+    def end_task(self, dataset):
+        XDer.end_task(self, dataset)
+        ClewiMixin.end_task(self, dataset)
