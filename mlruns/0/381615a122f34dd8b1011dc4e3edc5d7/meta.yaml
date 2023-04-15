@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/381615a122f34dd8b1011dc4e3edc5d7/artifacts
+end_time: 1681560445620
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 381615a122f34dd8b1011dc4e3edc5d7
+run_name: clewi more epochs batchnorm only
+run_uuid: 381615a122f34dd8b1011dc4e3edc5d7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681557608104
+status: 3
+tags: []
+user_id: jkozal
