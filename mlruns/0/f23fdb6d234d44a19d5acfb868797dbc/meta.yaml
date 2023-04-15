@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/f23fdb6d234d44a19d5acfb868797dbc/artifacts
+end_time: 1681488615298
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f23fdb6d234d44a19d5acfb868797dbc
+run_name: xder 20 tasks
+run_uuid: f23fdb6d234d44a19d5acfb868797dbc
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681470910258
+status: 3
+tags: []
+user_id: jedrzejkozal
