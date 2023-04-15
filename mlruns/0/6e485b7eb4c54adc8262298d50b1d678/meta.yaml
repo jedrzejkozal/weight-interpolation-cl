@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/6e485b7eb4c54adc8262298d50b1d678/artifacts
+end_time: 1681551027766
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6e485b7eb4c54adc8262298d50b1d678
+run_name: clewi more epochs in interpolation
+run_uuid: 6e485b7eb4c54adc8262298d50b1d678
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681547973782
+status: 3
+tags: []
+user_id: jkozal
