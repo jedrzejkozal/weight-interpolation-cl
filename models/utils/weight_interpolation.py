@@ -5,19 +5,19 @@ import scipy.optimize
 import numpy as np
 
 
-def interpolate(sournce_network, premutation_nework, train_loader, device, alpha=0.5):
+def interpolate(sournce_network, premutation_nework, train_loader, device, alpha=0.5, permuation_epochs=1, batchnorm_epochs=1):
     sournce_network = add_junctures(sournce_network, device)
     premutation_nework = add_junctures(premutation_nework, device)
-    premutation_nework = permute_network(train_loader, sournce_network, premutation_nework, device)
+    premutation_nework = permute_network(train_loader, sournce_network, premutation_nework, device, epochs=permuation_epochs)
 
     mix_weights(premutation_nework, alpha, sournce_network, premutation_nework, device)
-    reset_bn_stats(premutation_nework, train_loader, device)
+    reset_bn_stats(premutation_nework, train_loader, device, epochs=batchnorm_epochs)
     sournce_network = remove_junctures(sournce_network)
     premutation_nework = remove_junctures(premutation_nework)
     return premutation_nework
 
 
-def permute_network(train_aug_loader, source_network, premuted_network, device):
+def permute_network(train_aug_loader, source_network, premuted_network, device, epochs=1):
     blocks0 = get_blocks(source_network)
     blocks1 = get_blocks(premuted_network)
 
@@ -26,7 +26,7 @@ def permute_network(train_aug_loader, source_network, premuted_network, device):
         block1 = blocks1[k]
         subnet0 = nn.Sequential(blocks0[:k], block0.conv1, block0.bn1, nn.ReLU(inplace=True))
         subnet1 = nn.Sequential(blocks1[:k], block1.conv1, block1.bn1, nn.ReLU(inplace=True))
-        perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader, device)
+        perm_map = get_layer_perm(subnet0, subnet1, train_aug_loader, device, epochs=epochs)
         permute_output(perm_map, block1.conv1, block1.bn1)
         permute_input(perm_map, block1.conv2)
 
@@ -36,7 +36,7 @@ def permute_network(train_aug_loader, source_network, premuted_network, device):
     for k in range(len(blocks1)):
         kk = get_permk(k)
         if kk != last_kk:
-            perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1], train_aug_loader, device)
+            perm_map = get_layer_perm(blocks0[:kk+1], blocks1[:kk+1], train_aug_loader, device, epochs=epochs)
             last_kk = kk
 
         if k > 0:
@@ -88,12 +88,12 @@ def get_blocks(net):
                          *net.layer1, *net.layer2, *net.layer3, *net.layer4)
 
 
-def get_layer_perm(net0, net1, train_dataloader, device):
+def get_layer_perm(net0, net1, train_dataloader, device, epochs=1):
     """
     returns the channel-permutation to make layer1's activations most closely
     match layer0's.
     """
-    corr_mtx = run_corr_matrix(net0, net1, train_dataloader, device)
+    corr_mtx = run_corr_matrix(net0, net1, train_dataloader, device, epochs=epochs)
     return compute_permutation_matrix(corr_mtx)
 
 

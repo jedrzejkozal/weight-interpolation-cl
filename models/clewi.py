@@ -14,6 +14,8 @@ def get_parser() -> ArgumentParser:
     parser = ArgumentParser(description='Continual Learning with Weight Interpolation')
     parser.add_argument('--interpolation_alpha', type=float, default=0.5,
                         help='interpolation alpha')
+    parser.add_argument('--permuation_epochs', type=int, default=1)
+    parser.add_argument('--batchnorm_epochs', type=int, default=1)
 
     add_management_args(parser)
     add_experiment_args(parser)
@@ -63,7 +65,8 @@ class Clewi(ContinualModel):
 
         # self.interpolation_plot(dataset, buffer_dataloder)
 
-        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device, alpha=self.interpolation_alpha)
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
+                                     alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
         # self.train_model_after_interpolation(buffer_dataloder)
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
