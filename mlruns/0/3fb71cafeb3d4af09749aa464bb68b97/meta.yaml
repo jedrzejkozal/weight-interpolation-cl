@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/3fb71cafeb3d4af09749aa464bb68b97/artifacts
+end_time: 1681594043253
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3fb71cafeb3d4af09749aa464bb68b97
+run_name: clewi interpolation alpha schedule
+run_uuid: 3fb71cafeb3d4af09749aa464bb68b97
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681591247140
+status: 3
+tags: []
+user_id: jkozal

@@ -31,7 +31,9 @@ class Clewi(ContinualModel):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
         self.old_model = self.deepcopy_model(backbone)
-        self.interpolation_alpha = args.interpolation_alpha
+        self.alphas_iter = iter(list(np.linspace(0.3, 0.4, 4)) + list(np.linspace(0.4, 0.45, 4)) + list(np.linspace(0.4, 0.5, args.n_tasks - 8)))
+        self.interpolation_alpha = 0.3
+
         self.first_task = True
 
     def observe(self, inputs, labels, not_aug_inputs):
@@ -65,6 +67,7 @@ class Clewi(ContinualModel):
 
         # self.interpolation_plot(dataset, buffer_dataloder)
 
+        self.interpolation_alpha = next(self.alphas_iter)
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
                                      alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
         # self.train_model_after_interpolation(buffer_dataloder)
