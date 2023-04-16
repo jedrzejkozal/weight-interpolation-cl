@@ -31,7 +31,7 @@ class Clewi(ContinualModel):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
         self.old_model = self.deepcopy_model(backbone)
-        self.alphas_iter = iter(list(np.linspace(0.3, 0.4, 4)) + list(np.linspace(0.4, 0.45, 4)) + list(np.linspace(0.4, 0.5, args.n_tasks - 8)))
+        self.alphas_iter = iter(list(np.linspace(0.3, 0.5, args.n_tasks)))  # iter(list(np.linspace(0.3, 0.4, 4)) + list(np.linspace(0.4, 0.45, 4)) + list(np.linspace(0.4, 0.5, args.n_tasks - 8)))
         self.interpolation_alpha = 0.3
 
         self.first_task = True
@@ -57,10 +57,10 @@ class Clewi(ContinualModel):
         return loss.item()
 
     def end_task(self, dataset):
-        # if self.first_task:
-        #     self.first_task = False
-        #     self.old_model = self.deepcopy_model(self.net)
-        #     return
+        if self.first_task:
+            self.first_task = False
+            self.old_model = self.deepcopy_model(self.net)
+            return
         buffer_dataloder = self.get_buffer_dataloder()
         # torch.save(self.old_model, 'old_model.pt')
         # torch.save(self.net, 'net.pt')
