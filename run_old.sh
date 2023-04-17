@@ -36,7 +36,6 @@
 # python main.py --model="der" --load_best_args --dataset="seq-tinyimg" --buffer_size=500 --seed=46 --n_tasks=20 --run_name="der run 4 20 tasks" --experiment_name="seq-tinyimagenet"
 # python main.py --model="der" --load_best_args --dataset="seq-tinyimg" --buffer_size=500 --seed=47 --n_tasks=20 --run_name="der run 5 20 tasks" --experiment_name="seq-tinyimagenet"
 
-# sleep 3h
 # python main.py --model="clewim" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --run_name="clewi with er no first task"
 # python main.py --model="clewi_er_ace" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --run_name="clewi with er ace no first task"
 # python main.py --model="clewi_der" --dataset="seq-cifar100" --buffer_size=500 --seed=42 --n_tasks=20 --lr=0.1 --alpha=0.1 --run_name="clewi with der no first task"
