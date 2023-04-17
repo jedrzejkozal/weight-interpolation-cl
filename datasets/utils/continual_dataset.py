@@ -105,9 +105,7 @@ class ContinualDataset:
         """
         train_labels = train_dataset.targets
         classes = np.unique(train_labels)
-        print(classes)
         new_classes = np.random.RandomState(seed=self.args.seed).permutation(classes)
-        print(new_classes)
 
         train_dataset.targets = [new_classes[c] for c in train_dataset.targets]
         test_dataset.targets = [new_classes[c] for c in test_dataset.targets]
