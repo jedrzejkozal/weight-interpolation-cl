@@ -143,11 +143,6 @@ def train(model: ContinualModel, dataset: ContinualDataset,
             if scheduler is not None:
                 scheduler.step()
 
-            if epoch % 50 == 0:
-                print("changing cheduler")
-                scheduler = dataset.get_scheduler(model, args)
-                # print(model.n_updates)
-
         if hasattr(model, 'end_task'):
             model.end_task(dataset)
 
