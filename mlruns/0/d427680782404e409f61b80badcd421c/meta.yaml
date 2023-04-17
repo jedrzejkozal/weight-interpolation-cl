@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/d427680782404e409f61b80badcd421c/artifacts
+end_time: 1681642252180
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: d427680782404e409f61b80badcd421c
+run_name: clewi train with more interpolation and higher interpolation alpha
+run_uuid: d427680782404e409f61b80badcd421c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681642252156
+status: 3
+tags: []
+user_id: jkozal
