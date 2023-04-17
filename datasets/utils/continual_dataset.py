@@ -99,6 +99,19 @@ class ContinualDataset:
     def get_minibatch_size():
         raise NotImplementedError
 
+    def permute_tasks(self, train_dataset, test_dataset) -> None:
+        """
+        Changes the order of classes in the dataset, so with different seed data in each task is different
+        """
+        train_labels = train_dataset.targets
+        classes = np.unique(train_labels)
+        print(classes)
+        new_classes = np.random.RandomState(seed=self.args.seed).permutation(classes)
+        print(new_classes)
+
+        train_dataset.targets = [new_classes[c] for c in train_dataset.targets]
+        test_dataset.targets = [new_classes[c] for c in test_dataset.targets]
+
 
 def store_masked_loaders(train_dataset: Dataset, test_dataset: Dataset,
                          setting: ContinualDataset) -> Tuple[DataLoader, DataLoader]:

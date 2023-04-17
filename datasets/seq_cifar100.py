@@ -99,6 +99,7 @@ class SequentialCIFAR100(ContinualDataset):
             test_dataset = TCIFAR100(base_path() + 'CIFAR100', train=False,
                                      download=True, transform=test_transform)
 
+        self.permute_tasks(train_dataset, test_dataset)
         train, test = store_masked_loaders(train_dataset, test_dataset, self)
 
         return train, test
