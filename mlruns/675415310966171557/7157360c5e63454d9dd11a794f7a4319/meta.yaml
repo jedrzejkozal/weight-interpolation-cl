@@ -1,7 +1,7 @@
 artifact_uri: mlflow-artifacts:/0/7157360c5e63454d9dd11a794f7a4319/artifacts
 end_time: 1681775505135
 entry_point_name: ''
-experiment_id: '0'
+experiment_id: '675415310966171557'
 lifecycle_stage: active
 run_id: 7157360c5e63454d9dd11a794f7a4319
 run_name: clewi seed 43 20 tasks
