@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/4de10351d0294664a855078fffa0d392/artifacts
+end_time: 1681852371221
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 4de10351d0294664a855078fffa0d392
+run_name: bic seed 43 20 tasks
+run_uuid: 4de10351d0294664a855078fffa0d392
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681848229733
+status: 3
+tags: []
+user_id: jedrzejkozal
