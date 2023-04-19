@@ -14,9 +14,8 @@ from utils.metrics import backward_transfer, forward_transfer, forgetting
 
 class MLFlowLogger(utils.loggers.Logger):
     def __init__(self, setting_str: str, dataset_str: str, model_str: str,
-                 run_id=None, experiment_name='Default', nested=False, run_name=None):
+                 experiment_name='Default', parent_run_id=None, run_name=None):
         super().__init__(setting_str, dataset_str, model_str)
-        self.run_id = run_id
         self.experiment_name = experiment_name
         client = mlflow.tracking.MlflowClient()
         self.experiment = client.get_experiment_by_name(experiment_name)
@@ -26,12 +25,23 @@ class MLFlowLogger(utils.loggers.Logger):
             id = mlflow.create_experiment(experiment_name, artifact_location=str(artifact_location))
             self.experiment = client.get_experiment(id)
         self.experiment_id = self.experiment.experiment_id
-        self.nested = nested
+        self.parent_run_id = parent_run_id
+        self.run_name = run_name
+        self.run_id = None
 
-        if self.run_id == None:
-            with mlflow.start_run(experiment_id=self.experiment_id, run_name=run_name, nested=nested):
-                active_run = mlflow.active_run()
-                self.run_id = active_run.info.run_id
+        def create_run():
+            active_run = mlflow.active_run()
+            self.run_id = active_run.info.run_id
+        self.activate_run(create_run)
+
+    def activate_run(self, function=None):
+        if self.parent_run_id != None:
+            with mlflow.start_run(run_id=self.parent_run_id):
+                with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, run_name=self.run_name, nested=True):
+                    function()
+        else:
+            with mlflow.start_run(un_id=self.run_id, experiment_id=self.experiment_id, run_name=self.run_name, nested=False):
+                function()
 
     def find_last_exp_id(self, client):
         last_id = -1
@@ -92,12 +102,10 @@ class MLFlowLogger(utils.loggers.Logger):
         self.log_metric('forgetting_mask_classes', self.forgetting_mask_classes)
 
     def log_metric(self, metric_name, value):
-        with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-            mlflow.log_metric(metric_name, value)
+        self.activate_run(lambda: mlflow.log_metric(metric_name, value))
 
     def log_args(self, args: dict):
-        with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-            mlflow.log_params(args)
+        self.activate_run(lambda: mlflow.log_params(args))
 
     def log_artifact(self, artifact_path, name):
         with SwapArtifactUri(self.experiment_id, self.run_id):
@@ -105,16 +113,14 @@ class MLFlowLogger(utils.loggers.Logger):
             if active_run is not None and active_run.info.run_id == self.run_id:
                 mlflow.log_artifact(artifact_path, name)
             else:
-                with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-                    mlflow.log_artifact(artifact_path, name)
+                self.activate_run(lambda: mlflow.log_artifact(artifact_path, name))
 
     def log_model(self, model: torch.nn.Module, weight_name):
         with SwapArtifactUri(self.experiment_id, self.run_id):
             with tempfile.TemporaryDirectory() as tmpdir:
                 model_path = pathlib.Path(tmpdir) / f'{weight_name}.pt'
                 torch.save(model, model_path)
-                with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, nested=self.nested):
-                    mlflow.log_artifact(model_path, weight_name)
+                self.activate_run(lambda: mlflow.log_artifact(model_path, weight_name))
 
     def log_avrg_accuracy(self):
         client = mlflow.tracking.MlflowClient()

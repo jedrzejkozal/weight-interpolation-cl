@@ -41,6 +41,12 @@ def lecun_fix():
 
 
 def parse_args():
+    parser, args = parse_known_args()
+    args = parse_model_args(parser, args)
+    return args
+
+
+def parse_known_args():
     parser = ArgumentParser(description='mammoth', allow_abbrev=False)
     parser.add_argument('--model', type=str, required=True,
                         help='Model name.', choices=get_all_models())
@@ -50,6 +56,11 @@ def parse_args():
     torch.set_num_threads(4)
     add_management_args(parser)
     args = parser.parse_known_args()[0]
+
+    return parser, args
+
+
+def parse_model_args(parser, args):
     mod = importlib.import_module('models.' + args.model)
 
     if args.load_best_args:
@@ -81,15 +92,12 @@ def parse_args():
         parser = get_parser()
         args = parser.parse_args()
 
-    if args.seed is not None:
-        set_random_seed(args.seed)
-
     return args
 
 
-def main():
-    lecun_fix()
-    args = parse_args()
+def run_experiment(args):
+    if args.seed is not None:
+        set_random_seed(args.seed)
 
     os.putenv("MKL_SERVICE_FORCE_INTEL", "1")
     os.putenv("NPY_MKL_FORCE_INTEL", "1")
@@ -130,6 +138,12 @@ def main():
     else:
         assert not hasattr(model, 'end_task') or model.NAME == 'joint_gcl'
         ctrain(args)
+
+
+def main():
+    lecun_fix()
+    args = parse_args()
+    run_experiment(args)
 
 
 if __name__ == '__main__':

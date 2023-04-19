@@ -54,7 +54,7 @@ def add_management_args(parser: ArgumentParser) -> None:
     parser.add_argument('--debug_mode', type=int, default=0, help='Run only a few forward steps per epoch')
 
     parser.add_argument('--experiment_name', type=str, default='Default')
-    parser.add_argument('--nested_experiment', action='store_true')
+    parser.add_argument('--parent_run_id', default=None, type=str, help='mlflow parent run id, used for creating nested run in mlflow logger')
     parser.add_argument('--run_name', type=str, default=None)
     parser.add_argument('--n_tasks', type=int, default=10)
 
