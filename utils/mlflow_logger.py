@@ -40,7 +40,7 @@ class MLFlowLogger(utils.loggers.Logger):
                 with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, run_name=self.run_name, nested=True):
                     function()
         else:
-            with mlflow.start_run(un_id=self.run_id, experiment_id=self.experiment_id, run_name=self.run_name, nested=False):
+            with mlflow.start_run(run_id=self.run_id, experiment_id=self.experiment_id, run_name=self.run_name, nested=False):
                 function()
 
     def find_last_exp_id(self, client):
