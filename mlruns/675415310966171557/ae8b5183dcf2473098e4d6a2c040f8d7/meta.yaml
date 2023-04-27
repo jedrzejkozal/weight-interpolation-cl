@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/ae8b5183dcf2473098e4d6a2c040f8d7/artifacts
+end_time: 1681997434587
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: ae8b5183dcf2473098e4d6a2c040f8d7
+run_name: derpp seed 43 10 tasks
+run_uuid: ae8b5183dcf2473098e4d6a2c040f8d7
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1681991374917
+status: 3
+tags: []
+user_id: jedrzejkozal
