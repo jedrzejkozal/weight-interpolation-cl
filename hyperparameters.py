@@ -1,18 +1,24 @@
 import itertools
-import mlflow
+import math
+import random
 import subprocess
+
+import mlflow
 
 from main import *
 
 
 def main():
     # all values for arguements defeined in model
-    hyperparameters_invervals = {
+    hyperparameters_intervals = {
         'ewc_on': {
             'lr': (0.1, 0.01, 0.001),
             'e_lambda': (100.0, 10.0, 1.0, 0.0, 0.1, 0.01),
             'gamma': (0.0, 0.2, 0.4, 0.6, 0.8, 0.9),
         },
+        'er': {
+            'lr': (0.1, 0.01, 0.001),
+        }
     }
 
     lecun_fix()
@@ -31,8 +37,8 @@ def main():
     args = parser.parse_args()
     # args = parse_args()
 
-    assert args.model in hyperparameters_invervals.keys(), f"model {args.model} has undefined hyperparameters search intervals"
-    search_space = hyperparameters_invervals[args.model]
+    assert args.model in hyperparameters_intervals.keys(), f"model {args.model} has undefined hyperparameters search intervals"
+    search_space = hyperparameters_intervals[args.model]
     assert args.experiment_name != 'Default'
 
     args.seed = 3141592
@@ -49,7 +55,8 @@ def main():
     with mlflow.start_run(experiment_id=experiment_id, run_name=run_name) as active_run:
         parrent_run_id = active_run.info.run_id
 
-    grid_search(args, search_space, parrent_run_id)
+    # grid_search(args, search_space, parrent_run_id)
+    random_search(args, search_space, parrent_run_id, n_trials=20)
 
     n_repeats = 5
     args = select_best_paramters(args, client, experiment_id, parrent_run_id)
@@ -65,22 +72,59 @@ def main():
 
 def grid_search(args, search_space: dict, parent_run_id: str):
     names = []
-    intervals = []
-    for hyperparam_name, interval in search_space.items():
+    values = []
+    for hyperparam_name, hyperparam_values in search_space.items():
         names.append(hyperparam_name)
-        intervals.append(interval)
+        values.append(hyperparam_values)
 
-    grid = itertools.product(*intervals)
-    args.parent_run_id = parent_run_id
-
+    grid = itertools.product(*values)
     for hyperparm_values in grid:
-        run_name = f'{args.model}'
-        for name, value in zip(names, hyperparm_values):
-            setattr(args, name, value)
-            run_name += f' {name}={value}'
-        args.run_name = run_name
-
+        set_args(args, names, hyperparm_values, parent_run_id)
         run_training(args)
+
+
+def random_search(args, search_space: dict, parent_run_id: str, n_trials=20):
+    names = []
+    intervals = []
+    for hyperparam_name, hyperparam_values in search_space.items():
+        names.append(hyperparam_name)
+        hyper_max = max(hyperparam_values)
+        hyper_min = min(hyperparam_values)
+        intervals.append((hyper_min, hyper_max))
+
+    for _ in range(n_trials):
+        hyperparam_values = []
+        for (h_min, h_max) in intervals:
+            if h_min == 0:
+                use_log_scale = h_max >= 1
+            else:
+                use_log_scale = h_max / h_min >= 10
+
+            if use_log_scale:
+                if h_min == 0:
+                    h_min += 1e-08
+                if h_max == 0:
+                    h_max -= 1e-08
+
+                h_min_log = math.log10(h_min)
+                h_max_log = math.log10(h_max)
+                power = random.uniform(h_min_log, h_max_log)
+                value = 10 ** power
+            else:
+                value = random.uniform(h_min, h_max)
+            hyperparam_values.append(value)
+
+        set_args(args, names, hyperparam_values, parent_run_id)
+        run_training(args)
+
+
+def set_args(args, names, hyperparm_values, parent_run_id):
+    run_name = f'{args.model}'
+    for name, value in zip(names, hyperparm_values):
+        setattr(args, name, value)
+        run_name += f' {name}={value}'
+    args.run_name = run_name
+    args.parent_run_id = parent_run_id
 
 
 def run_training(args):
