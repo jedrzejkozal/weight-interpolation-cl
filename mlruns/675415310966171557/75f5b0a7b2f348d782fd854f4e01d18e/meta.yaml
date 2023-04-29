@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/75f5b0a7b2f348d782fd854f4e01d18e/artifacts
+end_time: 1682653266603
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 75f5b0a7b2f348d782fd854f4e01d18e
+run_name: ewc_on lr=0.0012039928482766255 e_lambda=0.8554835637526365 gamma=0.24571603062451466
+run_uuid: 75f5b0a7b2f348d782fd854f4e01d18e
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1682648259428
+status: 3
+tags: []
+user_id: jedrzejkozal
