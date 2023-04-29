@@ -28,6 +28,7 @@ class MLFlowLogger(utils.loggers.Logger):
         self.parent_run_id = parent_run_id
         self.run_name = run_name
         self.run_id = None
+        self.metrics_steps = dict()
 
         def create_run():
             active_run = mlflow.active_run()
@@ -102,7 +103,12 @@ class MLFlowLogger(utils.loggers.Logger):
         self.log_metric('forgetting_mask_classes', self.forgetting_mask_classes)
 
     def log_metric(self, metric_name, value):
-        self.activate_run(lambda: mlflow.log_metric(metric_name, value))
+        def log_value():
+            if metric_name not in self.metrics_steps:
+                self.metrics_steps[metric_name] = -1
+            self.metrics_steps[metric_name] += 1
+            mlflow.log_metric(metric_name, value, step=self.metrics_steps[metric_name])
+        self.activate_run(log_value)
 
     def log_args(self, args: dict):
         self.activate_run(lambda: mlflow.log_params(args))

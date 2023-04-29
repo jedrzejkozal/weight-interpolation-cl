@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/864eaa236c9a4591931c614a8e32feec/artifacts
+end_time: 1682639763914
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 864eaa236c9a4591931c614a8e32feec
+run_name: clewi_xder seed 43 20 tasks
+run_uuid: 864eaa236c9a4591931c614a8e32feec
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1682624543056
+status: 1
+tags: []
+user_id: jkozal
