@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/2a78b4f5a60943a7aa6d75e2a751b666/artifacts
+end_time: 1684071381437
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2a78b4f5a60943a7aa6d75e2a751b666
+run_name: clewi pseudorehersal seed 42 20 tasks
+run_uuid: 2a78b4f5a60943a7aa6d75e2a751b666
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1684070927502
+status: 3
+tags: []
+user_id: jkozal
