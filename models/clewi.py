@@ -32,8 +32,6 @@ class Clewi(ContinualModel):
         self.buffer = Buffer(self.args.buffer_size, self.device)
         self.old_model = self.deepcopy_model(backbone)
         self.interpolation_alpha = args.interpolation_alpha
-        self.interpolation_threshold = 4029
-        self.n_updates = 0
 
         self.first_task = True
 
@@ -55,19 +53,6 @@ class Clewi(ContinualModel):
         self.buffer.add_data(examples=not_aug_inputs,
                              labels=labels[:real_batch_size])
 
-        self.n_updates += 1
-        if not self.first_task and self.n_updates >= self.interpolation_threshold:
-            print('interpolate model')
-            buffer_dataloder = self.get_buffer_dataloder()
-            self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
-                                         alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
-            # self.train_model_after_interpolation(buffer_dataloder)
-            self.net = self.deepcopy_model(self.old_model)
-            self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
-            self.opt.zero_grad()
-
-            self.n_updates = 0
-
         return loss.item()
 
     def end_task(self, dataset):
@@ -75,6 +60,14 @@ class Clewi(ContinualModel):
             self.first_task = False
             self.old_model = self.deepcopy_model(self.net)
             return
+
+        buffer_dataloder = self.get_buffer_dataloder()
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
+                                     alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
+        # self.train_model_after_interpolation(buffer_dataloder)
+        self.net = self.deepcopy_model(self.old_model)
+        self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
+        self.opt.zero_grad()
 
         # torch.save(self.old_model, 'old_model.pt')
         # torch.save(self.net, 'net.pt')

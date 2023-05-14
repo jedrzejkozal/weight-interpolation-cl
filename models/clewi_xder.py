@@ -36,5 +36,5 @@ class ClewiXDer(ClewiMixin, XDer):
         self.old_model = self.deepcopy_model(backbone)
 
     def end_task(self, dataset):
-        XDer.end_task(self, dataset)
         ClewiMixin.end_task(self, dataset)
+        XDer.end_task(self, dataset)
