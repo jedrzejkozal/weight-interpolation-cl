@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/fb539c6e154d4b889330ddd729c5036d/artifacts
+end_time: 1682924497506
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: fb539c6e154d4b889330ddd729c5036d
+run_name: agem hyperparameters final
+run_uuid: fb539c6e154d4b889330ddd729c5036d
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1682893868562
+status: 3
+tags: []
+user_id: jedrzejkozal
