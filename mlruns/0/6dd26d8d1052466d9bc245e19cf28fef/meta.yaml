@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/6dd26d8d1052466d9bc245e19cf28fef/artifacts
+end_time: 1688393443943
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 6dd26d8d1052466d9bc245e19cf28fef
+run_name: clewi seed 43 20 tasks
+run_uuid: 6dd26d8d1052466d9bc245e19cf28fef
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1688390778803
+status: 3
+tags: []
+user_id: jkozal
