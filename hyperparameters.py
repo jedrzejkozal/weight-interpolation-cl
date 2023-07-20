@@ -41,6 +41,7 @@ def main():
         },
         'mir': {
             'lr': ((0.1, 0.01, 0.001), float),
+            'minibatch_size': ((64,), int)
         },
     }
 
@@ -57,8 +58,6 @@ def main():
     parser.add_argument('--n_epochs', type=int, required=True,
                         help='Number of epochs to train for in each exprience.')
     parser.add_argument('--batch_size', type=int,
-                        help='Batch size.')
-    parser.add_argument('--minibatch_size', type=int,
                         help='Batch size.')
 
     args = parser.parse_args()
