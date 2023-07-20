@@ -2,6 +2,7 @@
 
 # training with best hyperparameters known (from previous experiments)
 for N_TASKS in 20 10 5
+do
     for SEED in 43 44 45 46 47
     do 
         # no best args
@@ -33,6 +34,7 @@ done
 
 # hyperparameters tuning
 for N_TASKS in 20 10 5
+do
     python hyperparameters.py --model="joint" --dataset="seq-cifar100" --n_tasks=$N_TASKS --experiment_name="seq-cifar100" --n_epochs=50 --batch_size=32
     python hyperparameters.py --model="sgd" --dataset="seq-cifar100" --n_tasks=$N_TASKS --experiment_name="seq-cifar100" --n_epochs=50 --batch_size=32
     # python hyperparameters.py --model="mer" --dataset="seq-cifar100" --n_tasks=$N_TASKS --experiment_name="seq-cifar100" --buffer_size=500 --n_epochs=50 --batch_size=1
