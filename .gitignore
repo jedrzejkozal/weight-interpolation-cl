@@ -1,3 +1,4 @@
 *.pth.tar
 *.pt
 __pycache__/
+.vscode/

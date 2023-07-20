@@ -17,6 +17,8 @@ def main():
     utils.seed_everything(42)
 
     model0 = resnet18()
+    args.weights1_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/336b81ee3fca45d1a12eec09736dae39/artifacts/net_model_task_1/net.pt'
+    args.weights2_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/336b81ee3fca45d1a12eec09736dae39/artifacts/old_model_task_1/old_model.pt'
     utils.load_model(model0, args.weights1_path)
     model1 = resnet18()
     utils.load_model(model1, args.weights2_path)
@@ -46,14 +48,35 @@ def parse_args():
 def interpolate(sournce_network, premutation_nework, train_loader, test_loader, alpha=0.5):
     sournce_network = add_junctures(sournce_network)
     premutation_nework = add_junctures(premutation_nework)
+    print('before weight permutation')
+    weights_distance(sournce_network, premutation_nework)
     premutation_nework = permute_network(train_loader, test_loader, sournce_network, premutation_nework)
+    print('after weight permutation')
+    weights_distance(sournce_network, premutation_nework)
 
     mix_weights(premutation_nework, alpha, sournce_network, premutation_nework)
     reset_bn_stats(premutation_nework, train_loader)
     sournce_network = remove_junctures(sournce_network)
     premutation_nework = remove_junctures(premutation_nework)
     test_acc, _ = evaluate(premutation_nework, test_loader)
+    print('after weight interpolation')
+    weights_distance(sournce_network, premutation_nework)
+
     print('test_acc = ', test_acc)
+
+
+@torch.no_grad()
+def weights_distance(model0, model1):
+    model0_params_vec = []
+    model1_params_vec = []
+    for model0_params, model1_params in zip(model0.parameters(), model1.parameters()):
+        model0_params_vec.append(model0_params.flatten())
+        model1_params_vec.append(model1_params.flatten())
+    model0_params_vec = torch.cat(model0_params_vec)
+    model1_params_vec = torch.cat(model1_params_vec)
+
+    weight_dist = torch.norm(model0_params_vec - model1_params_vec, p=2) ** 2
+    print(weight_dist)
 
 
 def permute_network(train_aug_loader, test_loader, source_network, premuted_network):

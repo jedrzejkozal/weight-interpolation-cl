@@ -61,6 +61,9 @@ class Clewi(ContinualModel):
             self.old_model = self.deepcopy_model(self.net)
             return
 
+        torch.save(self.old_model, 'old_model.pt')
+        torch.save(self.net, 'net.pt')
+
         buffer_dataloder = self.get_buffer_dataloder()
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
                                      alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
@@ -68,9 +71,6 @@ class Clewi(ContinualModel):
         self.net = self.deepcopy_model(self.old_model)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
-
-        # torch.save(self.old_model, 'old_model.pt')
-        # torch.save(self.net, 'net.pt')
 
         # self.interpolation_plot(dataset, buffer_dataloder)
 

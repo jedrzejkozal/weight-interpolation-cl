@@ -97,7 +97,7 @@ def train(train_dataloader, test_dataloader, store_weights_path, load_weights_pa
 
 def resnet18():
     model = torchvision.models.resnet18(pretrained=False)
-    model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
+    # model.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1, bias=False)
     model = model.cuda().eval()
     return model
 
