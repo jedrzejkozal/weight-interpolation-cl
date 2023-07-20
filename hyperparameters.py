@@ -11,22 +11,37 @@ from main import *
 def main():
     # all values for arguements defeined in model
     hyperparameters_intervals = {
+        'joint': {
+            'lr': ((0.1, 0.01, 0.001), float),
+        },
+        'sgd': {
+            'lr': ((0.1, 0.01, 0.001), float),
+        },
         'ewc_on': {
-            'lr': (0.1, 0.01, 0.001),
-            'e_lambda': (100.0, 10.0, 1.0, 0.0, 0.1, 0.01),
-            'gamma': (0.0, 0.2, 0.4, 0.6, 0.8, 0.9),
+            'lr': ((0.1, 0.01, 0.001), float),
+            'e_lambda': ((100.0, 10.0, 1.0, 0.0, 0.1, 0.01), float),
+            'gamma': ((0.0, 0.2, 0.4, 0.6, 0.8, 0.9), float),
         },
         'er': {
-            'lr': (0.1, 0.01, 0.001),
+            'lr': ((0.1, 0.01, 0.001), float),
         },
         'si': {
-            'lr': (0.1, 0.01, 0.001),
-            'c': (100.0, 10.0, 1.0, 0.0, 0.1, 0.01),
-            'xi': (0.0, 0.0001, 1e-12),
+            'lr': ((0.1, 0.01, 0.001), float),
+            'c': ((100.0, 10.0, 1.0, 0.0, 0.1, 0.01), float),
+            'xi': ((0.0, 0.0001, 1e-12), float),
         },
         'agem': {
-            'lr': (0.1, 0.01, 0.001),
-        }
+            'lr': ((0.1, 0.01, 0.001), float),
+        },
+        'mer': {
+            'lr': ((0.1, 0.01, 0.001), float),
+            'beta': ((1.0, 0.1, 0.03, 0.01,  0.001), float),
+            'gamma': ((0.1, 0.01, 0.001), float),
+            'batch_num': ((1,), int),
+        },
+        'mir': {
+            'lr': ((0.1, 0.01, 0.001), float),
+        },
     }
 
     lecun_fix()
@@ -39,7 +54,11 @@ def main():
     if hasattr(mod, 'Buffer'):
         parser.add_argument('--buffer_size', type=int, required=True,
                             help='The size of the memory buffer.')
-    parser.add_argument('--n_epochs', type=int,
+    parser.add_argument('--n_epochs', type=int, required=True,
+                        help='Number of epochs to train for in each exprience.')
+    parser.add_argument('--batch_size', type=int,
+                        help='Batch size.')
+    parser.add_argument('--minibatch_size', type=int,
                         help='Batch size.')
 
     args = parser.parse_args()
@@ -94,15 +113,15 @@ def grid_search(args, search_space: dict, parent_run_id: str):
 def random_search(args, search_space: dict, parent_run_id: str, n_trials=20):
     names = []
     intervals = []
-    for hyperparam_name, hyperparam_values in search_space.items():
+    for hyperparam_name, (hyperparam_values, hyperparam_type) in search_space.items():
         names.append(hyperparam_name)
         hyper_max = max(hyperparam_values)
         hyper_min = min(hyperparam_values)
-        intervals.append((hyper_min, hyper_max))
+        intervals.append((hyper_min, hyper_max, hyperparam_type))
 
     for _ in range(n_trials):
         hyperparam_values = []
-        for (h_min, h_max) in intervals:
+        for (h_min, h_max, h_type) in intervals:
             if h_min == 0:
                 use_log_scale = h_max >= 1
             else:
@@ -120,14 +139,14 @@ def random_search(args, search_space: dict, parent_run_id: str, n_trials=20):
                 value = 10 ** power
             else:
                 value = random.uniform(h_min, h_max)
-            hyperparam_values.append(value)
+            hyperparam_values.append(h_type(value))
 
         set_args(args, names, hyperparam_values, parent_run_id)
         run_training(args)
 
 
 def set_args(args, names, hyperparm_values, parent_run_id):
-    run_name = f'{args.model}'
+    run_name = f'{args.model} {args.n_tasks} tasks'
     for name, value in zip(names, hyperparm_values):
         setattr(args, name, value)
         run_name += f' {name}={value}'
