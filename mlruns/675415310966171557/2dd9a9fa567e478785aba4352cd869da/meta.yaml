@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/2dd9a9fa567e478785aba4352cd869da/artifacts
+end_time: 1689881105994
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 2dd9a9fa567e478785aba4352cd869da
+run_name: joint 20 tasks lr=0.045114158834376465
+run_uuid: 2dd9a9fa567e478785aba4352cd869da
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1689878243590
+status: 3
+tags: []
+user_id: jedrzejkozal
