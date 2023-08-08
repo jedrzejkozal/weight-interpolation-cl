@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/47efd77382a54843b167c594186d936c/artifacts
+end_time: 1689966416382
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 47efd77382a54843b167c594186d936c
+run_name: mir 20 tasks lr=0.0248067138683985 minibatch_size=64
+run_uuid: 47efd77382a54843b167c594186d936c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1689959922011
+status: 3
+tags: []
+user_id: jedrzejkozal
