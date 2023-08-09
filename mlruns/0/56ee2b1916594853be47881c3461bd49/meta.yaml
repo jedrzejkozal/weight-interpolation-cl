@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/56ee2b1916594853be47881c3461bd49/artifacts
+end_time: 1691507408161
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 56ee2b1916594853be47881c3461bd49
+run_name: half data in first task derpp
+run_uuid: 56ee2b1916594853be47881c3461bd49
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1691503608835
+status: 1
+tags: []
+user_id: jkozal
