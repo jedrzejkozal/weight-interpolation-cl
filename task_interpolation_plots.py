@@ -17,13 +17,19 @@ from utils.buffer import Buffer
 def main():
     args = parse_args()
 
-    run_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/336b81ee3fca45d1a12eec09736dae39'
+    run_path = '/home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/0/b585d8b91cf64f0ea34aa1ec91b1e29d'
     artifact_path = run_path + '/artifacts/{}_task_{}/{}'
     seed_file_path = run_path + '/params/seed'
     with open(seed_file_path, 'r') as f:
         seed = f.read()
-        seed = int(seed)
+        if seed != 'None':
+            seed = int(seed)
+        else:
+            seed = 42
     args.seed = seed
+
+    if args.batch_size is None:
+        args.batch_size = 32
 
     plot(args, artifact_path, 1)
     plot(args, artifact_path, 2, evaluate_buffer=True)
@@ -34,7 +40,7 @@ def main():
 
 
 def plot(args, artifact_path, suplot_idx, evaluate_last=False, evaluate_previous=False, evaluate_buffer=False):
-    num_tasks = 20
+    num_tasks = 11
     results_acc = []
     results_loss = []
     result_labels = []
@@ -49,7 +55,7 @@ def plot(args, artifact_path, suplot_idx, evaluate_last=False, evaluate_previous
     for t in tqdm(range(num_tasks)):
         train_loader, test_loader = dataset.get_data_loaders()
 
-        if t in (1, 2, 3, 4):
+        if t in (1, 2, 3, 4, 5, 7, 10):
             buffer_dataloder = get_buffer_dataloder(buffer, dataset)
             interpolation_accs = []
             interpolation_losses = []

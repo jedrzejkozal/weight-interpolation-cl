@@ -32,10 +32,12 @@ class ContinualDataset:
         self.i = 0
         self.args = args
 
-        if self.N_CLASSES // self.N_TASKS < 2:
+        if not self.args.half_data_in_first_task and self.N_CLASSES // self.N_TASKS < 2:
             raise ValueError(f"Each task should have at least 2 classes, got N_CLASSES={self.N_CLASSES}, N_TASKS={self.N_TASKS}")
         if not all((self.NAME, self.SETTING, self.N_CLASSES, self.N_CLASSES_PER_TASK, self.N_TASKS)):
             raise NotImplementedError('The dataset must be initialized with all the required fields.')
+        if self.args.half_data_in_first_task:
+            self.N_TASKS = self.N_TASKS // 2 + 1
 
     def get_data_loaders(self) -> Tuple[DataLoader, DataLoader]:
         """
@@ -120,10 +122,14 @@ def store_masked_loaders(train_dataset: Dataset, test_dataset: Dataset,
     :param setting: continual learning setting
     :return: train and test loaders
     """
+    if setting.args.half_data_in_first_task and setting.i == 0:
+        n_classes = setting.N_CLASSES // 2
+    else:
+        n_classes = setting.N_CLASSES_PER_TASK
     train_mask = np.logical_and(np.array(train_dataset.targets) >= setting.i,
-                                np.array(train_dataset.targets) < setting.i + setting.N_CLASSES_PER_TASK)
+                                np.array(train_dataset.targets) < setting.i + n_classes)
     test_mask = np.logical_and(np.array(test_dataset.targets) >= setting.i,
-                               np.array(test_dataset.targets) < setting.i + setting.N_CLASSES_PER_TASK)
+                               np.array(test_dataset.targets) < setting.i + n_classes)
 
     train_dataset.data = train_dataset.data[train_mask]
     test_dataset.data = test_dataset.data[test_mask]
@@ -138,7 +144,7 @@ def store_masked_loaders(train_dataset: Dataset, test_dataset: Dataset,
     setting.test_loaders.append(test_loader)
     setting.train_loader = train_loader
 
-    setting.i += setting.N_CLASSES_PER_TASK
+    setting.i += n_classes
     return train_loader, test_loader
 
 
