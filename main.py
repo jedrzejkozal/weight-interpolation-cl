@@ -53,7 +53,7 @@ def parse_known_args():
     parser.add_argument('--load_best_args', action='store_true',
                         help='Loads the best arguments for each method, '
                              'dataset and memory buffer.')
-    torch.set_num_threads(4)
+    # torch.set_num_threads(4)
     add_management_args(parser)
     args = parser.parse_known_args()[0]
 

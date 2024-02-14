@@ -65,6 +65,8 @@ class Clewi(ContinualModel):
         torch.save(self.net, 'net.pt')
 
         buffer_dataloder = self.get_buffer_dataloder()
+        self.interpolation_plot(dataset, buffer_dataloder)
+
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
                                      alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
         # self.train_model_after_interpolation(buffer_dataloder)
@@ -72,18 +74,23 @@ class Clewi(ContinualModel):
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
 
-        # self.interpolation_plot(dataset, buffer_dataloder)
-
-    def interpolation_plot(self, dataset, buffer_dataloder):
+    def interpolation_plot(self, dataset, buffer_dataloader):
         alpha_grid = np.arange(0, 1.001, 0.02)
-        net = self.deepcopy_model(self.net)
-        old = self.deepcopy_model(self.old_model)
         interpolation_accs = []
         for alpha in alpha_grid:
-            new_model = interpolate(net, old, buffer_dataloder, self.device, alpha=alpha)
+            net = self.deepcopy_model(self.net)
+            old = self.deepcopy_model(self.old_model)
+            new_model = interpolate(net, old, buffer_dataloader, self.device, alpha=alpha)
             acc = evaluate(new_model, dataset, self.device)
             interpolation_accs.append(acc)
+        print('interpolation accuracies:')
         print(interpolation_accs)
+        print('old model accs:')
+        accs = evaluate(self.old_model, dataset, self.device)
+        print(accs)
+        print('new model accs:')
+        accs = evaluate(self.net, dataset, self.device)
+        print(accs)
 
     def get_buffer_dataloder(self):
         buf_inputs, buf_labels = self.buffer.get_data(len(self.buffer), transform=self.transform)
