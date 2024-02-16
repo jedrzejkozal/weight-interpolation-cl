@@ -8,6 +8,7 @@ from models.utils.continual_model import ContinualModel
 from utils.args import add_management_args, add_experiment_args, add_rehearsal_args, ArgumentParser
 from utils.buffer import Buffer
 from models.utils.weight_interpolation import *
+from models.utils.hessian_trace import hessian_trace
 
 
 def get_parser() -> ArgumentParser:
@@ -30,10 +31,11 @@ class Clewi(ContinualModel):
     def __init__(self, backbone, loss, args, transform):
         super().__init__(backbone, loss, args, transform)
         self.buffer = Buffer(self.args.buffer_size, self.device)
-        self.old_model = self.deepcopy_model(backbone)
+        self.old_model = None
         self.interpolation_alpha = args.interpolation_alpha
 
         self.first_task = True
+        self.t = 0
 
     def observe(self, inputs, labels, not_aug_inputs):
         real_batch_size = inputs.shape[0]
@@ -47,6 +49,10 @@ class Clewi(ContinualModel):
 
         outputs = self.net(inputs)
         loss = self.loss(outputs, labels)
+
+        # ht = hessian_trace(self.net, loss, self.device, 10)
+        # print(ht)
+
         loss.backward()
         self.opt.step()
 
@@ -56,6 +62,44 @@ class Clewi(ContinualModel):
         return loss.item()
 
     def end_task(self, dataset):
+        print('\n\n')
+        if self.t == 1:
+            self.interpolation_alpha = 0.2
+        elif self.t == 2:
+            self.interpolation_alpha = 0.25
+        elif self.t == 3:
+            self.interpolation_alpha = 0.3
+        elif self.t == 5:
+            self.interpolation_alpha = 0.33
+        elif self.t == 6:
+            self.interpolation_alpha = 0.35
+        elif self.t == 9:
+            self.interpolation_alpha = 0.37
+        self.t += 1
+
+        # torch.cuda.empty_cache()
+        # buffer_dataloder = self.get_buffer_dataloder(batch_size=256)
+        # for input, target in buffer_dataloder:
+        #     input = input.to(self.device)
+        #     target = target.to(self.device)
+        #     y_pred = self.net(input)
+        #     loss = self.loss(y_pred, target)
+        #     ht = hessian_trace(self.net, loss, self.device, 10)
+        #     print('new model hessian trace = ', ht)
+
+        # if self.old_model is not None:
+        #     torch.cuda.empty_cache()
+        #     for input, target in buffer_dataloder:
+        #         input = input.to(self.device)
+        #         target = target.to(self.device)
+        #         y_pred = self.old_model(input)
+        #         loss = self.loss(y_pred, target)
+        #         ht = hessian_trace(self.old_model, loss, self.device, 10)
+        #         print('old model hessian trace = ', ht)
+
+        print('end_task call')
+        print('interpolation_alpha = ', self.interpolation_alpha)
+
         if self.first_task:
             self.first_task = False
             self.old_model = self.deepcopy_model(self.net)
@@ -66,11 +110,10 @@ class Clewi(ContinualModel):
 
         buffer_dataloder = self.get_buffer_dataloder()
         self.interpolation_plot(dataset, buffer_dataloder)
-
-        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device,
-                                     alpha=self.interpolation_alpha, permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
-        # self.train_model_after_interpolation(buffer_dataloder)
+        self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device, alpha=self.interpolation_alpha,
+                                     permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
         self.net = self.deepcopy_model(self.old_model)
+        # self.train_model_after_interpolation(buffer_dataloder)
         self.opt = self.opt.__class__(self.net.parameters(), **self.opt.defaults)
         self.opt.zero_grad()
 
@@ -92,34 +135,36 @@ class Clewi(ContinualModel):
         accs = evaluate(self.net, dataset, self.device)
         print(accs)
 
-    def get_buffer_dataloder(self):
+    def get_buffer_dataloder(self, batch_size=32):
+        if batch_size is None:
+            batch_size = len(self.buffer)
         buf_inputs, buf_labels = self.buffer.get_data(len(self.buffer), transform=self.transform)
         buffer_dataset = torch.utils.data.TensorDataset(buf_inputs, buf_labels)
-        buffer_dataloder = torch.utils.data.DataLoader(buffer_dataset, batch_size=32, num_workers=0)
+        buffer_dataloder = torch.utils.data.DataLoader(buffer_dataset, batch_size=batch_size, num_workers=0)
         return buffer_dataloder
 
     @staticmethod
     def deepcopy_model(model):
         model_copy = copy.deepcopy(model)
-        model_copy.load_state_dict(model.state_dict())
+        # model_copy.load_state_dict(model.state_dict())
         return model_copy
 
     def train_model_after_interpolation(self, datalodaer):
-        self.old_model.train()
-        self.old_model = self.freeze_weights(self.old_model)
+        self.net.train()
+        self.net = self.freeze_weights(self.net)
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.old_model.parameters(), lr=0.0001)
+        optimizer = optim.Adam(self.net.parameters(), lr=0.0001)
 
         for input, target in datalodaer:
             optimizer.zero_grad()
             input = input.to(self.device)
             target = target.to(self.device)
-            y_pred = self.old_model(input)
+            y_pred = self.net(input)
             loss = criterion(y_pred, target)
             loss.backward()
             optimizer.step()
 
-        self.old_model = self.unfreeze_weights(self.old_model)
+        self.net = self.unfreeze_weights(self.net)
 
     def freeze_weights(self, model: nn.Module):
         for name, param in model.named_parameters():
@@ -133,6 +178,7 @@ class Clewi(ContinualModel):
         return model
 
 
+@torch.no_grad()
 def evaluate(network: ContinualModel, dataset, device, last=False):
     status = network.training
     network.eval()
@@ -143,14 +189,13 @@ def evaluate(network: ContinualModel, dataset, device, last=False):
             continue
         correct, total = 0.0, 0.0
         for data in test_loader:
-            with torch.no_grad():
-                inputs, labels = data
-                inputs, labels = inputs.to(device), labels.to(device)
-                outputs = network(inputs)
+            inputs, labels = data
+            inputs, labels = inputs.to(device), labels.to(device)
+            outputs = network(inputs)
 
-                _, pred = torch.max(outputs.data, 1)
-                correct += torch.sum(pred == labels).item()
-                total += labels.shape[0]
+            _, pred = torch.max(outputs.data, 1)
+            correct += torch.sum(pred == labels).item()
+            total += labels.shape[0]
 
         accs.append(correct / total * 100)
 

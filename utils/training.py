@@ -70,6 +70,8 @@ def evaluate(model: ContinualModel, dataset: ContinualDataset, last=False) -> Tu
         accs_mask_classes.append(correct_mask_classes / total * 100)
 
     model.net.train(status)
+    print('evaluation acc:')
+    print(accs)
     return accs, accs_mask_classes
 
 
