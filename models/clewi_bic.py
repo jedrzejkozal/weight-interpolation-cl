@@ -5,8 +5,7 @@ from .clewi_mixin import ClewiMixin
 
 
 def get_parser() -> ArgumentParser:
-    parser = ArgumentParser(description='A bag of tricks for '
-                                        'Continual learning.')
+    parser = ArgumentParser(description='A bag of tricks for Continual learning.')
     add_management_args(parser)
     add_experiment_args(parser)
     add_rehearsal_args(parser)
@@ -21,12 +20,14 @@ def get_parser() -> ArgumentParser:
     parser.add_argument('--wd_reg', type=float, default=None,
                         help='bias injector.')
     parser.add_argument('--distill_after_bic', type=int, default=1)
+    parser.add_argument('--interpolation_alpha', type=float, default=0.5,
+                        help='interpolation alpha')
 
     return parser
 
 
 class ClewiBiC(ClewiMixin, BiC):
-    NAME = 'clewi_xder'
+    NAME = 'clewi_bic'
     COMPATIBILITY = ['class-il', 'task-il']
 
     def __init__(self, backbone, loss, args, transform):
