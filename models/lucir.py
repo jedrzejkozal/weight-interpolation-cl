@@ -38,7 +38,7 @@ def lucir_batch_hard_triplet_loss(labels, embeddings, k, margin, num_old_classes
         assert (gt_scores.size() == max_novel_scores.size())
         assert (gt_scores.size(0) == hard_num)
         loss = nn.MarginRankingLoss(margin=margin)(gt_scores.view(-1, 1),
-                                                   max_novel_scores.view(-1, 1), torch.ones(hard_num * k).to(embeddings.device))
+                                                   max_novel_scores.view(-1, 1), torch.ones(hard_num * k).to(embeddings.device).view(-1, 1))
     else:
         loss = torch.zeros(1).to(embeddings.device)
 
