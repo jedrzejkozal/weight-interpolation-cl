@@ -16,9 +16,9 @@ def get_parser() -> ArgumentParser:
     add_management_args(parser)
     add_experiment_args(parser)
     parser.add_argument('--c', type=float, required=True,
-                        help='surrogate loss weight parameter c')
+                        help='surrogate loss weight parameter c')  # values: 0.1, 1, 10
     parser.add_argument('--xi', type=float, required=True,
-                        help='xi parameter for EWC online')
+                        help='xi parameter for EWC online')  # values: 0.001, 0.1 - it is damping parameter in denominator to avoid zero division error
 
     return parser
 
