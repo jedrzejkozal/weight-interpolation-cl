@@ -182,7 +182,7 @@ class Clewi(ContinualModel):
 def evaluate(network: ContinualModel, dataset, device, last=False):
     status = network.training
     network.eval()
-    network.cuda()
+    network.to(device)
     accs = []
     for k, test_loader in enumerate(dataset.test_loaders):
         if last and k < len(dataset.test_loaders) - 1:
