@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/7315f6bad23d4ff086f2a4340cc335db/artifacts
+end_time: 1708130159254
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 7315f6bad23d4ff086f2a4340cc335db
+run_name: agem seed 45
+run_uuid: 7315f6bad23d4ff086f2a4340cc335db
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708126881563
+status: 1
+tags: []
+user_id: jkozal
