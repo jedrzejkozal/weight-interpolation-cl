@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/96ab9dd7d484433aaacf6a8ef07939fa/artifacts
+end_time: 1708174052336
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: 96ab9dd7d484433aaacf6a8ef07939fa
+run_name: clewi agem 45
+run_uuid: 96ab9dd7d484433aaacf6a8ef07939fa
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708170480974
+status: 1
+tags: []
+user_id: jkozal

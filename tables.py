@@ -26,6 +26,7 @@ def standard_benchmarks():
             'DER': None,
             'xDER': None,
             'CLeWI': None,
+            'CLEWI+aGEM': None,
         },
         'cifar100': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
@@ -42,6 +43,7 @@ def standard_benchmarks():
             'DER': ['cd06015c7db24f308176ed5a2bb632d9', '6946c90170914e319cd522c2563995a8', '22fb4bca74c0441d8fc7314da250b4ba', 'df57945b9e304e94b6eb76c61e9778ac', '3157516230564a7887a4a4164843e12d'],
             'xDER': ['f4510037fdbf409d9a39c633d9961f33', '6279780737c64700af2dd780637300f4', '29f2ff8dba584728ac379c76e54341ab', '95383a9572b94a0180fa62dfb4bb01b6', '27b6ab60af294ce3a40ac56a33ffbe1b'],
             'CLeWI': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
+            'CLEWI+aGEM': None,
         },
         'tiny-imagenet': {
             'Joint': None,
@@ -58,6 +60,7 @@ def standard_benchmarks():
             'DER': None,
             'xDER': None,
             'CLeWI': None,
+            'CLEWI+aGEM': None,
         }
     }
 
@@ -109,7 +112,8 @@ def varing_n_tasks():
             'MIR': ['1137061e495c406fbf532ce2c0f2a9f9', 'f24325e75f314d8989ca850a9003e84a', 'a46fcde138574818920d31f9a47ab45e', 'e8ced848a66343f9b00ee16d3eea8167', '5b008bcaf06544099ebe98d67d43313f'],
             'DER': ['fd72fc1b81f84b8caeaf7acb207a2f97', 'fa27e138808e48e68f00d23c02b03507', '61dc397fe81f488e98725ee37aacaabe', '7aabdcca65a44d73a5015c15f8cabd25', '217fb45437f4425a94c70017aa26901c'],
             'xDER': ['fe27a2cd3a414b498d984ee9d6019952', '5dc8077a643a40e19b21e6337991b488', 'b5ec01658cf14b81b824ba916782c9a8', '0d7c109accc645e08f1fcd0594f4b6f1', '0f30523a31ad4bedbb831920cb9cd530'],
-            'CLeWI': ['0fa6f70ffe104b69ac8899a8ccbacb7f', 'f59a01c79b7a477e8b3866be57ee431b', 'cb276ba0a0f04fe6bfc0be5c5a526110', '4088b64d49814c848ca0f2a2d3e20f51', '75126b5c9c4645beae9204ab7d1ba667'],
+            'CLeWI+ER': ['0fa6f70ffe104b69ac8899a8ccbacb7f', 'f59a01c79b7a477e8b3866be57ee431b', 'cb276ba0a0f04fe6bfc0be5c5a526110', '4088b64d49814c848ca0f2a2d3e20f51', '75126b5c9c4645beae9204ab7d1ba667'],
+            'CLEWI+aGEM': None,
         },
         '10 tasks': {
             'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
@@ -125,7 +129,8 @@ def varing_n_tasks():
             'MIR': ['3e2d37d427e04f03855243fefdc6e1fd', '70cbe7616f7a433c891931594d5fd1af', 'e23a3a90090149ea91c1cecd4bcdc404', '20b096e7d73b46b4a5867477eef29a63', '2413e62de8bb45c3aabe0da54189ab52'],
             'DER': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27', 'ca4ab2fde2a54595b308db566fc2753a', '142ce6e4e98d4c94b050c1f1acc55601'],
             'xDER': ['f248a2f2900b4f0f9682e4629d49930b', 'e7f20f8c086243e29699307e782dd116', '66c73464bf1048cf9d0d454814f6607e', 'b9b03222b2b8470c9cc5303510dda447', '1e2937c86b54484cbf88569da7b00ba9'],
-            'CLeWI': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
+            'CLeWI+ER': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
+            'CLEWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
         },
         '20 tasks': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
@@ -141,7 +146,8 @@ def varing_n_tasks():
             'MIR': ['c73632f271924e2eaaea438cc59745bc', 'f349082c209548ac9dda7ab7fa9e0738', '404cff1ecc344b3cb9290fe1da26408e', 'a36a28e3298a49dcadf83bf946975de3', '205f73a788134b35a80590338e98a990'],
             'DER': ['cd06015c7db24f308176ed5a2bb632d9', '6946c90170914e319cd522c2563995a8', '22fb4bca74c0441d8fc7314da250b4ba', 'df57945b9e304e94b6eb76c61e9778ac', '3157516230564a7887a4a4164843e12d'],
             'xDER': ['f4510037fdbf409d9a39c633d9961f33', '6279780737c64700af2dd780637300f4', '29f2ff8dba584728ac379c76e54341ab', '95383a9572b94a0180fa62dfb4bb01b6', '27b6ab60af294ce3a40ac56a33ffbe1b'],
-            'CLeWI': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
+            'CLeWI+ER': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
+            'CLEWI+aGEM': None,
         }
     }
 
