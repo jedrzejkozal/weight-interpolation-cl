@@ -24,7 +24,8 @@ class ClewiMixin:
         torch.save(self.net, 'net.pt')
 
         buffer_dataloder = self.get_buffer_dataloder()
-        self.interpolation_plot(dataset, buffer_dataloder)
+        if self.args.debug_interpolation:
+            self.interpolation_plot(dataset, buffer_dataloder)
 
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device, alpha=self.interpolation_alpha)
         self.net = self.deepcopy_model(self.old_model)

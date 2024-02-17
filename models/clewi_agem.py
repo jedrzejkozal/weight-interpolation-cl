@@ -11,6 +11,7 @@ def get_parser() -> ArgumentParser:
     add_rehearsal_args(parser)
 
     parser.add_argument('--interpolation_alpha', type=float, default=0.5, help='interpolation alpha')
+    parser.add_argument('--debug_interpolation', action='store_true')
     return parser
 
 

@@ -22,6 +22,7 @@ def get_parser() -> ArgumentParser:
     parser.add_argument('--distill_after_bic', type=int, default=1)
     parser.add_argument('--interpolation_alpha', type=float, default=0.5,
                         help='interpolation alpha')
+    parser.add_argument('--debug_interpolation', action='store_true')
 
     return parser
 
