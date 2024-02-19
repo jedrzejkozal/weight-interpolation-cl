@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/fac71bfdcfd544db9ee086a281ca769f/artifacts
+end_time: 1708196092839
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: fac71bfdcfd544db9ee086a281ca769f
+run_name: monumental-bird-440
+run_uuid: fac71bfdcfd544db9ee086a281ca769f
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708189664904
+status: 3
+tags: []
+user_id: jedrzejkozal

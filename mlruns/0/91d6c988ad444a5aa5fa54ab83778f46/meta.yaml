@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/91d6c988ad444a5aa5fa54ab83778f46/artifacts
+end_time: 1708189661878
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 91d6c988ad444a5aa5fa54ab83778f46
+run_name: bittersweet-hen-40
+run_uuid: 91d6c988ad444a5aa5fa54ab83778f46
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708183222411
+status: 3
+tags: []
+user_id: jedrzejkozal
