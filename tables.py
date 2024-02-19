@@ -114,6 +114,7 @@ def varing_n_tasks():
             'xDER': ['fe27a2cd3a414b498d984ee9d6019952', '5dc8077a643a40e19b21e6337991b488', 'b5ec01658cf14b81b824ba916782c9a8', '0d7c109accc645e08f1fcd0594f4b6f1', '0f30523a31ad4bedbb831920cb9cd530'],
             'CLeWI+ER': ['0fa6f70ffe104b69ac8899a8ccbacb7f', 'f59a01c79b7a477e8b3866be57ee431b', 'cb276ba0a0f04fe6bfc0be5c5a526110', '4088b64d49814c848ca0f2a2d3e20f51', '75126b5c9c4645beae9204ab7d1ba667'],
             'CLEWI+aGEM': None,
+            'CLEWI+ER-ACE': None,
             'CLEWI+MIR': None,
         },
         '10 tasks': {
@@ -132,6 +133,7 @@ def varing_n_tasks():
             'xDER': ['f248a2f2900b4f0f9682e4629d49930b', 'e7f20f8c086243e29699307e782dd116', '66c73464bf1048cf9d0d454814f6607e', 'b9b03222b2b8470c9cc5303510dda447', '1e2937c86b54484cbf88569da7b00ba9'],
             'CLeWI+ER': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
             'CLEWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
+            'CLEWI+ER-ACE': ['30f722588dbe49179757ee7f34b0d1f2', 'ef9737eb24cf421f8116616cb399bef9', '1e5cf3ea5d384dbbaf7ae67840aaca3b', '2f513b260fd84454abaca0c32ee554f9', '2e53e881984d46a8842f71708fb811bd'],
             'CLEWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
         },
         '20 tasks': {
@@ -150,6 +152,7 @@ def varing_n_tasks():
             'xDER': ['f4510037fdbf409d9a39c633d9961f33', '6279780737c64700af2dd780637300f4', '29f2ff8dba584728ac379c76e54341ab', '95383a9572b94a0180fa62dfb4bb01b6', '27b6ab60af294ce3a40ac56a33ffbe1b'],
             'CLeWI+ER': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
             'CLEWI+aGEM': None,
+            'CLEWI+ER-ACE': None,
             'CLEWI+MIR': None,
         }
     }
