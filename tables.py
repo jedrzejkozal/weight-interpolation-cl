@@ -14,7 +14,7 @@ def standard_benchmarks():
         'cifar10': {
             'Joint': None,
             'Finetuning': None,
-            'EWC': None,
+            'oEWC': None,
             'SI': None,
             'iCARL': None,
             'ER': None,
@@ -31,7 +31,7 @@ def standard_benchmarks():
         'cifar100': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
             'Finetuning': ['bb644c8bdd8c47d89d14e1692e3c2c8e', '125a5d28aadd4e66839e173d8942a515', '7c23e4a7c2dc4483833b67c7054c628d', 'e39f89770ece4badbfa1831745eb3200', 'da049146b71148688dcaf58ec517b4be'],
-            'EWC': ['8753f219b2344fe695a86e21b14078e8', '64b8d37a83cd48a98968d1ad3e519981', '5002e50e739647539be89f7995e2eb89', '7c91df1cd7614efc9831860b399468de', '3a40f7d5baaf46528727f5e55236bb02'],
+            'oEWC': ['8753f219b2344fe695a86e21b14078e8', '64b8d37a83cd48a98968d1ad3e519981', '5002e50e739647539be89f7995e2eb89', '7c91df1cd7614efc9831860b399468de', '3a40f7d5baaf46528727f5e55236bb02'],
             'SI': None,
             'iCARL': ['94de55f367924c248a45c5987df33524', 'c8e0f027b51c49648f69f0eb38509462', '610e0073957d49548b68791dd9246919', '7a08a1afe0c741f6a5e893681aa9f8a2', 'de486b95a6c74bfda0a9dd1dd1ec246d'],
             'ER': ['b493ab8e54004750896dbf9cebf0b609', '1951a520b7974b7c9a6d2e26f70f1d3c', '997ecc0f525f4071a74f0b216e9f39c8', 'a8513f0c1db74676af3b9454f49e7a2f', 'e011a0cbc9854328b248df835ae5d178'],
@@ -101,7 +101,7 @@ def varing_n_tasks():
         '5 tasks': {
             'Joint': ['0b3a5c552bf840b7bf3b283d7adda616', 'a5b21afc059f48cab2595679d2b26d0a', '763b69704b73425e97e4771586c3ee78', 'f02f0b88fe134600820524374ab5197e', 'e2da958ae0274d5a94591c6db34ab998'],
             'Finetuning': ['06512a6ae08d44f4887a0286a7d92211', '5bd6ede41509449e9f877330388d8083', 'e14425b91aab44518d0c774813bdf962', 'afbc8e2906bf4feebfa32d024c92b8e4', '19e9676976f04e3f9f2b5521c9e19ada'],
-            'EWC': None,
+            'oEWC': None,
             'SI': None,
             'iCARL': ['7dc675684dfa4f8cacf8aeb1cc09ffc1', 'c9ed7dd02f5649b3b9792c40576832c7', 'f0bda601517343aaaba222367d242233', 'c604e22e957f4ccf98d251babcabc60a', '77dd9b747c4d45aab6d8011540eb4fad'],
             'ER': ['49e3cac631bf487599e3ec0387bf0560', '5ebebc19adf14b5698e8897fe7d8fbde', '77150474837640baa21fd93d8a9ebe80', 'ce32bab6ad9a4a47b03d25e2dbaf9f32', '4d1f067b3c12432ead29617eeaa6d173'],
@@ -118,7 +118,7 @@ def varing_n_tasks():
         '10 tasks': {
             'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
             'Finetuning': ['17b3122b6a5f420b9661e004af2a0588', '93980b3382fd438fb84635aead2e89df', '7b026e572ccd47938ce600c8b76248a8', 'f7f8eba20dbb454d80df3c4f2fa00c8d', '5d0ab7d56d3746d08d5d7c98cf3232ff'],
-            'EWC': None,
+            'oEWC': None,
             'SI': None,
             'iCARL': ['4dd5033dfda04f6a98b646774b1d8229', 'b3639bf984824afd88e9aec812290dce', '41737907295f43cfa6696761f2455fad', 'e9e2562273844d2f9ac8a8c8ccb507f4', '84de7552699e4beda7196121027622c5'],
             'ER': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811', 'fe4136cbe534423ab257fcf0e8914300', 'be01e5f0683f410885922ef516eb5591'],
@@ -135,7 +135,7 @@ def varing_n_tasks():
         '20 tasks': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
             'Finetuning': ['bb644c8bdd8c47d89d14e1692e3c2c8e', '125a5d28aadd4e66839e173d8942a515', '7c23e4a7c2dc4483833b67c7054c628d', 'e39f89770ece4badbfa1831745eb3200', 'da049146b71148688dcaf58ec517b4be'],
-            'EWC': ['8753f219b2344fe695a86e21b14078e8', '64b8d37a83cd48a98968d1ad3e519981', '5002e50e739647539be89f7995e2eb89', '7c91df1cd7614efc9831860b399468de', '3a40f7d5baaf46528727f5e55236bb02'],
+            'oEWC': ['8753f219b2344fe695a86e21b14078e8', '64b8d37a83cd48a98968d1ad3e519981', '5002e50e739647539be89f7995e2eb89', '7c91df1cd7614efc9831860b399468de', '3a40f7d5baaf46528727f5e55236bb02'],
             'SI': None,
             'iCARL': ['94de55f367924c248a45c5987df33524', 'c8e0f027b51c49648f69f0eb38509462', '610e0073957d49548b68791dd9246919', '7a08a1afe0c741f6a5e893681aa9f8a2', 'de486b95a6c74bfda0a9dd1dd1ec246d'],
             'ER': ['b493ab8e54004750896dbf9cebf0b609', '1951a520b7974b7c9a6d2e26f70f1d3c', '997ecc0f525f4071a74f0b216e9f39c8', 'a8513f0c1db74676af3b9454f49e7a2f', 'e011a0cbc9854328b248df835ae5d178'],
