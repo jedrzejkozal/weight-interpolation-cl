@@ -1,7 +1,7 @@
 artifact_uri: mlflow-artifacts:/0/ab8047d14e1240d198b9c4604852501d/artifacts
 end_time: 1708183219268
 entry_point_name: ''
-experiment_id: '0'
+experiment_id: '675415310966171557'
 lifecycle_stage: active
 run_id: ab8047d14e1240d198b9c4604852501d
 run_name: clewi mir seed 45
