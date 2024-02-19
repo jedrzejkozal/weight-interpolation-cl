@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/befd7e8a18604801a486d69f45d8e0ac/artifacts
+end_time: 1708344977709
+entry_point_name: ''
+experiment_id: '675415310966171557'
+lifecycle_stage: active
+run_id: befd7e8a18604801a486d69f45d8e0ac
+run_name: ewc_on seed 44
+run_uuid: befd7e8a18604801a486d69f45d8e0ac
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708342492686
+status: 1
+tags: []
+user_id: jkozal
