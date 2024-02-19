@@ -4,12 +4,12 @@ entry_point_name: ''
 experiment_id: '675415310966171557'
 lifecycle_stage: active
 run_id: 2e53e881984d46a8842f71708fb811bd
-run_name: ewc_on seed 47
+run_name: clewi_er_ace seed 47
 run_uuid: 2e53e881984d46a8842f71708fb811bd
 source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1708367322692
-status: 3
+status: 1
 tags: []
 user_id: jedrzejkozal
