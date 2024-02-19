@@ -4,12 +4,12 @@ entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
 run_id: 3f8698c62abd4a7c8f2b4ae6557d7f50
-run_name: amazing-flea-712
+run_name: clewi mir seed 43
 run_uuid: 3f8698c62abd4a7c8f2b4ae6557d7f50
 source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1708163124824
-status: 3
+status: 1
 tags: []
 user_id: jedrzejkozal

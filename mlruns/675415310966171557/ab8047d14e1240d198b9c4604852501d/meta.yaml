@@ -4,12 +4,12 @@ entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
 run_id: ab8047d14e1240d198b9c4604852501d
-run_name: honorable-bug-310
+run_name: clewi mir seed 45
 run_uuid: ab8047d14e1240d198b9c4604852501d
 source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1708176801632
-status: 3
+status: 1
 tags: []
 user_id: jedrzejkozal

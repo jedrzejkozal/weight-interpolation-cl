@@ -4,12 +4,12 @@ entry_point_name: ''
 experiment_id: '0'
 lifecycle_stage: active
 run_id: 28a3fdd20fa24a1cb786450d8fcb83e8
-run_name: popular-mole-554
+run_name: clewi mir seed 44
 run_uuid: 28a3fdd20fa24a1cb786450d8fcb83e8
 source_name: ''
 source_type: 4
 source_version: ''
 start_time: 1708170246694
-status: 3
+status: 1
 tags: []
 user_id: jedrzejkozal
