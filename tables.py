@@ -17,33 +17,41 @@ def standard_benchmarks():
             'oEWC': None,
             'SI': None,
             'iCARL': None,
-            'ER': None,
-            'aGEM': None,
-            'BIC': None,
-            'ER-ACE': None,
             'GDumb': None,
+            # 'xDER': None,
+            'ER': None,
+            'CLeWI+ER': None,
+            'aGEM': None,
+            'CLeWI+aGEM': None,
+            'ER-ACE': None,
+            'CLeWI+ER-ACE': None,
             'MIR': None,
-            'DER': None,
-            'xDER': None,
-            'CLeWI': None,
-            'CLEWI+aGEM': None,
+            'CLeWI+MIR': None,
+            'BIC': None,
+            'CLeWI+BIC': None,
+            'DER++': None,
+            'CLeWI+DER++': None,
         },
         'cifar100': {
-            'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
-            'Finetuning': ['bb644c8bdd8c47d89d14e1692e3c2c8e', '125a5d28aadd4e66839e173d8942a515', '7c23e4a7c2dc4483833b67c7054c628d', 'e39f89770ece4badbfa1831745eb3200', 'da049146b71148688dcaf58ec517b4be'],
-            'oEWC': ['8753f219b2344fe695a86e21b14078e8', '64b8d37a83cd48a98968d1ad3e519981', '5002e50e739647539be89f7995e2eb89', '7c91df1cd7614efc9831860b399468de', '3a40f7d5baaf46528727f5e55236bb02'],
+            'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
+            'Finetuning': ['17b3122b6a5f420b9661e004af2a0588', '93980b3382fd438fb84635aead2e89df', '7b026e572ccd47938ce600c8b76248a8', 'f7f8eba20dbb454d80df3c4f2fa00c8d', '5d0ab7d56d3746d08d5d7c98cf3232ff'],
+            'oEWC': ['191280d66c724ba390016d49b4544ce8', 'befd7e8a18604801a486d69f45d8e0ac', 'b0c5e9759ad64040ac330ddf1be4382a', '0d2b0c75b79e4a0997cc1b0168300965', '7e39d2481c5f4c3ea57e97df906006aa'],
             'SI': None,
-            'iCARL': ['94de55f367924c248a45c5987df33524', 'c8e0f027b51c49648f69f0eb38509462', '610e0073957d49548b68791dd9246919', '7a08a1afe0c741f6a5e893681aa9f8a2', 'de486b95a6c74bfda0a9dd1dd1ec246d'],
-            'ER': ['b493ab8e54004750896dbf9cebf0b609', '1951a520b7974b7c9a6d2e26f70f1d3c', '997ecc0f525f4071a74f0b216e9f39c8', 'a8513f0c1db74676af3b9454f49e7a2f', 'e011a0cbc9854328b248df835ae5d178'],
-            'aGEM': ['9405b16c0fe243c68c2c7d35e84aec17', '82b1def4d55c4719aa614728341a2154', '6da962ac0c1c46dbbfd1a58f650ac524', '5ff50f224d8b4f6190f81aaca22a9e05', '1855d3054a234e8f87b30b72b1ca7495'],
-            'BIC': ['3baf04da53404ca4bbcc0506c90545bb', '5b0b5502cc82427f80df476408ce7da5', '12d168011906473aa728600e672f91d8', '1e686f8e6e4e4c96b113adfe1547e01c', '25c878dddec74378b069173f3caf503f'],
-            'ER-ACE': ['a7e438cff0b64590a1b51e421bc200fc', '1b04f1d16d584333826c3c29d277633b', '459fb22963c04042800b2492307c208d', '9f2060e2ea934c109d5447895fddbfcc', 'a41d246aac464288bbcd990e602c276b'],
-            'GDumb': ['ff544949cdda41dcb17666474f40db51', '330650c362984bd2abf34d6fbad93366', 'c3e0e9ddc19f4e1c8368411a54b31773', 'd11cb963b54c4a64ba58c50f86651eb6', 'f1389212c51b455eae5d57f8eeac01d0'],
-            'MIR': ['c73632f271924e2eaaea438cc59745bc', 'f349082c209548ac9dda7ab7fa9e0738', '404cff1ecc344b3cb9290fe1da26408e', 'a36a28e3298a49dcadf83bf946975de3', '205f73a788134b35a80590338e98a990'],
-            'DER': ['cd06015c7db24f308176ed5a2bb632d9', '6946c90170914e319cd522c2563995a8', '22fb4bca74c0441d8fc7314da250b4ba', 'df57945b9e304e94b6eb76c61e9778ac', '3157516230564a7887a4a4164843e12d'],
-            'xDER': ['f4510037fdbf409d9a39c633d9961f33', '6279780737c64700af2dd780637300f4', '29f2ff8dba584728ac379c76e54341ab', '95383a9572b94a0180fa62dfb4bb01b6', '27b6ab60af294ce3a40ac56a33ffbe1b'],
-            'CLeWI': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
-            'CLEWI+aGEM': None,
+            'iCARL': ['4dd5033dfda04f6a98b646774b1d8229', 'b3639bf984824afd88e9aec812290dce', '41737907295f43cfa6696761f2455fad', 'e9e2562273844d2f9ac8a8c8ccb507f4', '84de7552699e4beda7196121027622c5'],
+            'GDumb': ['cdd60faa69da45549ed0eb9804c0bbfe', '887164556a234e228bb38017abe44ab6', 'b92f47cfa43d4363a37330ddaf23033c', '81a91133ccda4800ae86b01315b7a0ad', '692af0b23b5d416380421876fc4b591c'],
+            # 'xDER': ['f248a2f2900b4f0f9682e4629d49930b', 'e7f20f8c086243e29699307e782dd116', '66c73464bf1048cf9d0d454814f6607e', 'b9b03222b2b8470c9cc5303510dda447', '1e2937c86b54484cbf88569da7b00ba9'],
+            'ER': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811', 'fe4136cbe534423ab257fcf0e8914300', 'be01e5f0683f410885922ef516eb5591'],
+            'CLeWI+ER': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
+            'aGEM': ['66eb4c88e25b42de81016a2bbc2ada2d', '36e7ae355bd440d2b7de47d850ebc464', '7315f6bad23d4ff086f2a4340cc335db', 'f4a9b57dc701435c8fc1595547cd6ffd', 'db8fe29d318a49b08d886ac21d83c6dd'],
+            'CLeWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
+            'ER-ACE': ['734e25c074514804a0c012e05d9b5450', '1b6cd95859c94471b3cdbed16d242306', '77d24d4c2eeb4b3d8c8566ec5494ac98', '26cd9495cfda4a4984b2532f8d6a80e7', 'eeb81e6993164c8090da796abc8f9ee1'],
+            'CLeWI+ER-ACE': ['30f722588dbe49179757ee7f34b0d1f2', 'ef9737eb24cf421f8116616cb399bef9', '1e5cf3ea5d384dbbaf7ae67840aaca3b', '2f513b260fd84454abaca0c32ee554f9', '2e53e881984d46a8842f71708fb811bd'],
+            'MIR': ['3e2d37d427e04f03855243fefdc6e1fd', '70cbe7616f7a433c891931594d5fd1af', 'e23a3a90090149ea91c1cecd4bcdc404', '20b096e7d73b46b4a5867477eef29a63', '2413e62de8bb45c3aabe0da54189ab52'],
+            'CLeWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
+            'BIC': ['1cd4ab0fff654d66952518480bace581', '4396afc6f0ad4da6b95c6e7508f68cc3', '725ad3cc7299453aac8798ffc35676dc', '5d5266c29a80430facfe17080bfb2edb', 'ba359e2d933e471087fea26956cafd6d'],
+            'CLeWI+BIC': None,
+            'DER++': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27', 'ca4ab2fde2a54595b308db566fc2753a', '142ce6e4e98d4c94b050c1f1acc55601'],
+            'CLeWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
         },
         'tiny-imagenet': {
             'Joint': None,
@@ -51,16 +59,20 @@ def standard_benchmarks():
             'oEWC': None,
             'SI': None,
             'iCARL': None,
-            'ER': None,
-            'aGEM': None,
-            'BIC': None,
-            'ER-ACE': None,
             'GDumb': None,
+            # 'xDER': None,
+            'ER': None,
+            'CLeWI+ER': None,
+            'aGEM': None,
+            'CLeWI+aGEM': None,
+            'ER-ACE': None,
+            'CLeWI+ER-ACE': None,
             'MIR': None,
-            'DER': None,
-            'xDER': None,
-            'CLeWI': None,
-            'CLEWI+aGEM': None,
+            'CLeWI+MIR': None,
+            'BIC': None,
+            'CLeWI+BIC': None,
+            'DER++': None,
+            'CLeWI+DER++': None,
         }
     }
 
@@ -81,11 +93,31 @@ def standard_benchmarks():
     for algorithm_name in algorithms:
         row = list()
         row.append(algorithm_name)
-        for dataset in ('cifar10', 'cifar100', 'tiny-imagenet'):
+        for dataset, n_tasks in zip(('cifar10', 'cifar100', 'tiny-imagenet'), (5, 10, 20)):
             run_ids = runs_standard_benchmarks[dataset][algorithm_name]
             experiment_id = dataset_experiments[dataset]
-            metrics = calc_average_metrics(run_ids, client, experiment_id)
+            metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=n_tasks)
             row.extend(metrics)
+
+        if row[0].startswith('CLeWI+'):
+            previos_row = table[-1]
+
+            # print(row)
+            for i in range(1, 6, 2):
+                # print(row[i])
+                # print(row[i+1])
+                # print()
+
+                if row[i] == '-' or previos_row[i] == '-':
+                    continue
+
+                difference_acc = float(row[i].split('±')[0]) - float(previos_row[i].split('±')[0])
+                row[i] += get_difference_str(difference_acc)
+                difference_fm = float(row[i+1].split('±')[0]) - float(previos_row[i+1].split('±')[0])
+                row[i+1] += get_difference_str(difference_fm, bigger_better=False)
+
+            # print(row)
+            # exit()
         table.append(row)
 
     tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['method', 'acc', 'FM', 'acc', 'FM', 'acc', 'FM',])
@@ -94,6 +126,22 @@ def standard_benchmarks():
     tab_latex = tab_latex.replace('\\}', '}')
     print(tab_latex)
     print("\n\n")
+
+
+def get_difference_str(difference, bigger_better=True):
+    if bigger_better:
+        greather = 'green'
+        lower = 'red'
+    else:
+        greather = 'red'
+        lower = 'green'
+    difference_str = '{:.2f}'.format(difference)
+    if difference >= 0:
+        difference_str = '\\textcolor{' + greather + '}{' + f'+{difference_str}' + '}'
+    else:
+        difference_str = '\\textcolor{' + lower + '}{' + f'{difference_str}' + '}'
+    difference_str = f'({difference_str})'
+    return difference_str
 
 
 def varing_n_tasks():
@@ -113,10 +161,10 @@ def varing_n_tasks():
             'DER': ['fd72fc1b81f84b8caeaf7acb207a2f97', 'fa27e138808e48e68f00d23c02b03507', '61dc397fe81f488e98725ee37aacaabe', '7aabdcca65a44d73a5015c15f8cabd25', '217fb45437f4425a94c70017aa26901c'],
             'xDER': ['fe27a2cd3a414b498d984ee9d6019952', '5dc8077a643a40e19b21e6337991b488', 'b5ec01658cf14b81b824ba916782c9a8', '0d7c109accc645e08f1fcd0594f4b6f1', '0f30523a31ad4bedbb831920cb9cd530'],
             'CLeWI+ER': ['0fa6f70ffe104b69ac8899a8ccbacb7f', 'f59a01c79b7a477e8b3866be57ee431b', 'cb276ba0a0f04fe6bfc0be5c5a526110', '4088b64d49814c848ca0f2a2d3e20f51', '75126b5c9c4645beae9204ab7d1ba667'],
-            'CLEWI+aGEM': None,
-            'CLEWI+ER-ACE': None,
-            'CLEWI+MIR': None,
-            'CLEWI+DER++': None,
+            'CLeWI+aGEM': None,
+            'CLeWI+ER-ACE': None,
+            'CLeWI+MIR': None,
+            'CLeWI+DER++': None,
         },
         '10 tasks': {
             'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
@@ -133,10 +181,10 @@ def varing_n_tasks():
             'DER': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27', 'ca4ab2fde2a54595b308db566fc2753a', '142ce6e4e98d4c94b050c1f1acc55601'],
             'xDER': ['f248a2f2900b4f0f9682e4629d49930b', 'e7f20f8c086243e29699307e782dd116', '66c73464bf1048cf9d0d454814f6607e', 'b9b03222b2b8470c9cc5303510dda447', '1e2937c86b54484cbf88569da7b00ba9'],
             'CLeWI+ER': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
-            'CLEWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
-            'CLEWI+ER-ACE': ['30f722588dbe49179757ee7f34b0d1f2', 'ef9737eb24cf421f8116616cb399bef9', '1e5cf3ea5d384dbbaf7ae67840aaca3b', '2f513b260fd84454abaca0c32ee554f9', '2e53e881984d46a8842f71708fb811bd'],
-            'CLEWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
-            'CLEWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
+            'CLeWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
+            'CLeWI+ER-ACE': ['30f722588dbe49179757ee7f34b0d1f2', 'ef9737eb24cf421f8116616cb399bef9', '1e5cf3ea5d384dbbaf7ae67840aaca3b', '2f513b260fd84454abaca0c32ee554f9', '2e53e881984d46a8842f71708fb811bd'],
+            'CLeWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
+            'CLeWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
         },
         '20 tasks': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
@@ -153,10 +201,10 @@ def varing_n_tasks():
             'DER': ['cd06015c7db24f308176ed5a2bb632d9', '6946c90170914e319cd522c2563995a8', '22fb4bca74c0441d8fc7314da250b4ba', 'df57945b9e304e94b6eb76c61e9778ac', '3157516230564a7887a4a4164843e12d'],
             'xDER': ['f4510037fdbf409d9a39c633d9961f33', '6279780737c64700af2dd780637300f4', '29f2ff8dba584728ac379c76e54341ab', '95383a9572b94a0180fa62dfb4bb01b6', '27b6ab60af294ce3a40ac56a33ffbe1b'],
             'CLeWI+ER': ['7157360c5e63454d9dd11a794f7a4319', '98284fb1575e4863a79b1e3a2b9d2ab6', '4cfed79122ab440aa81d5f4f1006b70a', 'bace4c4d02c24be2b923e5d4d8e84289'],
-            'CLEWI+aGEM': None,
-            'CLEWI+ER-ACE': None,
-            'CLEWI+MIR': None,
-            'CLEWI+DER++': None,
+            'CLeWI+aGEM': None,
+            'CLeWI+ER-ACE': None,
+            'CLeWI+MIR': None,
+            'CLeWI+DER++': None,
         }
     }
 
