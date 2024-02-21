@@ -116,6 +116,7 @@ def varing_n_tasks():
             'CLEWI+aGEM': None,
             'CLEWI+ER-ACE': None,
             'CLEWI+MIR': None,
+            'CLEWI+DER++': None,
         },
         '10 tasks': {
             'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
@@ -135,6 +136,7 @@ def varing_n_tasks():
             'CLEWI+aGEM': ['a3cc47c1ca9c41ebbcda996c59eecfdd', 'ad3953382b694924981c5d8a6d906bed', '96ab9dd7d484433aaacf6a8ef07939fa', '5d292d3e82e44cafab3a79281b006b9b', '4bf6ca4fad20479283befa1acdc0ac63'],
             'CLEWI+ER-ACE': ['30f722588dbe49179757ee7f34b0d1f2', 'ef9737eb24cf421f8116616cb399bef9', '1e5cf3ea5d384dbbaf7ae67840aaca3b', '2f513b260fd84454abaca0c32ee554f9', '2e53e881984d46a8842f71708fb811bd'],
             'CLEWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
+            'CLEWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
         },
         '20 tasks': {
             'Joint': ['aeea61c15292433e9b981c00873ee87f', 'b42b8405295c44928ba111d904265144', 'e59e9f24c8cc459d85b6bf0befd4caa8', '73259b1384904285bbc87ad6c372572a', '80c2683062ce4481ada44bcf99ac0dd1'],
@@ -154,6 +156,7 @@ def varing_n_tasks():
             'CLEWI+aGEM': None,
             'CLEWI+ER-ACE': None,
             'CLEWI+MIR': None,
+            'CLEWI+DER++': None,
         }
     }
 
