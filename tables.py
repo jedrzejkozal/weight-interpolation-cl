@@ -18,7 +18,6 @@ def standard_benchmarks():
             'SI': None,
             'iCARL': None,
             'GDumb': None,
-            # 'xDER': None,
             'ER': None,
             'CLeWI+ER': None,
             'aGEM': None,
@@ -36,10 +35,9 @@ def standard_benchmarks():
             'Joint': ['340276f083b64cc49dccd2d69c9ad66a', 'ef826a5b9e334f4b92cc3fa695847b8a', '663bcd4b333248a5b559a01e376585dd', 'b008c7833f404dfca446753cefdcdf1e', '4f53e6af47174940b04fa70d618af51a'],
             'Finetuning': ['17b3122b6a5f420b9661e004af2a0588', '93980b3382fd438fb84635aead2e89df', '7b026e572ccd47938ce600c8b76248a8', 'f7f8eba20dbb454d80df3c4f2fa00c8d', '5d0ab7d56d3746d08d5d7c98cf3232ff'],
             'oEWC': ['191280d66c724ba390016d49b4544ce8', 'befd7e8a18604801a486d69f45d8e0ac', 'b0c5e9759ad64040ac330ddf1be4382a', '0d2b0c75b79e4a0997cc1b0168300965', '7e39d2481c5f4c3ea57e97df906006aa'],
-            'SI': None,
+            'SI': ['47d5e185871d4f8184f80ae580807906', '75d48d891fe64254b4bc5e252c5aa7c1', 'db800f218e5848b8b7cb17978bd85f84', 'fc99b0f9ff0f41329966ff78b507a148', '0f10cd9068fe4654ac90a25fd3a2d97a'],
             'iCARL': ['4dd5033dfda04f6a98b646774b1d8229', 'b3639bf984824afd88e9aec812290dce', '41737907295f43cfa6696761f2455fad', 'e9e2562273844d2f9ac8a8c8ccb507f4', '84de7552699e4beda7196121027622c5'],
             'GDumb': ['cdd60faa69da45549ed0eb9804c0bbfe', '887164556a234e228bb38017abe44ab6', 'b92f47cfa43d4363a37330ddaf23033c', '81a91133ccda4800ae86b01315b7a0ad', '692af0b23b5d416380421876fc4b591c'],
-            # 'xDER': ['f248a2f2900b4f0f9682e4629d49930b', 'e7f20f8c086243e29699307e782dd116', '66c73464bf1048cf9d0d454814f6607e', 'b9b03222b2b8470c9cc5303510dda447', '1e2937c86b54484cbf88569da7b00ba9'],
             'ER': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811', 'fe4136cbe534423ab257fcf0e8914300', 'be01e5f0683f410885922ef516eb5591'],
             'CLeWI+ER': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306', '66c13b0edaff45eca4c5d79facce9c08', '60ccb27498024749a1292d1ab2ec66e1'],
             'aGEM': ['66eb4c88e25b42de81016a2bbc2ada2d', '36e7ae355bd440d2b7de47d850ebc464', '7315f6bad23d4ff086f2a4340cc335db', 'f4a9b57dc701435c8fc1595547cd6ffd', 'db8fe29d318a49b08d886ac21d83c6dd'],
@@ -60,7 +58,6 @@ def standard_benchmarks():
             'SI': None,
             'iCARL': None,
             'GDumb': None,
-            # 'xDER': None,
             'ER': None,
             'CLeWI+ER': None,
             'aGEM': None,
@@ -130,11 +127,11 @@ def standard_benchmarks():
 
 def get_difference_str(difference, bigger_better=True):
     if bigger_better:
-        greather = 'green'
-        lower = 'red'
+        greather = 'Green'
+        lower = 'Red'
     else:
-        greather = 'red'
-        lower = 'green'
+        greather = 'Red'
+        lower = 'Green'
     difference_str = '{:.2f}'.format(difference)
     if difference >= 0:
         difference_str = '\\textcolor{' + greather + '}{' + f'+{difference_str}' + '}'
