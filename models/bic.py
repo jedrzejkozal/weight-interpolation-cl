@@ -26,15 +26,10 @@ def get_parser() -> ArgumentParser:
     add_experiment_args(parser)
     add_rehearsal_args(parser)
 
-    parser.add_argument('--bic_epochs', type=int, default=250,
-                        help='bias injector.')
-    parser.add_argument('--temp', type=float, default=2.,
-                        help='softmax temperature')
-    parser.add_argument('--valset_split', type=float, default=0.1,
-                        help='bias injector.')
-    parser.add_argument('--multi_bic', type=int, default=0)
-    parser.add_argument('--wd_reg', type=float, default=None,
-                        help='bias injector.')
+    parser.add_argument('--bic_epochs', type=int, default=250, help='bias injector.')
+    parser.add_argument('--temp', type=float, default=2., help='softmax temperature')
+    parser.add_argument('--valset_split', type=float, default=0.1, help='bias injector.')
+    parser.add_argument('--wd_reg', type=float, default=None, help='bias injector.')
     parser.add_argument('--distill_after_bic', type=int, default=1)
 
     return parser
@@ -58,8 +53,6 @@ class BiC(ContinualModel):
 
     def begin_task(self, dataset):
         if self.task > 0:
-
-            self.old_net = deepcopy(self.net.eval())
             if hasattr(self, 'corr_factors'):
                 self.old_corr = deepcopy(self.corr_factors)
             self.net.train()
@@ -98,9 +91,7 @@ class BiC(ContinualModel):
             self.biasopt = Adam([corr_factors], lr=0.001)
 
             for l in range(self.args.bic_epochs):
-                for data in self.val_loader:
-
-                    inputs, labels, _ = data
+                for inputs, labels, _ in self.val_loader:
                     inputs, labels = inputs.to(self.device), labels.to(self.device)
 
                     self.biasopt.zero_grad()
@@ -124,6 +115,9 @@ class BiC(ContinualModel):
 
             self.net.train()
 
+        self.old_net = deepcopy(self.net.eval())
+        self.net.train()
+
         self.task += 1
         self.build_buffer(dataset)
 
@@ -144,7 +138,6 @@ class BiC(ContinualModel):
         dist_loss = torch.tensor(0.)
         if self.task > 0:
             with torch.no_grad():
-
                 old_outputs = self.old_net(inputs)
                 if self.args.distill_after_bic:
                     if hasattr(self, 'old_corr'):
@@ -171,7 +164,6 @@ class BiC(ContinualModel):
         return loss.item()
 
     def build_buffer(self, dataset):
-
         examples_per_task = self.buffer.buffer_size // self.task
 
         if self.task > 1:
