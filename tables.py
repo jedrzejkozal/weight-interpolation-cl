@@ -47,7 +47,7 @@ def standard_benchmarks():
             'MIR': ['3e2d37d427e04f03855243fefdc6e1fd', '70cbe7616f7a433c891931594d5fd1af', 'e23a3a90090149ea91c1cecd4bcdc404', '20b096e7d73b46b4a5867477eef29a63', '2413e62de8bb45c3aabe0da54189ab52'],
             'CLeWI+MIR': ['28a3fdd20fa24a1cb786450d8fcb83e8', '3f8698c62abd4a7c8f2b4ae6557d7f50', '91d6c988ad444a5aa5fa54ab83778f46', 'ab8047d14e1240d198b9c4604852501d', 'fac71bfdcfd544db9ee086a281ca769f'],
             'BIC': ['1cd4ab0fff654d66952518480bace581', '4396afc6f0ad4da6b95c6e7508f68cc3', '725ad3cc7299453aac8798ffc35676dc', '5d5266c29a80430facfe17080bfb2edb', 'ba359e2d933e471087fea26956cafd6d'],
-            'CLeWI+BIC': None,
+            'CLeWI+BIC': ['d85e20d3d5584689bc161d2178c98592', 'efb1be42b1694c4c80acac95fa98aaa8', '598310f386044f69acf71fd72a5a4132', '5cadca2662ad40609a8757b39205cdb5', 'ee0402e77cc243e3ab1099be46d55e64'],
             'DER++': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27', 'ca4ab2fde2a54595b308db566fc2753a', '142ce6e4e98d4c94b050c1f1acc55601'],
             'CLeWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
         },
