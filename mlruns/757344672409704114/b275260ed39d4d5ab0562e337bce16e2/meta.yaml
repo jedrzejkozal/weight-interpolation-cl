@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/b275260ed39d4d5ab0562e337bce16e2/artifacts
+end_time: 1708624555919
+entry_point_name: ''
+experiment_id: '757344672409704114'
+lifecycle_stage: active
+run_id: b275260ed39d4d5ab0562e337bce16e2
+run_name: si seed 47
+run_uuid: b275260ed39d4d5ab0562e337bce16e2
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708618418328
+status: 3
+tags: []
+user_id: jkozal
