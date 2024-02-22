@@ -1,9 +1,6 @@
 #! /bin/bash
 
-if [[ $(conda --version) == "conda: command not found" ]]; then
-    /opt/anaconda/condabin/conda init
-    source ~/.bashrc
-
+if [[ $(conda config --show | grep "solver: classic") == "solver: classic" ]]; then
     source activate base
     conda install -n base conda-libmamba-solver -y
     conda config --set solver libmamba
