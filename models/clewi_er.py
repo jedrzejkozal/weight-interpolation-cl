@@ -19,7 +19,7 @@ def get_parser() -> ArgumentParser:
     return parser
 
 
-class ClewiM(ClewiMixin, Er):
+class ClewiEr(ClewiMixin, Er):
     NAME = 'clewi_er'
     COMPATIBILITY = ['class-il', 'domain-il', 'task-il', 'general-continual']
 
