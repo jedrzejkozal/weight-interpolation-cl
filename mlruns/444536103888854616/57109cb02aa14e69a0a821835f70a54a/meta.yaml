@@ -1,0 +1,15 @@
+artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/57109cb02aa14e69a0a821835f70a54a/artifacts
+end_time: 1708721369253
+entry_point_name: ''
+experiment_id: '444536103888854616'
+lifecycle_stage: active
+run_id: 57109cb02aa14e69a0a821835f70a54a
+run_name: clewi_agem 46
+run_uuid: 57109cb02aa14e69a0a821835f70a54a
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1708716884153
+status: 3
+tags: []
+user_id: jkozal
