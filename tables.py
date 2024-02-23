@@ -12,21 +12,21 @@ def main():
 def standard_benchmarks():
     runs_standard_benchmarks = {
         'cifar10': {
-            'Joint': None,
+            'Joint': ['3b6f760d008f4384a27665672675e725', '71d1092f9e68468bb123d0256975309e', '85a5b63e886945e4b6774e2a830eaef1', '8381a5e1de484387b848a39b651dcf79', 'd45dac0143cf4ba58bed0c5dca36064d'],
             'Finetuning': ['4b6e3d6ca75a4129ab728bbf6a454890', 'ee5667d673b140e9b961424e60b3f558', '863c9dcb11794f0bba1db5c4a9ac4e85', 'e0c8dab9da0d45338f434b8f9059745a', 'bccee33a55ff4f0fbc69aec8f0979d1e'],
             'oEWC': ['9170e110c5aa45a887d9e173ca992c5c', '0b12da4a679740a68dd80bcb9dad762e', '213e3865ba334d879dde7dbb3a88a647', '903e932937ba4c6693d160501141fcd8', '0d921da25a0549c78db5864f561bf3cd'],
             'SI': ['1e9dddde0acb41bea68c4e6492274f0c', '3d7a1255bb134f07922c7e03bc451bbe', 'fdda8ff328d0488a94c2a9745cc64de6', '9c2bf0eb857049df9d708da46a80e539', 'e9c0a51ab2e54fd495fda1c60100b269'],
             'iCARL': ['9d536b3efd7d4236b6809c305f722372', 'bb00333c8bca4edab7bb588b7a9f3cb6', '00113d857ce545f58090f69d3698cf9a', '6b09deb643a545769974fcc707a64fe5', '2584779138b74ac5a213e78507705696'],
-            'GDumb': None,
+            'GDumb': ['4103e7810e134b1fade5dd3203e309f0', '5d24534e2b6f464196ecb7bd7737e02d', '0bbbb5f9ff03474ebfb3b332c100b579', '6873da88a1cf400a861f95b10acd0a5e', 'f5bcad61594542ab825f87f1cd61cc92'],
             'ER': ['cf0a90027e2349af93c7609109af230a', 'e46a089460084f4aa4be3d2429e6f139', '26f1325aca9543f4a755b806503d3287', 'ed78073b3b8e4f019a3909e37fffa765', '542bbd7ebee74580ae450f2f30c41986'],
             'CLeWI+ER': None,
             'aGEM': ['f89dc689961f486f99f3525d8f1026d6', '17c7754580164cd3a7d31c4a006f6be8', '1ec7253b84de474bacc4171e1740aecf', '97f52bafaa3c4c92b19a62ccb8e5d86e', '44a69af9a083402da24b69845b479ded'],
             'CLeWI+aGEM': None,
-            'ER-ACE': None,
+            'ER-ACE': ['d5d50499b90047e58e3c8420273c6945', '72290111cb624b868362323a2ba34116', 'ba73b2cbaa8a44a09fa1abe928ac16bb', '82fc09032af44d12942bf8be1c63dc3e', '0a1c80f40d234080ac4c9f33354d8490'],
             'CLeWI+ER-ACE': None,
             'MIR': None,
             'CLeWI+MIR': None,
-            'BIC': None,
+            'BIC': ['5ec300bbd2e9479a93359b0de9d4b2b5', '586e8b80400445419ed166e90ba8d48d', '66b5dd76828e47f4baec353d5a584552', '133703a6558444cbb2bd54de271e067b', 'ab754288b1e84a93b7934d0d9d2a3fe5'],
             'CLeWI+BIC': None,
             'DER++': ['f0332d41ac47409a98824ca78a08f157', '050c7026724a40d6af1c7c309f48afb0', '1060653fa198413abbaf470b722b1668', '95ebe92010b349fbafd4c0f3e079015a', 'eb3601785bb74c108dc15ef9fbda0d2e'],
             'CLeWI+DER++': None,
@@ -53,14 +53,14 @@ def standard_benchmarks():
         },
         'tiny-imagenet': {
             'Joint': None,
-            'Finetuning': None,
+            'Finetuning': ['bb467533c51d4f4d8b6f12c86c6b4a3e', 'e7b37e974309450b895df0d9f4b6e4b9', 'cf68367c6c3c401eb3b6d99b07fd3b75', 'b112ed4e336f465bb6072ad84b837862', '5fc622e1e37d4217b3b2a3ecb66e23b8'],
             'oEWC': ['127dc1061a01424ebdcc849ea0d647b5', 'b5a6d3367aa9471bb06e5c77b96a58bc', '7445317343ec4ae68a087a25646d6eed', '4a0a19b0f3674992a21cf7eb9662ef27', '8e92f75b5d104899b66ce5c22f2a9078'],
             'SI': ['1aed8e7dcf994c5cb26ae2316ab42ac6', '51d05c34b7c94b1e9d434a40155ceaef', 'd3342607c59345978425f2b0dacf4f61', 'f827a662b7ac413a806cb224d04f4f99', 'b275260ed39d4d5ab0562e337bce16e2'],
-            'iCARL': None,
-            'GDumb': None,
-            'ER': None,
+            'iCARL': ['a2cd5ca6d9714c388679aac0ee035854', 'efb84e6889f34ee2ba05195bfefb0270', '78bf2fd410804526b73376edef751a59', 'c2b5b86a92b942fa953b4f3836aee9a4', '3c995cbf8ce2428090140cbc6cb480dc'],
+            'GDumb': ['d1c4078a7b874e0091b682f1719aa70d', '9dd9644b1411452db420925c90b2dd25', '842ae1feffe04599b32d7155955e6be5', 'e42443f5d9664564835fa8eb1e9dc357', 'bb3c73b2469647bf8d91ca007344a293'],
+            'ER': ['846876270e014703afbcfccf4d983037', '71e7f27eef0b4ec6a0ec211c4a32591d', '0f21e2b127d14c5884a68b970f1a3d44', 'a1adc252c6fb4daa8283334d4581127a', '291315fb5a684937b9835b1c5509b299'],
             'CLeWI+ER': None,
-            'aGEM': None,
+            'aGEM': ['573f2ad340e646afad6823a5d6be0c73', '563d5d2044ef446bae3a6e0986193411', '1dbd9df4d19b4b429aff401b0a9e1c55', 'e08abf607aac41c2967fd0b295410648', '6238b6d4c4d344789c61edc8425478f4'],
             'CLeWI+aGEM': None,
             'ER-ACE': None,
             'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
@@ -243,9 +243,9 @@ def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=20):
         fm = calc_forgetting_measure(run_id, client, experiment_id=experiment_id, num_tasks=n_tasks)  # TODO fix logging num_tasks in experiments
         fm_all.append(fm)
 
-    avrg_acc, acc_std = rounded_reduction(acc_all)
+    avrg_acc, acc_std = rounded_reduction(acc_all, digits=3)
     acc = f'{avrg_acc}±{acc_std}'
-    avrg_fm, fm_std = rounded_reduction(fm_all)
+    avrg_fm, fm_std = rounded_reduction(fm_all, digits=3)
     forgetting = f'{avrg_fm}±{fm_std}'
     return acc, forgetting
 
