@@ -18,6 +18,7 @@ source activate interpolation
 
 git add mlruns
 git pull
+git pull
 git commit -m "update mlruns"
 git push
 

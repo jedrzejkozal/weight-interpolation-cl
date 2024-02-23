@@ -13,14 +13,14 @@ def standard_benchmarks():
     runs_standard_benchmarks = {
         'cifar10': {
             'Joint': None,
-            'Finetuning': None,
-            'oEWC': None,
-            'SI': None,
-            'iCARL': None,
+            'Finetuning': ['4b6e3d6ca75a4129ab728bbf6a454890', 'ee5667d673b140e9b961424e60b3f558', '863c9dcb11794f0bba1db5c4a9ac4e85', 'e0c8dab9da0d45338f434b8f9059745a', 'bccee33a55ff4f0fbc69aec8f0979d1e'],
+            'oEWC': ['9170e110c5aa45a887d9e173ca992c5c', '0b12da4a679740a68dd80bcb9dad762e', '213e3865ba334d879dde7dbb3a88a647', '903e932937ba4c6693d160501141fcd8', '0d921da25a0549c78db5864f561bf3cd'],
+            'SI': ['1e9dddde0acb41bea68c4e6492274f0c', '3d7a1255bb134f07922c7e03bc451bbe', 'fdda8ff328d0488a94c2a9745cc64de6', '9c2bf0eb857049df9d708da46a80e539', 'e9c0a51ab2e54fd495fda1c60100b269'],
+            'iCARL': ['9d536b3efd7d4236b6809c305f722372', 'bb00333c8bca4edab7bb588b7a9f3cb6', '00113d857ce545f58090f69d3698cf9a', '6b09deb643a545769974fcc707a64fe5', '2584779138b74ac5a213e78507705696'],
             'GDumb': None,
-            'ER': None,
+            'ER': ['cf0a90027e2349af93c7609109af230a', 'e46a089460084f4aa4be3d2429e6f139', '26f1325aca9543f4a755b806503d3287', 'ed78073b3b8e4f019a3909e37fffa765', '542bbd7ebee74580ae450f2f30c41986'],
             'CLeWI+ER': None,
-            'aGEM': None,
+            'aGEM': ['f89dc689961f486f99f3525d8f1026d6', '17c7754580164cd3a7d31c4a006f6be8', '1ec7253b84de474bacc4171e1740aecf', '97f52bafaa3c4c92b19a62ccb8e5d86e', '44a69af9a083402da24b69845b479ded'],
             'CLeWI+aGEM': None,
             'ER-ACE': None,
             'CLeWI+ER-ACE': None,
@@ -28,7 +28,7 @@ def standard_benchmarks():
             'CLeWI+MIR': None,
             'BIC': None,
             'CLeWI+BIC': None,
-            'DER++': None,
+            'DER++': ['f0332d41ac47409a98824ca78a08f157', '050c7026724a40d6af1c7c309f48afb0', '1060653fa198413abbaf470b722b1668', '95ebe92010b349fbafd4c0f3e079015a', 'eb3601785bb74c108dc15ef9fbda0d2e'],
             'CLeWI+DER++': None,
         },
         'cifar100': {
@@ -54,8 +54,8 @@ def standard_benchmarks():
         'tiny-imagenet': {
             'Joint': None,
             'Finetuning': None,
-            'oEWC': None,
-            'SI': None,
+            'oEWC': ['127dc1061a01424ebdcc849ea0d647b5', 'b5a6d3367aa9471bb06e5c77b96a58bc', '7445317343ec4ae68a087a25646d6eed', '4a0a19b0f3674992a21cf7eb9662ef27', '8e92f75b5d104899b66ce5c22f2a9078'],
+            'SI': ['1aed8e7dcf994c5cb26ae2316ab42ac6', '51d05c34b7c94b1e9d434a40155ceaef', 'd3342607c59345978425f2b0dacf4f61', 'f827a662b7ac413a806cb224d04f4f99', 'b275260ed39d4d5ab0562e337bce16e2'],
             'iCARL': None,
             'GDumb': None,
             'ER': None,
@@ -63,7 +63,7 @@ def standard_benchmarks():
             'aGEM': None,
             'CLeWI+aGEM': None,
             'ER-ACE': None,
-            'CLeWI+ER-ACE': None,
+            'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
             'MIR': None,
             'CLeWI+MIR': None,
             'BIC': None,
@@ -81,7 +81,7 @@ def standard_benchmarks():
     client = mlflow.tracking.MlflowClient(mlruns_path)
 
     dataset_experiments = {
-        'cifar10': None,
+        'cifar10': '444536103888854616',
         'cifar100': '675415310966171557',
         'tiny-imagenet': '757344672409704114'
     }
