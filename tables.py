@@ -66,7 +66,7 @@ def standard_benchmarks():
             'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
             'MIR': None,
             'CLeWI+MIR': None,
-            'BIC': None,
+            'BIC': ['f77def6d9cae422eaa46fa802bd0ee4d', '3ad493457e8842b793eec3e0fed0fd8b', '2ab72dd897044f1eba9a2030670e746d', '92a5abee359b45d19ee2a70f973460b4', 'b4baeb8326084acf9585316ce7ce96cc'],
             'CLeWI+BIC': None,
             'DER++': None,
             'CLeWI+DER++': None,
