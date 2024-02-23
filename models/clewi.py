@@ -17,6 +17,7 @@ def get_parser() -> ArgumentParser:
                         help='interpolation alpha')
     parser.add_argument('--permuation_epochs', type=int, default=1)
     parser.add_argument('--batchnorm_epochs', type=int, default=1)
+    parser.add_argument('--debug_interpolation', action='store_true')
 
     add_management_args(parser)
     add_experiment_args(parser)
@@ -63,19 +64,19 @@ class Clewi(ContinualModel):
 
     def end_task(self, dataset):
         print('\n\n')
-        if self.t == 1:
-            self.interpolation_alpha = 0.2
-        elif self.t == 2:
-            self.interpolation_alpha = 0.25
-        elif self.t == 3:
-            self.interpolation_alpha = 0.3
-        elif self.t == 5:
-            self.interpolation_alpha = 0.33
-        elif self.t == 6:
-            self.interpolation_alpha = 0.35
-        elif self.t == 9:
-            self.interpolation_alpha = 0.37
-        self.t += 1
+        # if self.t == 1:
+        #     self.interpolation_alpha = 0.2
+        # elif self.t == 2:
+        #     self.interpolation_alpha = 0.25
+        # elif self.t == 3:
+        #     self.interpolation_alpha = 0.3
+        # elif self.t == 5:
+        #     self.interpolation_alpha = 0.33
+        # elif self.t == 6:
+        #     self.interpolation_alpha = 0.35
+        # elif self.t == 9:
+        #     self.interpolation_alpha = 0.37
+        # self.t += 1
 
         # torch.cuda.empty_cache()
         # buffer_dataloder = self.get_buffer_dataloder(batch_size=256)
@@ -109,7 +110,8 @@ class Clewi(ContinualModel):
         torch.save(self.net, 'net.pt')
 
         buffer_dataloder = self.get_buffer_dataloder()
-        self.interpolation_plot(dataset, buffer_dataloder)
+        if self.args.debug_interpolation:
+            self.interpolation_plot(dataset, buffer_dataloder)
         self.old_model = interpolate(self.net, self.old_model, buffer_dataloder, self.device, alpha=self.interpolation_alpha,
                                      permuation_epochs=self.args.permuation_epochs, batchnorm_epochs=self.args.batchnorm_epochs)
         self.net = self.deepcopy_model(self.old_model)
