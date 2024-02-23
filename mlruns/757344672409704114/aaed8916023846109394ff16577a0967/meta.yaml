@@ -1,8 +1,9 @@
 artifact_uri: /home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/1/aaed8916023846109394ff16577a0967/artifacts
+deleted_time: 1708682596061
 end_time: 1708559282489
 entry_point_name: ''
 experiment_id: '757344672409704114'
-lifecycle_stage: active
+lifecycle_stage: deleted
 run_id: aaed8916023846109394ff16577a0967
 run_name: clewi_bic 43
 run_uuid: aaed8916023846109394ff16577a0967

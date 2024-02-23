@@ -63,7 +63,7 @@ def standard_benchmarks():
             'aGEM': None,
             'CLeWI+aGEM': None,
             'ER-ACE': None,
-            'CLeWI+ER-ACE': None,
+            'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
             'MIR': None,
             'CLeWI+MIR': None,
             'BIC': None,
