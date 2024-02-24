@@ -110,10 +110,8 @@ class SequentialCIFAR100(ContinualDataset):
             [transforms.ToPILImage(), SequentialCIFAR100.TRANSFORM])
         return transform
 
-    @staticmethod
-    def get_backbone():
-        return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK
-                        * SequentialCIFAR100.N_TASKS)
+    def get_backbone(self):
+        return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS, nf=int(64*self.args.resnet_width))
 
     @staticmethod
     def get_loss():
