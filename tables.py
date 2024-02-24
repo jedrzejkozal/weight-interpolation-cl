@@ -7,6 +7,7 @@ import tabulate
 def main():
     standard_benchmarks()
     varing_n_tasks()
+    interpolation_coef()
 
 
 def standard_benchmarks():
@@ -94,7 +95,7 @@ def standard_benchmarks():
             run_ids = runs_standard_benchmarks[dataset][algorithm_name]
             experiment_id = dataset_experiments[dataset]
             metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=n_tasks)
-            row.extend(metrics)
+            row.extend(metrics[:-1])
 
         if row[0].startswith('CLeWI+'):
             previos_row = table[-1]
@@ -219,7 +220,7 @@ def varing_n_tasks():
         for n_tasks in ('5 tasks', '10 tasks', '20 tasks'):
             run_ids = runs_n_tasks[n_tasks][algorithm_name]
             n_tasks = int(n_tasks.split()[0])
-            acc, _ = calc_average_metrics(run_ids, client, '675415310966171557', n_tasks)
+            acc, _, _ = calc_average_metrics(run_ids, client, '675415310966171557', n_tasks)
             row.append(acc)
         table.append(row)
 
@@ -231,23 +232,64 @@ def varing_n_tasks():
     print("\n\n")
 
 
+def interpolation_coef():
+    runs_dict = {
+        'CLeWI+ER alpha=0.1': None,
+        'CLeWI+ER alpha=0.2': None,
+        'CLeWI+ER alpha=0.3': None,
+        'CLeWI+ER alpha=0.4': None,
+        'CLeWI+ER alpha=0.5': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306'],
+    }
+
+    algorithms = list(runs_dict.keys())
+
+    mlruns_path = '///home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/'
+    # mlruns_path = '///home/jedrzejkozal/Documents/adversarial-computer-security/mlruns/'
+    client = mlflow.tracking.MlflowClient(mlruns_path)
+
+    table = list()
+    for algorithm_name in algorithms:
+        row = list()
+        row.append(algorithm_name)
+        run_ids = runs_dict[algorithm_name]
+        if algorithm_name == 'CLeWI+ER alpha=0.5':
+            experiment_id = '675415310966171557'
+        else:
+            experiment_id = '654603390611542524'
+        metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10)
+        row.extend(metrics)
+        table.append(row)
+
+    tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['alpha', 'Acc', 'FM', 'Acc_T',])
+    tab_latex = tab_latex.replace('\\textbackslash{}', '\\')
+    tab_latex = tab_latex.replace('\\{', '{')
+    tab_latex = tab_latex.replace('\\}', '}')
+    print(tab_latex)
+    print("\n\n")
+
+
 def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=20):
     if dataset_run_ids == None:
-        return '-', '-'
+        return '-', '-', '-'
 
     acc_all = []
     fm_all = []
+    last_task_acc_all = []
     for run_id in dataset_run_ids:
         acc = get_metrics(run_id, client)
         acc_all.append(acc)
         fm = calc_forgetting_measure(run_id, client, experiment_id=experiment_id, num_tasks=n_tasks)  # TODO fix logging num_tasks in experiments
         fm_all.append(fm)
+        last_task_acc = get_last_task_acc(run_id, client, experiment_id=experiment_id, num_tasks=n_tasks)
+        last_task_acc_all.append(last_task_acc)
 
     avrg_acc, acc_std = rounded_reduction(acc_all, digits=3)
     acc = f'{avrg_acc}±{acc_std}'
     avrg_fm, fm_std = rounded_reduction(fm_all, digits=3)
     forgetting = f'{avrg_fm}±{fm_std}'
-    return acc, forgetting
+    avrg_last_acc, last_acc_std = rounded_reduction(last_task_acc_all, digits=3)
+    last_acc = f'{avrg_last_acc}±{last_acc_std}'
+    return acc, forgetting, last_acc
 
 
 def get_metrics(run_id, client):
@@ -288,6 +330,22 @@ def calc_forgetting_measure(run_id, client, experiment_id, num_tasks=None):
 
     fm = fm / num_tasks
     return fm
+
+
+def get_last_task_acc(run_id, client, experiment_id, num_tasks=None):
+    run_path = pathlib.Path(f'mlruns/{experiment_id}/{run_id}/metrics/')
+    if num_tasks is None:
+        run = client.get_run(run_id)
+        num_tasks = run.data.params['n_experiences']
+        num_tasks = int(num_tasks)
+
+    filepath = run_path / f'acc_class_il_task_{num_tasks-1}'
+    with open(filepath, 'r') as f:
+        for line in f.readlines():
+            acc_str = line.split()[-2]
+            last_acc = float(acc_str)
+
+    return last_acc
 
 
 if __name__ == '__main__':
