@@ -63,7 +63,7 @@ def standard_benchmarks():
             'CLeWI+ER': None,
             'aGEM': ['573f2ad340e646afad6823a5d6be0c73', '563d5d2044ef446bae3a6e0986193411', '1dbd9df4d19b4b429aff401b0a9e1c55', 'e08abf607aac41c2967fd0b295410648', '6238b6d4c4d344789c61edc8425478f4'],
             'CLeWI+aGEM': None,
-            'ER-ACE': None,
+            'ER-ACE': ['a2fb4aed0153415588bb2f02f86087f6', '4743e2fc63bf402993de8bc781738f92', 'c2e2ee0781ac41a6a8b3f2ea4faa965f', '7dddc4e05c3748609e79a277c5aec3c0', '576af1e4d2ed4dac922ca71ef6de6c9e'],
             'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
             'MIR': None,
             'CLeWI+MIR': None,
