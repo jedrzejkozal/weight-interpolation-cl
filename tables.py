@@ -256,11 +256,13 @@ def interpolation_coef():
             experiment_id = '675415310966171557'
         else:
             experiment_id = '654603390611542524'
-        metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10)
-        row.extend(metrics)
+        acc, fm, last_acc = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10)
+        row.append(acc)
+        row.append(last_acc)
+        row.append(fm)
         table.append(row)
 
-    tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['alpha', 'Acc', 'FM', 'Acc_T',])
+    tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['alpha', 'Acc', 'Acc_T', 'FM',])
     tab_latex = tab_latex.replace('\\textbackslash{}', '\\')
     tab_latex = tab_latex.replace('\\{', '{')
     tab_latex = tab_latex.replace('\\}', '}')
