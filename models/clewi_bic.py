@@ -36,6 +36,62 @@ class ClewiBiC(ClewiMixin, BiC):
         self.interpolation_alpha = args.interpolation_alpha
         self.old_model = self.deepcopy_model(backbone)
 
+    def begin_task(self, dataset):
+        if self.task > 0:
+            self.net.train()
+            self.lamda = 1 / (self.task + 1)
+
+            icarl_replay(self, dataset, val_set_split=self.args.valset_split)
+
+        if hasattr(self, 'corr_factors'):
+            del self.corr_factors
+
     def end_task(self, dataset):
+        self.evaluate_corr(dataset)
+        self.old_net = deepcopy(self.net.eval())
+        if hasattr(self, 'corr_factors'):
+            self.old_corr = deepcopy(self.corr_factors)
+        self.net.train()
+
+        self.build_buffer(dataset, self.task+1)
         ClewiMixin.end_task(self, dataset)
-        BiC.end_task(self, dataset)
+        self.evaluate_corr(dataset)
+
+        self.task += 1
+
+    def evaluate_corr(self, dataset):
+        if self.task > 0:
+            self.net.eval()
+
+            from utils.training import evaluate
+            print("EVAL PRE", evaluate(self, dataset))
+
+            self.evaluate_bias('pre')
+
+            corr_factors = torch.tensor([0., 1.], device=self.device, requires_grad=True)
+            self.biasopt = Adam([corr_factors], lr=0.001)
+
+            for l in range(self.args.bic_epochs):
+                for inputs, labels, _ in self.val_loader:
+                    inputs, labels = inputs.to(self.device), labels.to(self.device)
+
+                    self.biasopt.zero_grad()
+                    with torch.no_grad():
+                        out = self.forward(inputs)
+
+                    start_last_task = (self.task) * self.cpt
+                    end_last_task = (self.task + 1) * self.cpt
+                    tout = out + 0
+                    tout[:, start_last_task:end_last_task] *= corr_factors[1].repeat_interleave(end_last_task - start_last_task)
+                    tout[:, start_last_task:end_last_task] += corr_factors[0].repeat_interleave(end_last_task - start_last_task)
+
+                    loss_bic = self.loss(tout[:, :end_last_task], labels)
+                    loss_bic.backward()
+                    self.biasopt.step()
+
+            self.corr_factors = corr_factors
+            print(self.corr_factors, file=sys.stderr)
+
+            self.evaluate_bias('post')
+
+            self.net.train()

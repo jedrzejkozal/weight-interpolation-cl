@@ -63,20 +63,37 @@ class BiC(ContinualModel):
         if hasattr(self, 'corr_factors'):
             del self.corr_factors
 
-    def evaluate_bias(self, fprefx):
-        resp = torch.zeros((self.task + 1) * self.cpt).to(self.device)
-        with torch.no_grad():
-            with bn_track_stats(self, False):
-                for data in self.val_loader:
+    def observe(self, inputs, labels, not_aug_inputs):
+        self.opt.zero_grad()
+        outputs = self.net(inputs)
 
-                    inputs, labels, _ = data
-                    inputs, labels = inputs.to(self.device), labels.to(self.device)
+        dist_loss = torch.tensor(0.)
+        if self.task > 0:
+            with torch.no_grad():
+                old_outputs = self.old_net(inputs)
+                if self.args.distill_after_bic:
+                    if hasattr(self, 'old_corr'):
+                        start_last_task = (self.task - 1) * self.cpt
+                        end_last_task = (self.task) * self.cpt
+                        old_outputs[:, start_last_task:end_last_task] *= self.old_corr[1].repeat_interleave(end_last_task - start_last_task)
+                        old_outputs[:, start_last_task:end_last_task] += self.old_corr[0].repeat_interleave(end_last_task - start_last_task)
 
-                    resp += self.forward(inputs, anticipate=fprefx == 'post')[:, :(self.task + 1) * self.cpt].sum(0)
-        resp /= len(self.val_loader.dataset)
+            pi_hat = F.log_softmax(outputs[:, :self.task * self.cpt] / self.args.temp, dim=1)
+            pi = F.softmax(old_outputs[:, :self.task * self.cpt] / self.args.temp, dim=1)
 
-        if fprefx == 'pre':
-            self.oldresp = resp.cpu()
+            dist_loss = -(pi_hat * pi).sum(1).mean()
+
+        class_loss = self.loss(outputs[:, :(self.task + 1) * self.cpt], labels, reduction='none')
+        loss = (1 - self.lamda) * class_loss.mean() + self.lamda * dist_loss.mean() * self.args.temp * self.args.temp
+
+        if self.args.wd_reg:
+            loss += self.args.wd_reg * torch.sum(self.net.module.get_params() ** 2)
+
+        loss.backward()
+
+        self.opt.step()
+
+        return loss.item()
 
     def end_task(self, dataset):
         if self.task > 0:
@@ -119,54 +136,27 @@ class BiC(ContinualModel):
         self.net.train()
 
         self.task += 1
-        self.build_buffer(dataset)
+        self.build_buffer(dataset, self.task)
 
-    def forward(self, x, anticipate=False):
-        ret = super().forward(x)
-        if ret.shape[0] > 0:
-            if hasattr(self, 'corr_factors'):
-                start_last_task = (self.task - 1 + (1 if anticipate else 0)) * self.cpt
-                end_last_task = (self.task + (1 if anticipate else 0)) * self.cpt
-                ret[:, start_last_task:end_last_task] *= self.corr_factors[1].repeat_interleave(end_last_task - start_last_task)
-                ret[:, start_last_task:end_last_task] += self.corr_factors[0].repeat_interleave(end_last_task - start_last_task)
-        return ret
+    def evaluate_bias(self, fprefx):
+        resp = torch.zeros((self.task + 1) * self.cpt).to(self.device)
+        with torch.no_grad():
+            with bn_track_stats(self, False):
+                for data in self.val_loader:
 
-    def observe(self, inputs, labels, not_aug_inputs):
-        self.opt.zero_grad()
-        outputs = self.net(inputs)
+                    inputs, labels, _ = data
+                    inputs, labels = inputs.to(self.device), labels.to(self.device)
 
-        dist_loss = torch.tensor(0.)
-        if self.task > 0:
-            with torch.no_grad():
-                old_outputs = self.old_net(inputs)
-                if self.args.distill_after_bic:
-                    if hasattr(self, 'old_corr'):
-                        start_last_task = (self.task - 1) * self.cpt
-                        end_last_task = (self.task) * self.cpt
-                        old_outputs[:, start_last_task:end_last_task] *= self.old_corr[1].repeat_interleave(end_last_task - start_last_task)
-                        old_outputs[:, start_last_task:end_last_task] += self.old_corr[0].repeat_interleave(end_last_task - start_last_task)
+                    resp += self.forward(inputs, anticipate=fprefx == 'post')[:, :(self.task + 1) * self.cpt].sum(0)
+        resp /= len(self.val_loader.dataset)
 
-            pi_hat = F.log_softmax(outputs[:, :self.task * self.cpt] / self.args.temp, dim=1)
-            pi = F.softmax(old_outputs[:, :self.task * self.cpt] / self.args.temp, dim=1)
+        if fprefx == 'pre':
+            self.oldresp = resp.cpu()
 
-            dist_loss = -(pi_hat * pi).sum(1).mean()
+    def build_buffer(self, dataset, task):
+        examples_per_task = self.buffer.buffer_size // task
 
-        class_loss = self.loss(outputs[:, :(self.task + 1) * self.cpt], labels, reduction='none')
-        loss = (1 - self.lamda) * class_loss.mean() + self.lamda * dist_loss.mean() * self.args.temp * self.args.temp
-
-        if self.args.wd_reg:
-            loss += self.args.wd_reg * torch.sum(self.net.module.get_params() ** 2)
-
-        loss.backward()
-
-        self.opt.step()
-
-        return loss.item()
-
-    def build_buffer(self, dataset):
-        examples_per_task = self.buffer.buffer_size // self.task
-
-        if self.task > 1:
+        if task > 1:
             # shrink buffer
             buf_x, buf_y, buf_tl = self.buffer.get_all_data()
             self.buffer.empty()
@@ -190,5 +180,15 @@ class BiC(ContinualModel):
                     self.buffer.add_data(examples=not_aug_inputs[:(examples_per_task - counter)],
                                          labels=labels[:(examples_per_task - counter)],
                                          task_labels=(torch.ones(self.args.batch_size) *
-                                                      (self.task - 1))[:(examples_per_task - counter)])
+                                                      (task - 1))[:(examples_per_task - counter)])
                     counter += len(not_aug_inputs)
+
+    def forward(self, x, anticipate=False):
+        ret = super().forward(x)
+        if ret.shape[0] > 0:
+            if hasattr(self, 'corr_factors'):
+                start_last_task = (self.task - 1 + (1 if anticipate else 0)) * self.cpt
+                end_last_task = (self.task + (1 if anticipate else 0)) * self.cpt
+                ret[:, start_last_task:end_last_task] *= self.corr_factors[1].repeat_interleave(end_last_task - start_last_task)
+                ret[:, start_last_task:end_last_task] += self.corr_factors[0].repeat_interleave(end_last_task - start_last_task)
+        return ret
