@@ -234,11 +234,11 @@ def varing_n_tasks():
 
 def interpolation_coef():
     runs_dict = {
-        'CLeWI+ER alpha=0.1': None,
-        'CLeWI+ER alpha=0.2': None,
-        'CLeWI+ER alpha=0.3': None,
-        'CLeWI+ER alpha=0.4': None,
-        'CLeWI+ER alpha=0.5': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306'],
+        '$\\alpha$=0.1': ['6c18801f786641a29744253b16384999', '92a29446a8b74091894bdc5c3a42922a', 'b70c33c69cdb487c95be3472869b6009'],
+        '$\\alpha$=0.2': ['b1e9e5fc86204e63b7d01e93a5cb1b3c', '36ecede7b11d40848a26ae8365e21730', '76816403a395414ea009d1f26f595398'],
+        '$\\alpha$=0.3': ['b1c44f969b2046938906b826556eec9b', '436da7d90acd4fe5ba3712100cb9081e', '7f46a1e00eb7499dbc987ed8a44e56ad'],
+        '$\\alpha$=0.4': ['85a739a6bf914d0b8afaab8f1fae6ccd', 'f9bcb6f16b71457d8c8b33555b267a65', 'b3618ad747a545fb910bea58614a09f7'],
+        '$\\alpha$=0.5': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306'],
     }
 
     algorithms = list(runs_dict.keys())
@@ -252,11 +252,11 @@ def interpolation_coef():
         row = list()
         row.append(algorithm_name)
         run_ids = runs_dict[algorithm_name]
-        if algorithm_name == 'CLeWI+ER alpha=0.5':
+        if algorithm_name == '$\\alpha$=0.5':
             experiment_id = '675415310966171557'
         else:
             experiment_id = '654603390611542524'
-        acc, fm, last_acc = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10)
+        acc, fm, last_acc = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10, digits=2)
         row.append(acc)
         row.append(last_acc)
         row.append(fm)
@@ -266,11 +266,12 @@ def interpolation_coef():
     tab_latex = tab_latex.replace('\\textbackslash{}', '\\')
     tab_latex = tab_latex.replace('\\{', '{')
     tab_latex = tab_latex.replace('\\}', '}')
+    tab_latex = tab_latex.replace('\\$', '$')
     print(tab_latex)
     print("\n\n")
 
 
-def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=20):
+def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=20, digits=3):
     if dataset_run_ids == None:
         return '-', '-', '-'
 
@@ -285,11 +286,11 @@ def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=20):
         last_task_acc = get_last_task_acc(run_id, client, experiment_id=experiment_id, num_tasks=n_tasks)
         last_task_acc_all.append(last_task_acc)
 
-    avrg_acc, acc_std = rounded_reduction(acc_all, digits=3)
+    avrg_acc, acc_std = rounded_reduction(acc_all, digits=digits)
     acc = f'{avrg_acc}±{acc_std}'
-    avrg_fm, fm_std = rounded_reduction(fm_all, digits=3)
+    avrg_fm, fm_std = rounded_reduction(fm_all, digits=digits)
     forgetting = f'{avrg_fm}±{fm_std}'
-    avrg_last_acc, last_acc_std = rounded_reduction(last_task_acc_all, digits=3)
+    avrg_last_acc, last_acc_std = rounded_reduction(last_task_acc_all, digits=digits)
     last_acc = f'{avrg_last_acc}±{last_acc_std}'
     return acc, forgetting, last_acc
 
