@@ -68,7 +68,7 @@ def standard_benchmarks():
             'MIR': ['d2e8f4b422b7453e994cec529c4d834a', '4d416a168f0f4314bf3f5a9e0fb2cd21', '1b57cc1cd86a4a2b858eda42290ced32', '727f4ccbd083465ab324811506576c20', '8df45a4e90df4698b4493a73c52d53b2'],
             'CLeWI+MIR': ['90a059ffc4e24da3a832e87ff4f09022', '7bf3d5b853e3410c854dbb33025c7481', 'c94d7618538c4c368c6ae48819580749', 'aee86f6bb5a145ac9c8ee7ec215bdbb2'],
             'BIC': ['f77def6d9cae422eaa46fa802bd0ee4d', '3ad493457e8842b793eec3e0fed0fd8b', '2ab72dd897044f1eba9a2030670e746d', '92a5abee359b45d19ee2a70f973460b4', 'b4baeb8326084acf9585316ce7ce96cc'],
-            'CLeWI+BIC': None,
+            'CLeWI+BIC': ['6aebdddb4f64435c9cf8c08e7377c2ac', 'a6fffbdec6c34140b3c1e726cb3b94ac', 'c17abf79c565473db9a328ee52c81af8', '9bf25693c32d4495a7f0b2e4711952b8', '563e638497aa4d9792fc11609397746c'],
             'DER++': None,
             'CLeWI+DER++': None,
         }
