@@ -53,7 +53,7 @@ def standard_benchmarks():
             'CLeWI+DER++': ['ec55afa0eba747f39390748811e09ffd', 'a55184ff8497433ca3df7f78d7bed368', 'a539e8526d994e60a16aeba62a13fd0f', '352f030fbf9f4b9d83e8782c63162ddc', '5c63ddbacb714799a15bbb4ec0265b3e'],
         },
         'tiny-imagenet': {
-            'Joint': None,
+            'Joint': ['15bf2f063b7941728d86a1ef011a9696', 'ecbb65d321b14932a756fbbe5ef57ad4', 'cc65ef4688034fefa92ccdfa980c840b', '11ee486431e64ef089bdc0f8a8ed7788', 'd591af5051f7472c8689e6bf6a3f3d7d'],
             'Finetuning': ['bb467533c51d4f4d8b6f12c86c6b4a3e', 'e7b37e974309450b895df0d9f4b6e4b9', 'cf68367c6c3c401eb3b6d99b07fd3b75', 'b112ed4e336f465bb6072ad84b837862', '5fc622e1e37d4217b3b2a3ecb66e23b8'],
             'oEWC': ['127dc1061a01424ebdcc849ea0d647b5', 'b5a6d3367aa9471bb06e5c77b96a58bc', '7445317343ec4ae68a087a25646d6eed', '4a0a19b0f3674992a21cf7eb9662ef27', '8e92f75b5d104899b66ce5c22f2a9078'],
             'SI': ['1aed8e7dcf994c5cb26ae2316ab42ac6', '51d05c34b7c94b1e9d434a40155ceaef', 'd3342607c59345978425f2b0dacf4f61', 'f827a662b7ac413a806cb224d04f4f99', 'b275260ed39d4d5ab0562e337bce16e2'],
