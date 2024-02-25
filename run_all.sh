@@ -40,3 +40,28 @@ do
     # python hyperparameters.py --model="mer" --dataset="seq-cifar100" --n_tasks=$N_TASKS --experiment_name="seq-cifar100" --buffer_size=500 --n_epochs=50 --batch_size=1
     python hyperparameters.py --model="mir" --dataset="seq-cifar100" --n_tasks=$N_TASKS --experiment_name="seq-cifar100" --buffer_size=500 --n_epochs=50 --batch_size=32 --minibatch_size=64
 done
+
+
+for seed in 43 44 45 46 47
+do 
+    echo "seed $seed"
+    python main.py --model="clewi_er_ace" --dataset="seq-tinyimg" --n_tasks=20 --experiment_name="seq-tinyimagenet" --run_name="clewi_er_ace $seed" --lr=0.03 --buffer_size=500 --n_epochs=50 --seed=$seed --optim_wd=0.0 --optim_mom=0.0 --interpolation_alpha=0.3 --device="cuda:1"
+done
+
+for seed in 43 44 45 46 47
+do 
+    echo "seed $seed"
+    python main.py --model="clewi_bic" --dataset="seq-tinyimg" --n_tasks=20 --experiment_name="seq-tinyimagenet" --run_name="clewi_bic $seed" --lr=0.03 --buffer_size=500 --n_epochs=50 --seed=$seed --optim_wd=0.0 --optim_mom=0.0 --interpolation_alpha=0.2 --device="cuda:1"
+done
+
+for seed in 43 44 45 46 47
+do 
+    echo "seed $seed"
+    python main.py --model="clewi_bic" --dataset="seq-cifar100" --experiment_name="seq-cifar100" --run_name="clewi_bic $seed" --lr=0.03 --buffer_size=500 --n_epochs=50 --seed=$seed --optim_wd=0.0 --optim_mom=0.0 --interpolation_alpha=0.2 --device="cuda:1"
+done
+
+for seed in 43 44 45 46 47
+do 
+    echo "seed $seed"
+    python main.py --model="clewi_derpp" --dataset="seq-tinyimg" --n_tasks=20 --experiment_name="seq-tinyimagenet" --run_name="clewi_derpp $seed" --lr=0.1 --buffer_size=500 --n_epochs=50 --seed=$seed --optim_wd=0.0 --optim_mom=0.0 --interpolation_alpha=0.2 --alpha=0.1 --beta=0.1 --device="cuda:1"
+done
