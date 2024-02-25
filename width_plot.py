@@ -2,6 +2,7 @@ import mlflow
 import pathlib
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 def main():
@@ -9,18 +10,18 @@ def main():
         'clewi': {
             '1': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306'],
             '2': ['1772099fdb5c4f8289313920e48ff3d8', '4a5ebec62798441db255cd8d842d824a', 'e36fbbb1cca046a181f219c41713e125'],
-            '4': None,
+            '4': ['1d1ebc9ffa2949d489daad0c7883b627', '1d5f5590ec0b438799ea09e116cdb1e1', 'ea335a22c85046a79a44510379e94338'],
             '8': None,
         },
         'er': {
             '1': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811'],
             '2': ['c271df8e94f344a6a6a851d9ba22f889', '5488420cbd564042b326bda3b7ceae2f', '026d42bad63344fdb9815c9d6c06abee'],
-            '4': None,
+            '4': ['a62134a775454391ab027555e30cb6af', '20997eb56bc042e79f00e114c96a2609', 'fddaf7e55a9748acae869619172abf92'],
             '8': None,
         },
         'derpp': {
             '1': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27'],
-            '2': None,
+            '2': ['32549c7fba134441912ae3abf072042f', '4f167668fabb4817a6da4823bf699d38', 'e41e2b7b860b44b3be9befa0e46af632'],
             '4': None,
             '8': None,
         },
@@ -33,22 +34,24 @@ def main():
     client = mlflow.tracking.MlflowClient(mlruns_path)
 
     widths = [1, 2, 4, 8]
-    for algorithm_name in algorithms:
-        width_acc = list()
-        for width in width_runs[algorithm_name].keys():
-            run_ids = width_runs[algorithm_name][width]
-            if width == '1':
-                experiment_id = '675415310966171557'
-            else:
-                experiment_id = '915839014035161355'
-            acc_avrg, acc_std, fm_avrg, fm_std, last_acc_avrg, last_acc_std = calc_average_metrics(run_ids, client, experiment_id)
-            width_acc.append(acc_avrg)
-        plt.plot(widths, width_acc, label=algorithm_name)
-    plt.xticks([1, 2, 4, 8])
-    plt.xlabel('network width')
-    plt.ylabel('accuracy')
-    plt.legend()
-    plt.show()
+    colors = sns.color_palette("husl", 9)
+    with sns.axes_style("darkgrid"):
+        for i, algorithm_name in enumerate(algorithms):
+            width_acc = list()
+            for width in width_runs[algorithm_name].keys():
+                run_ids = width_runs[algorithm_name][width]
+                if width == '1':
+                    experiment_id = '675415310966171557'
+                else:
+                    experiment_id = '915839014035161355'
+                acc_avrg, acc_std, fm_avrg, fm_std, last_acc_avrg, last_acc_std = calc_average_metrics(run_ids, client, experiment_id)
+                width_acc.append(acc_avrg)
+            plt.plot(widths, width_acc, label=algorithm_name, color=colors[i])
+        plt.xticks([1, 2, 4, 8])
+        plt.xlabel('network width')
+        plt.ylabel('Test accuracy')
+        plt.legend()
+        plt.show()
 
 
 def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=10):

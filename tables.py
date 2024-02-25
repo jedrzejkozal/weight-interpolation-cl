@@ -65,7 +65,7 @@ def standard_benchmarks():
             'CLeWI+aGEM': ['29bcaa26526a4f9d90a1908f37eff054', '7ad40b999b704e838243c87843a58e80', '8a217b9273ce4d44896103df7f9edffc', '1072739b4b4b40178568840044cee9ed', 'd6af7766331d486d8c3465fba1e18dae'],
             'ER-ACE': ['a2fb4aed0153415588bb2f02f86087f6', '4743e2fc63bf402993de8bc781738f92', 'c2e2ee0781ac41a6a8b3f2ea4faa965f', '7dddc4e05c3748609e79a277c5aec3c0', '576af1e4d2ed4dac922ca71ef6de6c9e'],
             'CLeWI+ER-ACE': ['62ff662c013f4ddf9315c506748ef11a', '120387133a6c4d448b120ee8318641a4', '41f911881f47406aab483a9aa4635bc3', '0d654576792043a6aa0aaf23b0ebdb52', 'd504d98c3199434ba339bc0a8fb5d7c7'],
-            'MIR': None,
+            'MIR': ['d2e8f4b422b7453e994cec529c4d834a', '4d416a168f0f4314bf3f5a9e0fb2cd21', '1b57cc1cd86a4a2b858eda42290ced32', '727f4ccbd083465ab324811506576c20', '8df45a4e90df4698b4493a73c52d53b2'],
             'CLeWI+MIR': None,
             'BIC': ['f77def6d9cae422eaa46fa802bd0ee4d', '3ad493457e8842b793eec3e0fed0fd8b', '2ab72dd897044f1eba9a2030670e746d', '92a5abee359b45d19ee2a70f973460b4', 'b4baeb8326084acf9585316ce7ce96cc'],
             'CLeWI+BIC': ['d6f22dc79ab34f3795600de91f7bdf35', 'a7db5b0a8c2348f9aeb093f88d5644b6', 'f0ae75ea46624db1aef0e99f4cf716d7', 'fd225489ca674152a886db17368b3ff2', 'c89efaa4f8f042d59c80a3c4d5c98a0f'],
