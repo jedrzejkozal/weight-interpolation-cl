@@ -70,7 +70,7 @@ def standard_benchmarks():
             'BIC': ['f77def6d9cae422eaa46fa802bd0ee4d', '3ad493457e8842b793eec3e0fed0fd8b', '2ab72dd897044f1eba9a2030670e746d', '92a5abee359b45d19ee2a70f973460b4', 'b4baeb8326084acf9585316ce7ce96cc'],
             'CLeWI+BIC': ['6aebdddb4f64435c9cf8c08e7377c2ac', 'a6fffbdec6c34140b3c1e726cb3b94ac', 'c17abf79c565473db9a328ee52c81af8', '9bf25693c32d4495a7f0b2e4711952b8', '563e638497aa4d9792fc11609397746c'],
             'DER++': ['c0136c60f1e8448d8a285c640a9b61f5', '87fefe37d7b44c308ba4bbd2dda1a457', 'b2e068c4b79f47b998161394a044e6dc', '2b2dfe3213e94e9e9f94d206905a2350', 'ae8470f0dcc14a8badce36f6ab052686'],
-            'CLeWI+DER++': None,
+            'CLeWI+DER++': ['492edb642ad846d484df38c1b27445f3', '39df786332a7400abad6f6a7ffd0d6ab', 'b55e219c2ce84bde81223b8672c0d2d6', 'eb341776391c4539a24031676fa85676', '7f615541f83348f89b9a24fef3914981'],
         }
     }
 
@@ -94,7 +94,7 @@ def standard_benchmarks():
         for dataset, n_tasks in zip(('cifar10', 'cifar100', 'tiny-imagenet'), (5, 10, 20)):
             run_ids = runs_standard_benchmarks[dataset][algorithm_name]
             experiment_id = dataset_experiments[dataset]
-            metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=n_tasks)
+            metrics = calc_average_metrics(run_ids, client, experiment_id, n_tasks=n_tasks, digits=2)
             row.extend(metrics[:-1])
 
         if row[0].startswith('CLeWI+'):

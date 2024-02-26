@@ -17,7 +17,7 @@ def main():
             '1': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811'],
             '2': ['c271df8e94f344a6a6a851d9ba22f889', '5488420cbd564042b326bda3b7ceae2f', '026d42bad63344fdb9815c9d6c06abee'],
             '4': ['a62134a775454391ab027555e30cb6af', '20997eb56bc042e79f00e114c96a2609', 'fddaf7e55a9748acae869619172abf92'],
-            '8': None,
+            '8': ['bd3d71d4cc5b4758baa104cfd57f54ad', 'aa8d0d123acb493e991caba186afddb7'],
         },
         'derpp': {
             '1': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27'],
