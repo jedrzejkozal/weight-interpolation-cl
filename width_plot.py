@@ -25,6 +25,12 @@ def main():
             '4': ['5e12e42f27fb43ec96c2be321148f8d8', '65136829a4d0493685e715047285edaa', '7f8515c687734a10be06dede5d7a476e'],
             '8': None,
         },
+        'clewi derpp': {
+            '1': ['ec55afa0eba747f39390748811e09ffd'],
+            '2': ['45c1ac25b0f44e2dac74b67dbaeecaec'],
+            '4': None,
+            '8': None,
+        }
     }
 
     algorithms = list(width_runs.keys())
@@ -45,10 +51,12 @@ def main():
                 else:
                     experiment_id = '915839014035161355'
                 acc_avrg, acc_std, fm_avrg, fm_std, last_acc_avrg, last_acc_std = calc_average_metrics(run_ids, client, experiment_id)
-                width_acc.append(acc_avrg)
-            plt.plot(widths, width_acc, label=algorithm_name, color=colors[i])
+                if acc_avrg != None:
+                    width_acc.append(acc_avrg)
+            x_locations = widths[:len(width_acc)]
+            plt.plot(x_locations, width_acc, label=algorithm_name, color=colors[i])
         plt.xticks([1, 2, 4, 8])
-        plt.xlabel('network width')
+        plt.xlabel('width multiplier')
         plt.ylabel('Test accuracy')
         plt.legend()
         plt.show()
@@ -56,7 +64,7 @@ def main():
 
 def calc_average_metrics(dataset_run_ids, client, experiment_id, n_tasks=10):
     if dataset_run_ids == None:
-        return 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+        return None, 0.0, 0.0, 0.0, 0.0, 0.0
 
     acc_all = []
     fm_all = []
