@@ -7,29 +7,29 @@ import seaborn as sns
 
 def main():
     width_runs = {
-        'clewi': {
+        'CLeWI ER': {
             '1': ['cf7c6b8b65b04450a468d2f2fa0e9ac9', '5b0b0cec489644b789105d0852223c02', '189b17529d5d49dfb549d1c3d3256306'],
             '2': ['1772099fdb5c4f8289313920e48ff3d8', '4a5ebec62798441db255cd8d842d824a', 'e36fbbb1cca046a181f219c41713e125'],
             '4': ['1d1ebc9ffa2949d489daad0c7883b627', '1d5f5590ec0b438799ea09e116cdb1e1', 'ea335a22c85046a79a44510379e94338'],
-            '8': None,
+            # '8': None,
         },
-        'er': {
+        'ER': {
             '1': ['46fda71735f64c8da98d050960dd3cd9', '7835e0307ca143689620fced42f62c9d', '2239aa1376dd4467852af4347adf4811'],
             '2': ['c271df8e94f344a6a6a851d9ba22f889', '5488420cbd564042b326bda3b7ceae2f', '026d42bad63344fdb9815c9d6c06abee'],
             '4': ['a62134a775454391ab027555e30cb6af', '20997eb56bc042e79f00e114c96a2609', 'fddaf7e55a9748acae869619172abf92'],
-            '8': ['bd3d71d4cc5b4758baa104cfd57f54ad', 'aa8d0d123acb493e991caba186afddb7'],
+            # '8': ['bd3d71d4cc5b4758baa104cfd57f54ad', 'aa8d0d123acb493e991caba186afddb7'],
         },
-        'derpp': {
+        'DER++': {
             '1': ['ae8b5183dcf2473098e4d6a2c040f8d7', 'a8002e911d8343f99aec7a59d67c34bb', '186e1034cd914a658c83d2c1c076df27'],
             '2': ['32549c7fba134441912ae3abf072042f', '4f167668fabb4817a6da4823bf699d38', 'e41e2b7b860b44b3be9befa0e46af632'],
             '4': ['5e12e42f27fb43ec96c2be321148f8d8', '65136829a4d0493685e715047285edaa', '7f8515c687734a10be06dede5d7a476e'],
-            '8': None,
+            # '8': None,
         },
-        'clewi derpp': {
+        'CLeWI DER++': {
             '1': ['ec55afa0eba747f39390748811e09ffd'],
             '2': ['45c1ac25b0f44e2dac74b67dbaeecaec'],
-            '4': None,
-            '8': None,
+            '4': ['899af2bbc7754e14a005ba27e9a03570'],
+            # '8': None,
         }
     }
 
@@ -55,7 +55,7 @@ def main():
                     width_acc.append(acc_avrg)
             x_locations = widths[:len(width_acc)]
             plt.plot(x_locations, width_acc, label=algorithm_name, color=colors[i])
-        plt.xticks([1, 2, 4, 8])
+        plt.xticks([1, 2, 4])
         plt.xlabel('width multiplier')
         plt.ylabel('Test accuracy')
         plt.legend()
