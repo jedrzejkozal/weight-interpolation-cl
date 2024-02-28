@@ -8,6 +8,7 @@ def main():
     standard_benchmarks()
     varing_n_tasks()
     interpolation_coef()
+    no_rehersal()
 
 
 def standard_benchmarks():
@@ -263,6 +264,42 @@ def interpolation_coef():
         table.append(row)
 
     tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['alpha', 'Acc', 'Acc_T', 'FM',])
+    tab_latex = tab_latex.replace('\\textbackslash{}', '\\')
+    tab_latex = tab_latex.replace('\\{', '{')
+    tab_latex = tab_latex.replace('\\}', '}')
+    tab_latex = tab_latex.replace('\\$', '$')
+    print(tab_latex)
+    print("\n\n")
+
+
+def no_rehersal():
+    runs_dict = {
+        'CLeWI-SGD $\\alpha=0.2$': ['94ec2de6e62f4f1c87b5903b1b61cd2b'],
+        'CLeWI-SGD $\\alpha=0.5$': ['67874804bb584f418e5959d33eebab1d'],
+        'CLeWI-SGD $\\alpha=0.6$': ['e9417b06549f44a9a7cbb3b6ec644ac3'],
+        'CLeWI-SGD $\\alpha=0.7$': ['63545a26f8f0430692efdf4241c6750e'],
+        'CLeWI-SGD $\\alpha=0.8$': ['e53875ef9f0b45e4b3784f2c388e11d3'],
+    }
+
+    algorithms = list(runs_dict.keys())
+
+    mlruns_path = '///home/jkozal/Documents/PWr/interpolation/weight-interpolation-cl/mlruns/'
+    # mlruns_path = '///home/jedrzejkozal/Documents/adversarial-computer-security/mlruns/'
+    client = mlflow.tracking.MlflowClient(mlruns_path)
+
+    table = list()
+    for algorithm_name in algorithms:
+        row = list()
+        row.append(algorithm_name)
+        run_ids = runs_dict[algorithm_name]
+        experiment_id = '0'
+        acc, fm, last_acc = calc_average_metrics(run_ids, client, experiment_id, n_tasks=10, digits=2)
+        row.append(acc)
+        row.append(last_acc)
+        row.append(fm)
+        table.append(row)
+
+    tab_latex = tabulate.tabulate(table, tablefmt="latex", headers=['alpha', 'Acc', 'Acc_T' 'FM',])
     tab_latex = tab_latex.replace('\\textbackslash{}', '\\')
     tab_latex = tab_latex.replace('\\{', '{')
     tab_latex = tab_latex.replace('\\}', '}')
