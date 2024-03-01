@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/ab2733ace4634c4985289834e55b1f19/artifacts
+end_time: 1709232415790
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: ab2733ace4634c4985289834e55b1f19
+run_name: clewi buffer size 394
+run_uuid: ab2733ace4634c4985289834e55b1f19
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709230018589
+status: 3
+tags: []
+user_id: jkozal
