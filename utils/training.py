@@ -87,14 +87,14 @@ def train(model: ContinualModel, dataset: ContinualDataset,
     model.net.to(model.device)
     results, results_mask_classes = [], []
 
-    if not args.disable_log:
+    if not args.disable_log and not args.debug:
         logger = MLFlowLogger(dataset.SETTING, dataset.NAME, model.NAME,
                               experiment_name=args.experiment_name, parent_run_id=args.parent_run_id, run_name=args.run_name)
         logger.log_args(args.__dict__)
 
     progress_bar = ProgressBar(verbose=not args.non_verbose)
 
-    if not args.ignore_other_metrics:
+    if not args.ignore_other_metrics and not args.debug:
         dataset_copy = get_dataset(args)
         for t in range(dataset.N_TASKS):
             model.net.train()
@@ -113,7 +113,7 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         train_loader, test_loader = dataset.get_data_loaders()
         if hasattr(model, 'begin_task'):
             model.begin_task(dataset)
-        if t and not args.ignore_other_metrics:
+        if t and not args.ignore_other_metrics and not args.debug:
             accs = evaluate(model, dataset, last=True)
             results[t-1] = results[t-1] + accs[0]
             if dataset.SETTING == 'class-il':
@@ -124,7 +124,7 @@ def train(model: ContinualModel, dataset: ContinualDataset,
             if args.model == 'joint':
                 continue
             for i, data in enumerate(train_loader):
-                if args.debug_mode and i > 3:
+                if args.debug and i > 3:
                     break
                 if hasattr(dataset.train_loader.dataset, 'logits'):
                     inputs, labels, not_aug_inputs, logits = data
@@ -159,11 +159,11 @@ def train(model: ContinualModel, dataset: ContinualDataset,
         mean_acc = np.mean(accs, axis=1)
         print_mean_accuracy(mean_acc, t + 1, dataset.SETTING)
 
-        if not args.disable_log:
+        if not args.disable_log and not args.debug:
             logger.log(mean_acc)
             logger.log_fullacc(accs)
 
-    if not args.disable_log and not args.ignore_other_metrics:
+    if not args.disable_log and not args.ignore_other_metrics and not args.debug:
         logger.add_bwt(results, results_mask_classes)
         logger.add_forgetting(results, results_mask_classes)
         if model.NAME != 'icarl' and model.NAME != 'pnn':

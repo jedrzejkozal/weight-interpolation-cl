@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/1c3a0218d8c64ad8931f2387141671bd/artifacts
+end_time: 1709302200873
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 1c3a0218d8c64ad8931f2387141671bd
+run_name: er buffer size 15000
+run_uuid: 1c3a0218d8c64ad8931f2387141671bd
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709302134037
+status: 3
+tags: []
+user_id: jkozal

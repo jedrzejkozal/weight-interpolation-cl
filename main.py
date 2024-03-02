@@ -119,6 +119,9 @@ def run_experiment(args):
         args.minibatch_size = dataset.get_minibatch_size()
 
     backbone = dataset.get_backbone()
+    print(f'backbone number of parameters = {get_n_parameters(backbone)}')
+    # print(backbone)
+
     loss = dataset.get_loss()
     model = get_model(args, backbone, loss, dataset.get_transform())
 
@@ -139,6 +142,14 @@ def run_experiment(args):
     else:
         assert not hasattr(model, 'end_task') or model.NAME == 'joint_gcl'
         ctrain(args)
+
+
+def get_n_parameters(backbone):
+    p_count = 0
+    for p in backbone.parameters():
+        if p.requires_grad:
+            p_count += p.nelement()
+    return p_count
 
 
 def main():

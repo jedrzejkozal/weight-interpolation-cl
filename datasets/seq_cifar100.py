@@ -17,6 +17,7 @@ from datasets.utils.continual_dataset import (ContinualDataset,
                                               store_masked_loaders)
 from datasets.utils.validation import get_train_val
 from utils.conf import base_path_dataset as base_path
+from torchvision.models import mobilenet_v2
 
 
 class TCIFAR100(CIFAR100):
@@ -111,7 +112,9 @@ class SequentialCIFAR100(ContinualDataset):
         return transform
 
     def get_backbone(self):
-        return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS, nf=int(64*self.args.resnet_width))
+        # return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS, nf=int(64*self.args.resnet_width))
+        model = mobilenet_v2(num_classes=SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS)
+        return model
 
     @staticmethod
     def get_loss():
