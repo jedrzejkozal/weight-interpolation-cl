@@ -19,6 +19,7 @@ from datasets.utils.continual_dataset import (ContinualDataset,
                                               store_masked_loaders)
 from datasets.utils.validation import get_train_val
 from utils.conf import base_path_dataset as base_path
+from torchvision.models import mobilenet_v2
 
 
 class TinyImagenet(Dataset):
@@ -149,8 +150,10 @@ class SequentialTinyImagenet(ContinualDataset):
 
     @staticmethod
     def get_backbone():
-        return resnet18(SequentialTinyImagenet.N_CLASSES_PER_TASK
-                        * SequentialTinyImagenet.N_TASKS)
+        # return resnet18(SequentialTinyImagenet.N_CLASSES_PER_TASK
+        #                 * SequentialTinyImagenet.N_TASKS)
+        model = mobilenet_v2(num_classes=SequentialTinyImagenet.N_CLASSES_PER_TASK * SequentialTinyImagenet.N_TASKS)
+        return model
 
     @staticmethod
     def get_loss():
