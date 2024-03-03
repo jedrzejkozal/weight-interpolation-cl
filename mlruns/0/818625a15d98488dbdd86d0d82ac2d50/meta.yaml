@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/818625a15d98488dbdd86d0d82ac2d50/artifacts
+end_time: 1709460550636
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 818625a15d98488dbdd86d0d82ac2d50
+run_name: er buffer CIFAR100 size 4062
+run_uuid: 818625a15d98488dbdd86d0d82ac2d50
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709457030154
+status: 3
+tags: []
+user_id: jkozal
