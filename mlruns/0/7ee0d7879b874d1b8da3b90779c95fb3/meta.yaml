@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/7ee0d7879b874d1b8da3b90779c95fb3/artifacts
+end_time: 1709400971619
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 7ee0d7879b874d1b8da3b90779c95fb3
+run_name: clewi CIFAR100 buffer size 438
+run_uuid: 7ee0d7879b874d1b8da3b90779c95fb3
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709397269221
+status: 3
+tags: []
+user_id: jkozal
