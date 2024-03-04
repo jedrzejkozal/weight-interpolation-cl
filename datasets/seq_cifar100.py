@@ -112,9 +112,9 @@ class SequentialCIFAR100(ContinualDataset):
         return transform
 
     def get_backbone(self):
-        # return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS, nf=int(64*self.args.resnet_width))
-        model = mobilenet_v2(num_classes=SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS)
-        return model
+        return resnet18(SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS, nf=int(64*self.args.resnet_width))
+        # model = mobilenet_v2(num_classes=SequentialCIFAR100.N_CLASSES_PER_TASK * SequentialCIFAR100.N_TASKS)
+        # return model
 
     @staticmethod
     def get_loss():

@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/0c01110ebf16409392a51aa23cdee77c/artifacts
+end_time: 1709517402814
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 0c01110ebf16409392a51aa23cdee77c
+run_name: er TinyImageNet buffer size 4062
+run_uuid: 0c01110ebf16409392a51aa23cdee77c
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709503568941
+status: 3
+tags: []
+user_id: jkozal

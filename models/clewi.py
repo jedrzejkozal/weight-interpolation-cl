@@ -7,8 +7,8 @@ import copy
 from models.utils.continual_model import ContinualModel
 from utils.args import add_management_args, add_experiment_args, add_rehearsal_args, ArgumentParser
 from utils.buffer import Buffer
-# from models.utils.weight_interpolation import *
-from models.utils.weight_interpolation_mobilenet import *
+from models.utils.weight_interpolation import *
+# from models.utils.weight_interpolation_mobilenet import *
 from models.utils.hessian_trace import hessian_trace
 
 

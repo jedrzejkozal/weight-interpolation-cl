@@ -150,10 +150,10 @@ class SequentialTinyImagenet(ContinualDataset):
 
     @staticmethod
     def get_backbone():
-        # return resnet18(SequentialTinyImagenet.N_CLASSES_PER_TASK
-        #                 * SequentialTinyImagenet.N_TASKS)
-        model = mobilenet_v2(num_classes=SequentialTinyImagenet.N_CLASSES_PER_TASK * SequentialTinyImagenet.N_TASKS)
-        return model
+        return resnet18(SequentialTinyImagenet.N_CLASSES_PER_TASK
+                        * SequentialTinyImagenet.N_TASKS)
+        # model = mobilenet_v2(num_classes=SequentialTinyImagenet.N_CLASSES_PER_TASK * SequentialTinyImagenet.N_TASKS)
+        # return model
 
     @staticmethod
     def get_loss():
