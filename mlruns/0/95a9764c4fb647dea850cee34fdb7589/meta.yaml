@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/0/95a9764c4fb647dea850cee34fdb7589/artifacts
+end_time: 1709558712641
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 95a9764c4fb647dea850cee34fdb7589
+run_name: clewi TinyImageNet buffer size 1000
+run_uuid: 95a9764c4fb647dea850cee34fdb7589
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1709545359027
+status: 3
+tags: []
+user_id: jkozal
