@@ -79,26 +79,6 @@ class Clewi(ContinualModel):
         #     self.interpolation_alpha = 0.37
         # self.t += 1
 
-        # torch.cuda.empty_cache()
-        # buffer_dataloder = self.get_buffer_dataloder(batch_size=256)
-        # for input, target in buffer_dataloder:
-        #     input = input.to(self.device)
-        #     target = target.to(self.device)
-        #     y_pred = self.net(input)
-        #     loss = self.loss(y_pred, target)
-        #     ht = hessian_trace(self.net, loss, self.device, 10)
-        #     print('new model hessian trace = ', ht)
-
-        # if self.old_model is not None:
-        #     torch.cuda.empty_cache()
-        #     for input, target in buffer_dataloder:
-        #         input = input.to(self.device)
-        #         target = target.to(self.device)
-        #         y_pred = self.old_model(input)
-        #         loss = self.loss(y_pred, target)
-        #         ht = hessian_trace(self.old_model, loss, self.device, 10)
-        #         print('old model hessian trace = ', ht)
-
         print('end_task call')
         print('interpolation_alpha = ', self.interpolation_alpha)
 

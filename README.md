@@ -32,4 +32,13 @@ And then go to [http://127.0.0.1:5000/#/](http://127.0.0.1:5000/#/) in your brow
 
 Please cite our work as
 
-TBD
+```
+@misc{kozal2024continual,
+      title={Continual Learning with Weight Interpolation}, 
+      author={Jędrzej Kozal and Jan Wasilewski and Bartosz Krawczyk and Michał Woźniak},
+      year={2024},
+      eprint={2404.04002},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG}
+}
+```
